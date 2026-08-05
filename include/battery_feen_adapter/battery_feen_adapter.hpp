@@ -1,11 +1,11 @@
 #ifndef BATTERY_FEEN_ADAPTER_HPP
 #define BATTERY_FEEN_ADAPTER_HPP
 
-#ifndef HLV_ENABLE_FEEN
-#define HLV_ENABLE_FEEN 0
+#ifndef DS_ENABLE_FEEN
+#define DS_ENABLE_FEEN 0
 #endif
 
-#if HLV_ENABLE_FEEN
+#if DS_ENABLE_FEEN
 #include <feen/ailee/confidence.h>
 #endif
 
@@ -14,18 +14,18 @@
 #include <stdexcept>
 #include <cmath>
 
-namespace hlv {
+namespace ds {
 
 class BatteryFeenAdapter {
 private:
-#if HLV_ENABLE_FEEN
+#if DS_ENABLE_FEEN
     feen::ailee::PhononicConfidenceScorer scorer_;
 #endif
     std::vector<double> voltage_history_;
     size_t max_history_size_;
 
 public:
-#if HLV_ENABLE_FEEN
+#if DS_ENABLE_FEEN
     BatteryFeenAdapter(size_t max_history_size = 10)
         : scorer_(feen::ailee::ConfidenceConfig{}),
           max_history_size_(max_history_size) {}
@@ -39,10 +39,10 @@ public:
             return 1.0;
         }
 
-#if HLV_ENABLE_FEEN
+#if DS_ENABLE_FEEN
         try {
             // Dummy peers logic (e.g., cell voltages could be used here if available,
-            // but we only have a single pack voltage in HLVState)
+            // but we only have a single pack voltage in DSState)
             std::vector<double> peers = {current_voltage};
 
             feen::ailee::ConfidenceResult result = scorer_.evaluate(
@@ -76,6 +76,6 @@ public:
     }
 };
 
-} // namespace hlv
+} // namespace ds
 
 #endif // BATTERY_FEEN_ADAPTER_HPP

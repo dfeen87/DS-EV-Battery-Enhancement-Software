@@ -3,7 +3,7 @@
  * Simple BMS Loop Example
  * ============================================================================
  *
- * Demonstrates basic usage of the HLV BMS Middleware in SIMPLE mode
+ * Demonstrates basic usage of the DS BMS Middleware in SIMPLE mode
  * (single-cell equivalent pack model).
  *
  * This example is intentionally minimal and deterministic:
@@ -24,19 +24,19 @@
 #include <chrono>
 #include <cmath>
 
-#include "hlv_bms_middleware_v2.hpp"
+#include "ds_bms_middleware_v2.hpp"
 
-using namespace hlv_plugin;
+using namespace ds_plugin;
 
 int main() {
-    std::cout << "=== HLV BMS Middleware – Simple Loop Example ===\n";
-    std::cout << "Middleware version: " << HLVBMSMiddleware::get_version() << "\n\n";
+    std::cout << "=== DS BMS Middleware – Simple Loop Example ===\n";
+    std::cout << "Middleware version: " << DSBMSMiddleware::get_version() << "\n\n";
 
     // ------------------------------------------------------------------------
     // Initialize middleware (single-pack equivalent)
     // ------------------------------------------------------------------------
 
-    HLVBMSMiddleware bms;
+    DSBMSMiddleware bms;
 
     // 75 Ah, 400 V nominal EV-style pack
     bms.init(75.0, 400.0);
@@ -69,7 +69,7 @@ int main() {
         temperature += 0.005 * std::abs(current);
 
         // --------------------------------------------------------------------
-        // Run HLV enhancement cycle
+        // Run DS enhancement cycle
         // --------------------------------------------------------------------
 
         auto enhanced = bms.enhance_cycle(
@@ -92,7 +92,7 @@ int main() {
                 << "SOC=" << diag.pack_soc_percent << "% | "
                 << "SOH=" << diag.pack_soh_percent << "% | "
                 << "P=" << diag.instantaneous_power_kw << " kW | "
-                << "Trace=" << diag.hlv_metric_trace
+                << "Trace=" << diag.ds_metric_trace
                 << (diag.safety_fault ? " | FAULT" : "")
                 << "\n";
         }

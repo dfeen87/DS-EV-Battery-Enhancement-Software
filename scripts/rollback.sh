@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # ============================================================================
-# HLV EV Battery Enhancement - Safe Backup & Rollback Utility
+# DS EV Battery Enhancement - Safe Backup & Rollback Utility
 # ============================================================================
 set -euo pipefail
 
-INSTALL_DIR="/opt/hlv_enhancement"
+INSTALL_DIR="/opt/ds_enhancement"
 BACKUP_DIR="${INSTALL_DIR}/backups"
 LOG_FILE="${INSTALL_DIR}/logs/install.log"
 

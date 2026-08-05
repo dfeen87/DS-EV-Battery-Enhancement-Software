@@ -1,11 +1,11 @@
 /*
  * ============================================================================
- * HLV Regen Braking Manager v1.0
+ * DS Regen Braking Manager v1.0
  * ============================================================================
  *
  * PURPOSE:
  *   Intelligent regenerative braking limiter + blending guidance for EVs.
- *   Uses HLV-enhanced battery state + pack diagnostics to compute:
+ *   Uses DS-enhanced battery state + pack diagnostics to compute:
  *     - safe regen torque limits
  *     - recommended regen fraction (blend with friction brakes)
  *
@@ -20,7 +20,7 @@
  *      - pack voltage headroom
  *      - battery temperature (cold and hot constraints)
  *      - cell imbalance / weak cell indicators (if available)
- *      - HLV stress indicators (metric trace / entropy / confidence)
+ *      - DS stress indicators (metric trace / entropy / confidence)
  *      - safety faults from middleware (hard gate)
  *   2) Provides a stable regen fraction to simplify brake blending.
  *
@@ -30,8 +30,8 @@
  *   - It does NOT command friction brakes. It only recommends blending.
  *
  * INPUTS:
- *   - Enhanced battery state (hlv::EnhancedState) from HLVBMSMiddleware
- *   - DiagnosticReport from HLVBMSMiddleware (optional but recommended)
+ *   - Enhanced battery state (ds::EnhancedState) from DSBMSMiddleware
+ *   - DiagnosticReport from DSBMSMiddleware (optional but recommended)
  *   - vehicle speed / motor RPM (optional, for speed-dependent behavior)
  *   - brake request (normalized 0..1)
  *   - ABS/ESC active flag + wheel slip flag (hard regen reductions)
@@ -49,15 +49,15 @@
  * ============================================================================
  */
 
-#ifndef HLV_REGEN_BRAKING_MANAGER_V1_HPP
-#define HLV_REGEN_BRAKING_MANAGER_V1_HPP
+#ifndef DS_REGEN_BRAKING_MANAGER_V1_HPP
+#define DS_REGEN_BRAKING_MANAGER_V1_HPP
 
-#include "hlv_bms_middleware_v2.hpp"  // for hlv_plugin::DiagnosticReport + EnhancedState
+#include "ds_bms_middleware_v2.hpp"  // for ds_plugin::DiagnosticReport + EnhancedState
 #include <string>
 #include <algorithm>
 #include <cmath>
 
-namespace hlv {
+namespace ds {
 namespace drive {
 
 // ============================================================================
@@ -103,9 +103,9 @@ struct RegenConfig {
     double imbalance_soft_mv = 50.0;          // start reducing regen if imbalance high
     double imbalance_hard_mv = 120.0;         // aggressively reduce regen if extreme
 
-    // HLV stress influence (optional: conservative derating when confidence is low)
-    double min_hlv_confidence_for_full_regen = 0.85; // below this, start tapering
-    double min_hlv_confidence_hard = 0.60;           // below this, strong reduction
+    // DS stress influence (optional: conservative derating when confidence is low)
+    double min_ds_confidence_for_full_regen = 0.85; // below this, start tapering
+    double min_ds_confidence_hard = 0.60;           // below this, strong reduction
 
     // ABS/ESC cooperation
     double abs_regen_cut_fraction = 0.10;     // when ABS/ESC active, allow only 10% regen
@@ -129,7 +129,7 @@ struct RegenDiagnostics {
     double f_voltage = 1.0;
     double f_temp = 1.0;
     double f_cell = 1.0;
-    double f_hlv = 1.0;
+    double f_ds = 1.0;
     double f_stability = 1.0;
 
     int abs_events = 0;
@@ -149,9 +149,9 @@ struct RegenResult {
 // ============================================================================
 // REGEN MANAGER
 // ============================================================================
-class HLVRegenBrakingManager {
+class DSRegenBrakingManager {
 public:
-    explicit HLVRegenBrakingManager(const RegenConfig& cfg = RegenConfig())
+    explicit DSRegenBrakingManager(const RegenConfig& cfg = RegenConfig())
         : cfg_(cfg), last_cmd_torque_nm_(0.0), last_output_torque_nm_(0.0),
           last_time_s_(0.0), last_abs_or_slip_time_s_(-1.0) {}
 
@@ -170,8 +170,8 @@ public:
     //   dt: time step seconds
     //
     RegenResult compute_regen_limit(
-        const hlv::EnhancedState& enhanced,
-        const hlv_plugin::DiagnosticReport* diag,
+        const ds::EnhancedState& enhanced,
+        const ds_plugin::DiagnosticReport* diag,
         double brake_request,
         double vehicle_speed_kph,
         double motor_rpm,
@@ -224,8 +224,8 @@ public:
             out.diag.f_cell = compute_cell_factor(*diag);
         }
 
-        // HLV confidence factor: conservative taper if confidence is low
-        out.diag.f_hlv = compute_hlv_factor(diag ? diag->hlv_confidence : 1.0);
+        // DS confidence factor: conservative taper if confidence is low
+        out.diag.f_ds = compute_ds_factor(diag ? diag->ds_confidence : 1.0);
 
         // ABS / slip cooperation
         if (abs_active) {
@@ -246,7 +246,7 @@ public:
                           out.diag.f_voltage *
                           out.diag.f_temp *
                           out.diag.f_cell *
-                          out.diag.f_hlv *
+                          out.diag.f_ds *
                           out.diag.f_stability;
 
         combined = std::clamp(combined, 0.0, 1.0);
@@ -344,7 +344,7 @@ private:
         return std::min(f_cold, f_hot);
     }
 
-    double compute_cell_factor(const hlv_plugin::DiagnosticReport& d) const {
+    double compute_cell_factor(const ds_plugin::DiagnosticReport& d) const {
         // If no cell detail available, do nothing.
         if (d.total_cells <= 1) return 1.0;
 
@@ -357,13 +357,13 @@ private:
         return std::clamp(t, 0.35, 1.0);
     }
 
-    double compute_hlv_factor(double confidence) const {
+    double compute_ds_factor(double confidence) const {
         confidence = clamp01(confidence);
-        if (confidence <= cfg_.min_hlv_confidence_hard) return 0.50;
-        if (confidence >= cfg_.min_hlv_confidence_for_full_regen) return 1.0;
+        if (confidence <= cfg_.min_ds_confidence_hard) return 0.50;
+        if (confidence >= cfg_.min_ds_confidence_for_full_regen) return 1.0;
 
-        double t = (confidence - cfg_.min_hlv_confidence_hard) /
-                   (cfg_.min_hlv_confidence_for_full_regen - cfg_.min_hlv_confidence_hard);
+        double t = (confidence - cfg_.min_ds_confidence_hard) /
+                   (cfg_.min_ds_confidence_for_full_regen - cfg_.min_ds_confidence_hard);
         return std::clamp(t, 0.50, 1.0);
     }
 
@@ -402,7 +402,7 @@ private:
         if (d.f_voltage < min_f) { min_f = d.f_voltage; name = "VOLTAGE"; }
         if (d.f_temp < min_f) { min_f = d.f_temp; name = "TEMPERATURE"; }
         if (d.f_cell < min_f) { min_f = d.f_cell; name = "CELL_IMBALANCE"; }
-        if (d.f_hlv < min_f) { min_f = d.f_hlv; name = "HLV_CONFIDENCE"; }
+        if (d.f_ds < min_f) { min_f = d.f_ds; name = "DS_CONFIDENCE"; }
         if (d.f_stability < min_f) { min_f = d.f_stability; name = "STABILITY_EVENT"; }
 
         // If none reduced, call it NONE
@@ -410,7 +410,7 @@ private:
         return name;
     }
 
-    static double diag_pack_max_voltage(const hlv_plugin::DiagnosticReport& d) {
+    static double diag_pack_max_voltage(const ds_plugin::DiagnosticReport& d) {
         // DiagnosticReport doesn’t currently contain pack max voltage explicitly.
         // OEM NOTE:
         //   If you want exact limits, consider adding pack voltage max to diagnostics,
@@ -437,6 +437,6 @@ private:
 };
 
 } // namespace drive
-} // namespace hlv
+} // namespace ds
 
-#endif // HLV_REGEN_BRAKING_MANAGER_V1_HPP
+#endif // DS_REGEN_BRAKING_MANAGER_V1_HPP

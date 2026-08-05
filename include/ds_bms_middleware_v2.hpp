@@ -1,10 +1,10 @@
-#ifndef HLV_BMS_MIDDLEWARE_V2_HPP
-#define HLV_BMS_MIDDLEWARE_V2_HPP
+#ifndef DS_BMS_MIDDLEWARE_V2_HPP
+#define DS_BMS_MIDDLEWARE_V2_HPP
 
-#include "hlv_battery_core.hpp"
-#include "hlv_battery_enhancement.hpp"
-#include "hlv_advanced_features.hpp"
-#include "hlv_energy_telemetry.hpp"
+#include "ds_battery_core.hpp"
+#include "ds_battery_enhancement.hpp"
+#include "ds_advanced_features.hpp"
+#include "ds_energy_telemetry.hpp"
 
 #include <vector>
 #include <array>
@@ -16,7 +16,7 @@
 #include <cmath>
 #include <map>
 
-namespace hlv_plugin {
+namespace ds_plugin {
 
 /* ================= VERSION ================= */
 
@@ -52,10 +52,10 @@ struct DiagnosticReport {
     double max_cell_temp_c = 25.0;
     double min_cell_temp_c = 25.0;
 
-    double hlv_metric_trace = 2.0;
-    double hlv_entropy = 0.0;
-    double hlv_phi_magnitude = 0.0;
-    double hlv_confidence = 1.0;
+    double ds_metric_trace = 2.0;
+    double ds_entropy = 0.0;
+    double ds_phi_magnitude = 0.0;
+    double ds_confidence = 1.0;
 
     bool weak_cell_warning = false;
     bool thermal_warning = false;
@@ -106,14 +106,14 @@ struct MiddlewareConfig {
     enum class Mode { SIMPLE, SINGLE_BATTERY = SIMPLE, MULTI_CELL_PACK, ADVANCED_ML };
 
     Mode mode = Mode::SIMPLE;
-    hlv::advanced::ChemistryType chemistry = hlv::advanced::ChemistryType::NMC;
+    ds::advanced::ChemistryType chemistry = ds::advanced::ChemistryType::NMC;
 
     double nominal_capacity_ah = 75.0;
     double nominal_voltage = 400.0;
 
     int series_cells = 96;
 
-    hlv::HLVConfig hlv_config;
+    ds::DSConfig ds_config;
 
     bool enable_kalman_filter = false;
     bool enable_ml_hybrid = false;
@@ -136,7 +136,7 @@ class SafetyMonitor {
 public:
     explicit SafetyMonitor(const SafetyLimits& limits = {}) : limits_(limits) {}
 
-    bool check(const hlv::HLVState& s, const DiagnosticReport& d) {
+    bool check(const ds::DSState& s, const DiagnosticReport& d) {
         faults_.clear();
         fault_active_ = false;
 
@@ -165,16 +165,16 @@ public:
 
 /* ================= MIDDLEWARE ================= */
 
-class HLVBMSMiddleware {
+class DSBMSMiddleware {
     MiddlewareConfig config_;
 
-    std::unique_ptr<hlv::HLVEnhancement> hlv_core_;
-    std::unique_ptr<hlv::advanced::MultiCellPack> pack_;
-    std::unique_ptr<hlv::advanced::KalmanHLVFilter> kalman_;
+    std::unique_ptr<ds::DSEnhancement> ds_core_;
+    std::unique_ptr<ds::advanced::MultiCellPack> pack_;
+    std::unique_ptr<ds::advanced::KalmanDSFilter> kalman_;
 
     SafetyMonitor safety_;
     DiagnosticReport diag_ = {};
-    hlv::EnhancedState enhanced_ = {};
+    ds::EnhancedState enhanced_ = {};
 
     bool initialized_ = false;
     double time_s_ = 0.0;
@@ -185,16 +185,16 @@ class HLVBMSMiddleware {
     double energy_out_kwh_ = 0.0;
 
 public:
-    HLVBMSMiddleware() = default;
+    DSBMSMiddleware() = default;
 
     void init(double capacity_ah, double voltage_v) {
         config_.nominal_capacity_ah = capacity_ah;
         config_.nominal_voltage = voltage_v;
-        config_.hlv_config.nominal_capacity_ah = capacity_ah;
-        config_.hlv_config.nominal_voltage = voltage_v;
+        config_.ds_config.nominal_capacity_ah = capacity_ah;
+        config_.ds_config.nominal_voltage = voltage_v;
 
-        hlv_core_ = std::make_unique<hlv::HLVEnhancement>();
-        hlv_core_->init(config_.hlv_config);
+        ds_core_ = std::make_unique<ds::DSEnhancement>();
+        ds_core_->init(config_.ds_config);
 
         safety_ = SafetyMonitor(config_.safety_limits);
         initialized_ = true;
@@ -203,30 +203,30 @@ public:
     void init_advanced(const MiddlewareConfig& cfg) {
         config_ = cfg;
 
-        hlv_core_ = std::make_unique<hlv::HLVEnhancement>();
-        hlv_core_->init(config_.hlv_config);
+        ds_core_ = std::make_unique<ds::DSEnhancement>();
+        ds_core_->init(config_.ds_config);
 
         if (cfg.mode == MiddlewareConfig::Mode::MULTI_CELL_PACK ||
             cfg.mode == MiddlewareConfig::Mode::ADVANCED_ML) {
-            pack_ = std::make_unique<hlv::advanced::MultiCellPack>(
+            pack_ = std::make_unique<ds::advanced::MultiCellPack>(
                 cfg.series_cells,
-                hlv::advanced::ChemistryLibrary().get_profile(cfg.chemistry));
+                ds::advanced::ChemistryLibrary().get_profile(cfg.chemistry));
         }
 
         if (cfg.enable_kalman_filter) {
-            kalman_ = std::make_unique<hlv::advanced::KalmanHLVFilter>();
+            kalman_ = std::make_unique<ds::advanced::KalmanDSFilter>();
         }
 
         safety_ = SafetyMonitor(cfg.safety_limits);
         initialized_ = true;
     }
 
-    hlv::EnhancedState enhance_cycle(double v, double i, double t, double soc, double dt) {
+    ds::EnhancedState enhance_cycle(double v, double i, double t, double soc, double dt) {
         if (!initialized_) throw std::runtime_error("Middleware not initialized");
 
         soc = std::clamp(soc, 0.0, 1.0);
 
-        enhanced_ = hlv_core_->enhance(v, i, t, soc, dt);
+        enhanced_ = ds_core_->enhance(v, i, t, soc, dt);
 
         if (kalman_) {
             kalman_->predict(enhanced_.state, dt);
@@ -249,12 +249,12 @@ public:
     const DiagnosticReport* diagnostics_ptr() const { return &diag_; }
     DiagnosticReport get_diagnostics() const { return diag_; }
 
-    hlv::HealthPrediction get_health_forecast(double cycles_ahead = 100.0) {
+    ds::HealthPrediction get_health_forecast(double cycles_ahead = 100.0) {
         if (!initialized_) throw std::runtime_error("Middleware not initialized");
 
         if (config_.mode == MiddlewareConfig::Mode::SIMPLE ||
             config_.mode == MiddlewareConfig::Mode::SINGLE_BATTERY) {
-            return hlv_core_->get_health_forecast(cycles_ahead);
+            return ds_core_->get_health_forecast(cycles_ahead);
         }
 
         if (!pack_) {
@@ -265,7 +265,7 @@ public:
     }
 
     std::string get_status_summary() const {
-        std::string status = "HLV BMS Status:\n";
+        std::string status = "DS BMS Status:\n";
         status += "  Mode: " + std::string(
             config_.mode == MiddlewareConfig::Mode::SIMPLE ||
             config_.mode == MiddlewareConfig::Mode::SINGLE_BATTERY
@@ -287,8 +287,8 @@ public:
 // --------------------------------------------------------------------
     // Optional Telemetry Snapshot (Non-Control, Read-Only)
     // --------------------------------------------------------------------
-    hlv::HLVEnergyTelemetry snapshot() const {
-        hlv::HLVEnergyTelemetry t;
+    ds::DSEnergyTelemetry snapshot() const {
+        ds::DSEnergyTelemetry t;
 
         t.soc_percent = diag_.pack_soc_percent;
         t.soh_percent = diag_.pack_soh_percent;
@@ -299,9 +299,9 @@ public:
                              : 0.0;
 
         t.recovered_energy_kwh = energy_in_kwh_;
-        t.hlv_metric_trace = diag_.hlv_metric_trace;
-        t.hlv_entropy = diag_.hlv_entropy;
-        t.hlv_confidence = diag_.hlv_confidence;
+        t.ds_metric_trace = diag_.ds_metric_trace;
+        t.ds_entropy = diag_.ds_entropy;
+        t.ds_confidence = diag_.ds_confidence;
 
         t.limiting_factor = diag_.safety_fault ? "SAFETY" : "NONE";
 
@@ -316,13 +316,13 @@ private:
         diag_.pack_soh_percent = (1.0 - s.degradation) * 100.0;
         diag_.pack_health_percent = diag_.pack_soh_percent;
         diag_.instantaneous_power_kw = (s.voltage * s.current) / 1000.0;
-        diag_.hlv_metric_trace = s.g_eff.trace();
-        diag_.hlv_entropy = s.entropy;
-        diag_.hlv_phi_magnitude = s.phi_magnitude;
-        diag_.hlv_confidence = enhanced_.hlv_confidence;
-        diag_.metric_trace = diag_.hlv_metric_trace;
-        diag_.phi_magnitude = diag_.hlv_phi_magnitude;
-        diag_.entropy_level = diag_.hlv_entropy;
+        diag_.ds_metric_trace = s.g_eff.trace();
+        diag_.ds_entropy = s.entropy;
+        diag_.ds_phi_magnitude = s.phi_magnitude;
+        diag_.ds_confidence = enhanced_.ds_confidence;
+        diag_.metric_trace = diag_.ds_metric_trace;
+        diag_.phi_magnitude = diag_.ds_phi_magnitude;
+        diag_.entropy_level = diag_.ds_entropy;
         diag_.energy_throughput_kwh = energy_in_kwh_ + energy_out_kwh_;
         diag_.last_update_time_ms = dt * 1000.0;
         const double next_update_count = static_cast<double>(updates_ + 1);
@@ -368,6 +368,6 @@ private:
     }
 };
 
-} // namespace hlv_plugin
+} // namespace ds_plugin
 
 #endif

@@ -3,23 +3,23 @@
 #include <chrono>
 #include <cmath>
 
-#include "hlv_bms_middleware_v2.hpp"
-#include "hlv_regen_braking_manager_v1.hpp"
+#include "ds_bms_middleware_v2.hpp"
+#include "ds_regen_braking_manager_v1.hpp"
 
 int main() {
-    std::cout << "=== HLV Regen Braking Manager Example ===\n";
-    std::cout << "Regen module version: " << hlv::drive::HLVRegenBrakingManager::get_version() << "\n\n";
+    std::cout << "=== DS Regen Braking Manager Example ===\n";
+    std::cout << "Regen module version: " << ds::drive::DSRegenBrakingManager::get_version() << "\n\n";
 
     // Initialize BMS middleware (simple mode)
-    hlv_plugin::HLVBMSMiddleware bms;
+    ds_plugin::DSBMSMiddleware bms;
     bms.init(75.0, 400.0);
 
     // Regen manager
-    hlv::drive::RegenConfig rcfg;
+    ds::drive::RegenConfig rcfg;
     rcfg.peak_regen_torque_nm = 220.0;
     rcfg.max_regen_power_kw = 120.0;
 
-    hlv::drive::HLVRegenBrakingManager regen(rcfg);
+    ds::drive::DSRegenBrakingManager regen(rcfg);
 
     constexpr double dt = 0.01;   // 100 Hz control loop
     double t = 0.0;

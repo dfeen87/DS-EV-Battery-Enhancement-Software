@@ -1,16 +1,16 @@
-#include "hlv_battery_core.hpp"
+#include "ds_battery_core.hpp"
 #include <iostream>
 #include <cassert>
 #include <cmath>
 #include <limits>
 
-using namespace hlv;
+using namespace ds;
 
 bool test_feen_disabled() {
-    std::cout << "Testing FEEN disabled (pre-4.1.0 behavior)..." << std::flush;
+    std::cout << "Testing FEEN disabled (pre-4.2.0 behavior)..." << std::flush;
 
-    HLVEnhancement enhancer;
-    HLVConfig config;
+    DSEnhancement enhancer;
+    DSConfig config;
     config.enable_feen_battery_integration = false;
     enhancer.init(config);
 
@@ -18,7 +18,7 @@ bool test_feen_disabled() {
     (void)result;
 
     assert(result.feen_trust_metric == -1.0);
-    assert(result.hlv_confidence >= 0.0 && result.hlv_confidence <= 1.0);
+    assert(result.ds_confidence >= 0.0 && result.ds_confidence <= 1.0);
 
     std::cout << " PASS\n";
     return true;
@@ -27,15 +27,15 @@ bool test_feen_disabled() {
 bool test_feen_enabled() {
     std::cout << "Testing FEEN enabled..." << std::flush;
 
-    HLVEnhancement enhancer;
-    HLVConfig config;
+    DSEnhancement enhancer;
+    DSConfig config;
     config.enable_feen_battery_integration = true;
     enhancer.init(config);
 
     auto result = enhancer.enhance(360.0, 50.0, 25.0, 0.8, 1.0);
 
     assert(result.feen_trust_metric >= 0.0 && result.feen_trust_metric <= 1.0);
-    assert(result.hlv_confidence >= 0.0 && result.hlv_confidence <= 1.0);
+    assert(result.ds_confidence >= 0.0 && result.ds_confidence <= 1.0);
 
     // Test multiple cycles
     for(int i = 0; i < 5; i++) {
@@ -74,21 +74,21 @@ bool test_feen_adapter_edge_cases() {
 bool test_determinism() {
     std::cout << "Testing determinism & replay..." << std::flush;
 
-    HLVConfig config;
+    DSConfig config;
     config.enable_feen_battery_integration = true;
 
-    HLVEnhancement enhancer1;
+    DSEnhancement enhancer1;
     enhancer1.init(config);
     auto r1 = enhancer1.enhance(360.0, 50.0, 25.0, 0.8, 1.0);
     (void)r1;
 
-    HLVEnhancement enhancer2;
+    DSEnhancement enhancer2;
     enhancer2.init(config);
     auto r2 = enhancer2.enhance(360.0, 50.0, 25.0, 0.8, 1.0);
     (void)r2;
 
     assert(r1.feen_trust_metric == r2.feen_trust_metric);
-    assert(r1.hlv_confidence == r2.hlv_confidence);
+    assert(r1.ds_confidence == r2.ds_confidence);
 
     std::cout << " PASS\n";
     return true;
@@ -98,7 +98,7 @@ bool test_version_consistency() {
     std::cout << "Testing version consistency..." << std::flush;
 
     // Check main version string against the library's source of truth
-    assert(HLVEnhancement::get_version() == get_version_string());
+    assert(DSEnhancement::get_version() == get_version_string());
 
     std::cout << " PASS\n";
     return true;
@@ -106,7 +106,7 @@ bool test_version_consistency() {
 
 int main() {
     std::cout << "============================================================================\n";
-    std::cout << "HLV BATTERY FEEN INTEGRATION TESTS\n";
+    std::cout << "DS BATTERY FEEN INTEGRATION TESTS\n";
     std::cout << "============================================================================\n\n";
 
     try {

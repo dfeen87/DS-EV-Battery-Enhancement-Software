@@ -1,6 +1,6 @@
-# HLV EV Battery Enhancement - Safety & Disclaimers
+# DS EV Battery Enhancement - Safety & Disclaimers
 
-Helix-Light-Vortex (HLV) Battery Enhancement operates at the intersection of mathematical field physics and advanced chemistry state estimation. To ensure optimal performance and avoid any hazard, the system enforces rigid, deterministic safety boundaries and fail-closed behaviors.
+Dual-State (DS) Battery Enhancement operates at the intersection of mathematical field physics and advanced chemistry state estimation. To ensure optimal performance and avoid any hazard, the system enforces rigid, deterministic safety boundaries and fail-closed behaviors.
 
 ---
 
@@ -10,13 +10,13 @@ Helix-Light-Vortex (HLV) Battery Enhancement operates at the intersection of mat
 This enhancement system is designed to run in parallel with standard automotive BMS micro-controllers. It is an **information-physical software optimizer** and **does not bypass** any hard safety mechanisms programmed into your vehicle's original equipment manufacturer (OEM) controller or battery contactors.
 
 ### 2. Liability Limit
-This software is provided "as is" under the PolyForm Noncommercial License 1.0.0 terms. While it implements highly verified physical constraints (including thermodynamic Kahan summation and Landauer energy bounds), users and vehicle engineers assume all risks associated with deploying aftermarket firmware configurations on production electric vehicles.
+This software is provided "as is" under the PolyForm Noncommercial License 1.0.0 terms. While it implements highly verified physical constraints (including thermodynamic Kahan summation and Thermodynamic energy bounds), users and vehicle engineers assume all risks associated with deploying aftermarket firmware configurations on production electric vehicles.
 
 ---
 
 ## 🛡️ Operational Safety Boundaries
 
-The HLV core engine establishes three layers of protection to ensure battery safety:
+The DS core engine establishes three layers of protection to ensure battery safety:
 
 ### 1. State of Health (SOH) Thresholds
 * **Limit**: Battery State of Health must be **>= 80%** to qualify for core state-coupling enhancements.
@@ -41,10 +41,10 @@ The HLV core engine establishes three layers of protection to ensure battery saf
 
 ## 🔒 Fail-Closed & Signal Freshness Philosophy
 
-If any critical telemetry signal (such as voltage, current, or temperature) is delayed, corrupted, or missing, the HLV stack executes a **strict fail-closed protocol**:
+If any critical telemetry signal (such as voltage, current, or temperature) is delayed, corrupted, or missing, the DS stack executes a **strict fail-closed protocol**:
 
 1. **Information Decay**: The informational state Φ immediately decays back to ground state ($\Phi \to 0$) with zero coupling effect.
-2. **Metric Trace Convergence**: The effective metric $g^{\text{eff}}_{\mu\nu}$ relaxes back to flat Minkowski space $g_{\mu\nu}$, disabling any predictive power enhancements.
+2. **Metric Trace Convergence**: The effective metric $g^{\text{eff}}_{\mu\nu}$ relaxes back to flat baseline space $g_{\mu\nu}$, disabling any predictive power enhancements.
 3. **Control Authority Handover**: All dynamic control scaling factors (torque fractions, regen bounds) return to standard OEM limits or are bypassed entirely.
 4. **Independent Protection**: Original vehicle hard-limits and contactor safety logic remain fully active and unaffected.
 
@@ -52,12 +52,12 @@ If any critical telemetry signal (such as voltage, current, or temperature) is d
 
 ## 🚨 Emergency Limp-Home & Performance Derating
 
-The HLV system defines and enforces explicit derating states under critical vehicle conditions:
+The DS system defines and enforces explicit derating states under critical vehicle conditions:
 
 ### 1. Critical SOC (Limp-Home Mode)
 * **Trigger**: State of Charge falls below **5.0%** (`soc < config.battery.soc_min_critical`).
 * **Behavior**:
-  - The HLV Torque Manager immediately activates `limp_mode_active = True`.
+  - The DS Torque Manager immediately activates `limp_mode_active = True`.
   - Maximum available motor torque is limited to **20%** of peak rating to protect the pack from deep discharge and cell reversal.
   - Diagnostics triggers visual dashboard warnings.
 

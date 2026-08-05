@@ -204,7 +204,7 @@ Vehicle parameters to evaluate:
 ✓ All health, temperature, voltage, and SOC metrics are within safe boundaries.
 === Pre-Flight Diagnostics Completed Successfully ===
 === Pre-Flight Diagnostics Completed Successfully ===
-[2026-07-17 11:54:58] SUCCESS: HLV EV Software suite successfully installed to /opt/hlv_enhancement.
+[2026-07-17 11:54:58] SUCCESS: DS EV Software suite successfully installed to /opt/ds_enhancement.
 === Starting Pre-Flight Diagnostics ===
 === Starting Pre-Flight Diagnostics ===
 Host OS detected: Linux 6.8.0
@@ -273,8 +273,8 @@ Vehicle parameters to evaluate:
 ✓ All health, temperature, voltage, and SOC metrics are within safe boundaries.
 === Pre-Flight Diagnostics Completed Successfully ===
 === Pre-Flight Diagnostics Completed Successfully ===
-[2026-07-17 11:55:48] SUCCESS: HLV EV Software suite successfully installed to /opt/hlv_enhancement.
-[2026-07-17 11:55:48] SUCCESS: HLV Software suite successfully updated.
+[2026-07-17 11:55:48] SUCCESS: DS EV Software suite successfully installed to /opt/ds_enhancement.
+[2026-07-17 11:55:48] SUCCESS: DS Software suite successfully updated.
 === Starting Pre-Flight Diagnostics ===
 === Starting Pre-Flight Diagnostics ===
 Host OS detected: Linux 6.8.0
@@ -285,8 +285,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Vehicle parameters to evaluate:
   Model:            Tesla_Model_3_LR
   Firmware Version: v2024.12.15
@@ -309,7 +309,7 @@ Vehicle parameters to evaluate:
 ✓ All health, temperature, voltage, and SOC metrics are within safe boundaries.
 === Pre-Flight Diagnostics Completed Successfully ===
 === Pre-Flight Diagnostics Completed Successfully ===
-[2026-07-17 12:03:01] SUCCESS: HLV EV Software suite successfully installed to /opt/hlv_enhancement.
+[2026-07-17 12:03:01] SUCCESS: DS EV Software suite successfully installed to /opt/ds_enhancement.
 === Starting Pre-Flight Diagnostics ===
 === Starting Pre-Flight Diagnostics ===
 Host OS detected: Linux 6.8.0
@@ -320,8 +320,8 @@ Python Version detected: 3.12.13
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Vehicle parameters to evaluate:
   Model:            Tesla_Cybertruck
   Firmware Version: v2024.12.1
@@ -354,8 +354,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Vehicle parameters to evaluate:
   Model:            Tesla_Model_3_LR
   Firmware Version: v2024.12.15
@@ -378,7 +378,7 @@ Vehicle parameters to evaluate:
 ✓ All health, temperature, voltage, and SOC metrics are within safe boundaries.
 === Pre-Flight Diagnostics Completed Successfully ===
 === Pre-Flight Diagnostics Completed Successfully ===
-[2026-07-17 12:08:48] SUCCESS: HLV EV Software suite successfully installed to /opt/hlv_enhancement.
+[2026-07-17 12:08:48] SUCCESS: DS EV Software suite successfully installed to /opt/ds_enhancement.
 === Starting Pre-Flight Diagnostics ===
 === Starting Pre-Flight Diagnostics ===
 Host OS detected: Linux 6.8.0
@@ -389,8 +389,8 @@ Python Version detected: 3.12.13
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Vehicle parameters to evaluate:
   Model:            GM_Hummer_EV
   Firmware Version: GM_ULT_v1.5
@@ -423,8 +423,8 @@ Python Version detected: 3.12.13
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Vehicle parameters to evaluate:
   Model:            Ford_Fusion_Energi
   Firmware Version: F_FW_v2.1
@@ -457,8 +457,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Vehicle parameters to evaluate:
   Model:            Tesla_Model_3_LR
   Firmware Version: v2024.12.15
@@ -481,7 +481,7 @@ Vehicle parameters to evaluate:
 ✓ All health, temperature, voltage, and SOC metrics are within safe boundaries.
 === Pre-Flight Diagnostics Completed Successfully ===
 === Pre-Flight Diagnostics Completed Successfully ===
-[2026-07-17 12:11:26] SUCCESS: HLV EV Software suite successfully installed to /opt/hlv_enhancement.
+[2026-07-17 12:11:26] SUCCESS: DS EV Software suite successfully installed to /opt/ds_enhancement.
 === Starting Pre-Flight Diagnostics ===
 === Starting Pre-Flight Diagnostics ===
 Host OS detected: Linux 6.8.0
@@ -492,8 +492,8 @@ Python Version detected: 3.12.13
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Vehicle parameters to evaluate:
   Model:            GM_Hummer_electric
   Firmware Version: GM_ULT_v1.2
@@ -526,8 +526,8 @@ Python Version detected: 3.12.13
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Vehicle parameters to evaluate:
   Model:            Ford_Fusion
   Firmware Version: F_FW_v3.0
@@ -560,8 +560,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Vehicle parameters to evaluate:
   Model:            Tesla_Model_3_LR
   Firmware Version: v2024.12.15
@@ -584,7 +584,7 @@ Vehicle parameters to evaluate:
 ✓ All health, temperature, voltage, and SOC metrics are within safe boundaries.
 === Pre-Flight Diagnostics Completed Successfully ===
 === Pre-Flight Diagnostics Completed Successfully ===
-[2026-07-17 12:17:39] SUCCESS: HLV EV Software suite successfully installed to /opt/hlv_enhancement.
+[2026-07-17 12:17:39] SUCCESS: DS EV Software suite successfully installed to /opt/ds_enhancement.
 === Starting Pre-Flight Diagnostics ===
 === Starting Pre-Flight Diagnostics ===
 Host OS detected: Linux 6.8.0
@@ -595,8 +595,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -621,7 +621,7 @@ Vehicle parameters to evaluate:
 ✓ All health, temperature, voltage, and SOC metrics are within safe boundaries.
 === Pre-Flight Diagnostics Completed Successfully ===
 === Pre-Flight Diagnostics Completed Successfully ===
-[2026-07-17 12:18:12] SUCCESS: HLV EV Software suite successfully installed to /opt/hlv_enhancement.
+[2026-07-17 12:18:12] SUCCESS: DS EV Software suite successfully installed to /opt/ds_enhancement.
 === Starting Pre-Flight Diagnostics ===
 === Starting Pre-Flight Diagnostics ===
 Host OS detected: Linux 6.8.0
@@ -632,8 +632,8 @@ Python Version detected: 3.12.13
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: GM_Hummer_electric
 Applying simulated status preset for model: GM_Hummer_electric
 Vehicle parameters to evaluate:
@@ -668,8 +668,8 @@ Python Version detected: 3.12.13
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Ford_Fusion
 Applying simulated status preset for model: Ford_Fusion
 Vehicle parameters to evaluate:
@@ -753,10 +753,10 @@ Vehicle parameters to evaluate:
 -- Building examples
 -- Building tests
 -- Building benchmarks
--- Configuring HLV Core Distribution Targets
+-- Configuring DS Core Distribution Targets
 --
 -- =======================================
--- HLV Battery Enhancement Build Summary
+-- DS Battery Enhancement Build Summary
 -- =======================================
 -- Version:        4.0.0
 -- Build Type:     Release
@@ -840,7 +840,7 @@ Vehicle parameters to evaluate:
 [devbox] Using Python executable for build: /home/jules/.pyenv/versions/3.12.13/bin/python3
 [devbox] Running command: cmake -B build -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=/home/jules/.pyenv/versions/3.12.13/bin/python3
 [devbox] Running command: cmake --build build
-[devbox] ✓ Updated code compiled successfully. Deploying to /opt/hlv_enhancement...
+[devbox] ✓ Updated code compiled successfully. Deploying to /opt/ds_enhancement...
 [devbox] SUCCESS: Software update completed successfully and deployed.
 [2026-07-17 13:05:03] VERSION: 4.0.0 | ACTION: static-analysis | STATUS: SUCCESS | INFO: Passed cppcheck and clang-tidy analysis
 [2026-07-17 13:05:04] VERSION: 4.0.0 | ACTION: verify | STATUS: SUCCESS | INFO: Environment verification passed successfully
@@ -854,8 +854,8 @@ Python Version detected: 3.12.13
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -891,8 +891,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -927,8 +927,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -953,7 +953,7 @@ Vehicle parameters to evaluate:
 ✓ All health, temperature, voltage, and SOC metrics are within safe boundaries.
 === Pre-Flight Diagnostics Completed Successfully ===
 === Pre-Flight Diagnostics Completed Successfully ===
-[2026-07-17 13:08:54] VERSION: 4.0.0 | ACTION: install | STATUS: SUCCESS | INFO: HLV EV Software suite successfully installed to /opt/hlv_enhancement
+[2026-07-17 13:08:54] VERSION: 4.0.0 | ACTION: install | STATUS: SUCCESS | INFO: DS EV Software suite successfully installed to /opt/ds_enhancement
 === Starting Pre-Flight Diagnostics ===
 === Starting Pre-Flight Diagnostics ===
 Host OS detected: Linux 6.8.0
@@ -964,8 +964,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -990,8 +990,8 @@ Vehicle parameters to evaluate:
 ✓ All health, temperature, voltage, and SOC metrics are within safe boundaries.
 === Pre-Flight Diagnostics Completed Successfully ===
 === Pre-Flight Diagnostics Completed Successfully ===
-[2026-07-17 14:09:21] VERSION: 4.0.0 | ACTION: install | STATUS: SUCCESS | INFO: HLV EV Software suite successfully installed to /opt/hlv_enhancement
-[2026-07-17 14:09:22] VERSION: 4.0.0 | ACTION: rollback | STATUS: SUCCESS | INFO: HLV Software suite rolled back successfully
+[2026-07-17 14:09:21] VERSION: 4.0.0 | ACTION: install | STATUS: SUCCESS | INFO: DS EV Software suite successfully installed to /opt/ds_enhancement
+[2026-07-17 14:09:22] VERSION: 4.0.0 | ACTION: rollback | STATUS: SUCCESS | INFO: DS Software suite rolled back successfully
 === Starting Pre-Flight Diagnostics ===
 === Starting Pre-Flight Diagnostics ===
 Host OS detected: Linux 6.8.0
@@ -1002,8 +1002,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1042,8 +1042,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1068,7 +1068,7 @@ Vehicle parameters to evaluate:
 ✓ All health, temperature, voltage, and SOC metrics are within safe boundaries.
 === Pre-Flight Diagnostics Completed Successfully ===
 === Pre-Flight Diagnostics Completed Successfully ===
-[2026-07-17 14:09:23] VERSION: 4.0.0 | ACTION: install | STATUS: SUCCESS | INFO: HLV EV Software suite successfully installed to /opt/hlv_enhancement
+[2026-07-17 14:09:23] VERSION: 4.0.0 | ACTION: install | STATUS: SUCCESS | INFO: DS EV Software suite successfully installed to /opt/ds_enhancement
 === Starting Pre-Flight Diagnostics ===
 === Starting Pre-Flight Diagnostics ===
 Host OS detected: Linux 6.8.0
@@ -1079,8 +1079,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1117,8 +1117,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1155,8 +1155,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1191,8 +1191,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1227,8 +1227,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1265,8 +1265,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1301,8 +1301,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1337,8 +1337,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1375,8 +1375,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1411,8 +1411,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1447,8 +1447,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1485,8 +1485,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1523,8 +1523,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1561,8 +1561,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1597,8 +1597,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1623,8 +1623,8 @@ Vehicle parameters to evaluate:
 ✓ All health, temperature, voltage, and SOC metrics are within safe boundaries.
 === Pre-Flight Diagnostics Completed Successfully ===
 === Pre-Flight Diagnostics Completed Successfully ===
-[2026-07-17 14:13:14] VERSION: 4.0.0 | ACTION: install | STATUS: SUCCESS | INFO: HLV EV Software suite successfully installed to /opt/hlv_enhancement
-[2026-07-17 14:13:14] VERSION: 4.0.0 | ACTION: rollback | STATUS: SUCCESS | INFO: HLV Software suite rolled back successfully
+[2026-07-17 14:13:14] VERSION: 4.0.0 | ACTION: install | STATUS: SUCCESS | INFO: DS EV Software suite successfully installed to /opt/ds_enhancement
+[2026-07-17 14:13:14] VERSION: 4.0.0 | ACTION: rollback | STATUS: SUCCESS | INFO: DS Software suite rolled back successfully
 === Starting Pre-Flight Diagnostics ===
 === Starting Pre-Flight Diagnostics ===
 Host OS detected: Linux 6.8.0
@@ -1635,8 +1635,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1675,8 +1675,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1701,7 +1701,7 @@ Vehicle parameters to evaluate:
 ✓ All health, temperature, voltage, and SOC metrics are within safe boundaries.
 === Pre-Flight Diagnostics Completed Successfully ===
 === Pre-Flight Diagnostics Completed Successfully ===
-[2026-07-17 14:13:16] VERSION: 4.0.0 | ACTION: install | STATUS: SUCCESS | INFO: HLV EV Software suite successfully installed to /opt/hlv_enhancement
+[2026-07-17 14:13:16] VERSION: 4.0.0 | ACTION: install | STATUS: SUCCESS | INFO: DS EV Software suite successfully installed to /opt/ds_enhancement
 === Starting Pre-Flight Diagnostics ===
 === Starting Pre-Flight Diagnostics ===
 Host OS detected: Linux 6.8.0
@@ -1712,8 +1712,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1750,8 +1750,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1788,8 +1788,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1824,8 +1824,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1860,8 +1860,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1898,8 +1898,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1934,8 +1934,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -1970,8 +1970,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -2008,8 +2008,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -2044,8 +2044,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -2080,8 +2080,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -2118,8 +2118,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -2156,8 +2156,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:
@@ -2194,8 +2194,8 @@ Python Version detected: 3.12.3
 ✓ Environment and OS verification PASSED.
 ✓ Hardware check: Simulation interface available (Simulation Mode)
 ✓ Hardware check: Simulation interface available (Simulation Mode)
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
-Loaded vehicle status from: /opt/hlv_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
+Loaded vehicle status from: /opt/ds_enhancement/config/vehicle_status.json
 Applying simulated status preset for model: Tesla_Model_3_LR
 Applying simulated status preset for model: Tesla_Model_3_LR
 Vehicle parameters to evaluate:

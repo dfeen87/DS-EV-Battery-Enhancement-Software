@@ -1,23 +1,23 @@
 /*
  * ============================================================================
- * HLV BATTERY ENHANCEMENT - CORE TESTS
+ * DS BATTERY ENHANCEMENT - CORE TESTS
  * ============================================================================
  * 
- * Basic unit tests for core HLV functionality
+ * Basic unit tests for core DS functionality
  * 
  * ============================================================================
  */
 
-#include "hlv_battery_core.hpp"
+#include "ds_battery_core.hpp"
 #include <iostream>
 #include <cassert>
 #include <cmath>
 
 bool test_initialization() {
-    std::cout << "Testing HLV initialization..." << std::flush;
+    std::cout << "Testing DS initialization..." << std::flush;
     
-    hlv::HLVEnhancement enhancer;
-    hlv::HLVConfig config;
+    ds::DSEnhancement enhancer;
+    ds::DSConfig config;
     // Use valid config values within validation bounds
     config.lambda = 1e-6;  // Valid: (0, 1e-3]
     config.phi_decay_rate = 0.001;  // Valid: [0, 1]
@@ -31,8 +31,8 @@ bool test_initialization() {
 bool test_enhance_cycle() {
     std::cout << "Testing enhance cycle..." << std::flush;
     
-    hlv::HLVEnhancement enhancer;
-    hlv::HLVConfig config;
+    ds::DSEnhancement enhancer;
+    ds::DSConfig config;
     enhancer.init(config);
     
     // Simulate battery state
@@ -48,7 +48,7 @@ bool test_enhance_cycle() {
     // Basic sanity checks
     assert(result.state.voltage > 0);
     assert(result.state.state_of_charge >= 0 && result.state.state_of_charge <= 1.0);
-    assert(result.hlv_confidence >= 0 && result.hlv_confidence <= 1.0);
+    assert(result.ds_confidence >= 0 && result.ds_confidence <= 1.0);
     
     std::cout << " PASS\n";
     return true;
@@ -57,8 +57,8 @@ bool test_enhance_cycle() {
 bool test_degradation_tracking() {
     std::cout << "Testing degradation tracking..." << std::flush;
     
-    hlv::HLVEnhancement enhancer;
-    hlv::HLVConfig config;
+    ds::DSEnhancement enhancer;
+    ds::DSConfig config;
     enhancer.init(config);
     
     // Run many cycles to accumulate degradation
@@ -86,8 +86,8 @@ bool test_degradation_tracking() {
 bool test_energy_conservation() {
     std::cout << "Testing energy conservation..." << std::flush;
     
-    hlv::HLVEnhancement enhancer;
-    hlv::HLVConfig config;
+    ds::DSEnhancement enhancer;
+    ds::DSConfig config;
     enhancer.init(config);
     
     double voltage = 360.0;
@@ -109,7 +109,7 @@ bool test_energy_conservation() {
 
 int main() {
     std::cout << "============================================================================\n";
-    std::cout << "HLV BATTERY CORE TESTS\n";
+    std::cout << "DS BATTERY CORE TESTS\n";
     std::cout << "============================================================================\n\n";
     
     try {

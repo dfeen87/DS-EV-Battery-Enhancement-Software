@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-HLV REST API Client Example
+DS REST API Client Example
 
-This script demonstrates how to interact with the HLV REST API server
+This script demonstrates how to interact with the DS REST API server
 from Python. It can be used for monitoring, logging, or building
 dashboard applications.
 
@@ -20,8 +20,8 @@ import time
 import sys
 from typing import Dict, Any, Optional
 
-class HLVApiClient:
-    """Client for the HLV REST API"""
+class DSApiClient:
+    """Client for the DS REST API"""
     
     def __init__(self, base_url: str = "http://localhost:8080"):
         self.base_url = base_url.rstrip('/')
@@ -83,10 +83,10 @@ def print_section(title: str, data: Dict[str, Any], indent: int = 0):
             print(f"{prefix}  {key}: {value}")
 
 
-def monitor_mode(client: HLVApiClient, interval: float = 1.0):
+def monitor_mode(client: DSApiClient, interval: float = 1.0):
     """Continuous monitoring mode"""
     print("==========================================================")
-    print("HLV REST API - Monitoring Mode")
+    print("DS REST API - Monitoring Mode")
     print("==========================================================")
     print("Press Ctrl+C to stop...\n")
     
@@ -136,13 +136,13 @@ def monitor_mode(client: HLVApiClient, interval: float = 1.0):
             
             if diagnostics:
                 warnings = diagnostics.get('warnings', {})
-                hlv = diagnostics.get('hlv_metrics', {})
+                ds = diagnostics.get('ds_metrics', {})
                 
                 print(f"\nDiagnostics:")
                 print(f"  Pack Health:   {diagnostics.get('pack_health_percent', 0):.2f}%")
                 print(f"  V Imbalance:   {diagnostics.get('voltage_imbalance_mv', 0):.2f} mV")
                 print(f"  T Spread:      {diagnostics.get('temperature_spread_celsius', 0):.2f} °C")
-                print(f"  HLV Confidence: {hlv.get('confidence', 0):.2f}")
+                print(f"  DS Confidence: {ds.get('confidence', 0):.2f}")
                 
                 # Show active warnings
                 active_warnings = [k for k, v in warnings.items() if v]
@@ -155,10 +155,10 @@ def monitor_mode(client: HLVApiClient, interval: float = 1.0):
         print("\n\nMonitoring stopped.")
 
 
-def test_all_endpoints(client: HLVApiClient):
+def test_all_endpoints(client: DSApiClient):
     """Test all API endpoints"""
     print("==========================================================")
-    print("HLV REST API - Testing All Endpoints")
+    print("DS REST API - Testing All Endpoints")
     print("==========================================================\n")
     
     # Test health endpoint
@@ -234,7 +234,7 @@ def main():
     """Main entry point"""
     import argparse
     
-    parser = argparse.ArgumentParser(description='HLV REST API Client')
+    parser = argparse.ArgumentParser(description='DS REST API Client')
     parser.add_argument('--url', default='http://localhost:8080',
                         help='Base URL of the API server (default: http://localhost:8080)')
     parser.add_argument('--monitor', action='store_true',
@@ -245,7 +245,7 @@ def main():
     args = parser.parse_args()
     
     # Create client
-    client = HLVApiClient(args.url)
+    client = DSApiClient(args.url)
     
     # Check server is reachable
     print(f"Connecting to {args.url}...")
@@ -255,7 +255,7 @@ def main():
         print("Make sure the server is running (./rest_api_server)")
         sys.exit(1)
     
-    print(f"✓ Connected to HLV REST API v{health.get('version', 'unknown')}\n")
+    print(f"✓ Connected to DS REST API v{health.get('version', 'unknown')}\n")
     
     # Run mode
     if args.monitor:

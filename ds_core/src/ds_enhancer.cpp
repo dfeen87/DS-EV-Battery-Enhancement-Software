@@ -1,13 +1,13 @@
 /*
  * ============================================================================
- * HLV EV Battery Enhancement Core - CLI & Shared Library Implementation
+ * DS EV Battery Enhancement Core - CLI & Shared Library Implementation
  * ============================================================================
  */
 
-#include "hlv_battery_enhancement.hpp"
-#include "hlv_bms_middleware_v2.hpp"
+#include "ds_battery_enhancement.hpp"
+#include "ds_bms_middleware_v2.hpp"
 #include "torque_enhancement.hpp"
-#include "hlv_regen_braking_manager_v1.hpp"
+#include "ds_regen_braking_manager_v1.hpp"
 
 #include <iostream>
 #include <string>
@@ -22,11 +22,11 @@
 
 extern "C" {
 
-struct HLVResult {
+struct DSResult {
     double degradation;
     double remaining_capacity_percent;
     double cycles_to_80_percent;
-    double hlv_confidence;
+    double ds_confidence;
     double recommended_current_limit;
     double recommended_voltage_limit;
     double recommended_temperature;
@@ -36,9 +36,9 @@ struct HLVResult {
     int numerical_stability;
 };
 
-void* hlv_create(double capacity_ah, double nominal_voltage_v) {
+void* ds_create(double capacity_ah, double nominal_voltage_v) {
     try {
-        auto* middleware = new hlv_plugin::HLVBMSMiddleware();
+        auto* middleware = new ds_plugin::DSBMSMiddleware();
         middleware->init(capacity_ah, nominal_voltage_v);
         return static_cast<void*>(middleware);
     } catch (...) {
@@ -46,23 +46,23 @@ void* hlv_create(double capacity_ah, double nominal_voltage_v) {
     }
 }
 
-void hlv_destroy(void* handle) {
+void ds_destroy(void* handle) {
     if (handle) {
-        delete static_cast<hlv_plugin::HLVBMSMiddleware*>(handle);
+        delete static_cast<ds_plugin::DSBMSMiddleware*>(handle);
     }
 }
 
-int hlv_enhance(void* handle, double voltage, double current, double temp, double soc, double dt, HLVResult* out_result) {
+int ds_enhance(void* handle, double voltage, double current, double temp, double soc, double dt, DSResult* out_result) {
     if (!handle || !out_result) return -1;
 
     try {
-        auto* middleware = static_cast<hlv_plugin::HLVBMSMiddleware*>(handle);
+        auto* middleware = static_cast<ds_plugin::DSBMSMiddleware*>(handle);
         auto enhanced = middleware->enhance_cycle(voltage, current, temp, soc, dt);
 
         out_result->degradation = enhanced.state.degradation;
         out_result->remaining_capacity_percent = enhanced.health.remaining_capacity_percent;
         out_result->cycles_to_80_percent = enhanced.health.cycles_to_80_percent;
-        out_result->hlv_confidence = enhanced.hlv_confidence;
+        out_result->ds_confidence = enhanced.ds_confidence;
         out_result->recommended_current_limit = enhanced.charging.recommended_current_limit;
         out_result->recommended_voltage_limit = enhanced.charging.recommended_voltage_limit;
         out_result->recommended_temperature = enhanced.charging.recommended_temperature;
@@ -83,10 +83,10 @@ int hlv_enhance(void* handle, double voltage, double current, double temp, doubl
 // COMMAND LINE INTERFACE (Option A)
 // ============================================================================
 
-#ifdef HLV_BUILD_CLI
+#ifdef DS_BUILD_CLI
 
 static void print_usage() {
-    std::cout << "Usage: hlv_enhancer [options]\n"
+    std::cout << "Usage: ds_enhancer [options]\n"
               << "Options:\n"
               << "  -v, --voltage <V>        Measured battery pack voltage (V)\n"
               << "  -c, --current <A>        Measured battery pack current (A)\n"
@@ -138,7 +138,7 @@ int main(int argc, char* argv[]) {
     }
 
     try {
-        hlv_plugin::HLVBMSMiddleware middleware;
+        ds_plugin::DSBMSMiddleware middleware;
         middleware.init(capacity, nominal_voltage);
 
         auto enhanced = middleware.enhance_cycle(voltage, current, temp, soc, dt);
@@ -146,11 +146,11 @@ int main(int argc, char* argv[]) {
 
         if (format_json) {
             std::cout << "{\n"
-                      << "  \"version\": \"" << hlv::HLVEnhancement::get_version() << "\",\n"
+                      << "  \"version\": \"" << ds::DSEnhancement::get_version() << "\",\n"
                       << "  \"degradation\": " << enhanced.state.degradation << ",\n"
                       << "  \"remaining_capacity_percent\": " << enhanced.health.remaining_capacity_percent << ",\n"
                       << "  \"cycles_to_80_percent\": " << enhanced.health.cycles_to_80_percent << ",\n"
-                      << "  \"hlv_confidence\": " << enhanced.hlv_confidence << ",\n"
+                      << "  \"ds_confidence\": " << enhanced.ds_confidence << ",\n"
                       << "  \"recommended_current_limit\": " << enhanced.charging.recommended_current_limit << ",\n"
                       << "  \"recommended_voltage_limit\": " << enhanced.charging.recommended_voltage_limit << ",\n"
                       << "  \"recommended_temperature\": " << enhanced.charging.recommended_temperature << ",\n"
@@ -161,14 +161,14 @@ int main(int argc, char* argv[]) {
                       << "}\n";
         } else {
             std::cout << "====================================================================\n"
-                      << "HLV BATTERY ENHANCER CLI - ANALYSIS RESULT\n"
+                      << "DS BATTERY ENHANCER CLI - ANALYSIS RESULT\n"
                       << "====================================================================\n"
                       << std::fixed << std::setprecision(4)
-                      << "Version:                      " << hlv::HLVEnhancement::get_version() << "\n"
+                      << "Version:                      " << ds::DSEnhancement::get_version() << "\n"
                       << "Degradation Rate:             " << enhanced.state.degradation * 100.0 << " %\n"
                       << "Remaining SOH Capacity:       " << enhanced.health.remaining_capacity_percent << " %\n"
                       << "Estimated Cycles to 80% SOH:  " << enhanced.health.cycles_to_80_percent << "\n"
-                      << "HLV Core Model Confidence:    " << enhanced.hlv_confidence * 100.0 << " %\n"
+                      << "DS Core Model Confidence:    " << enhanced.ds_confidence * 100.0 << " %\n"
                       << "Optimal Charge Current Limit: " << enhanced.charging.recommended_current_limit << " A\n"
                       << "Optimal Charge Voltage Limit: " << enhanced.charging.recommended_voltage_limit << " V\n"
                       << "Target Charging Temp:         " << enhanced.charging.recommended_temperature << " °C\n"
@@ -186,4 +186,4 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-#endif // HLV_BUILD_CLI
+#endif // DS_BUILD_CLI

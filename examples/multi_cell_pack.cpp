@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * HLV BATTERY ENHANCEMENT - MULTI-CELL PACK EXAMPLE
+ * DS BATTERY ENHANCEMENT - MULTI-CELL PACK EXAMPLE
  * ============================================================================
  * 
  * Demonstrates multi-cell pack management with per-cell tracking,
@@ -14,9 +14,9 @@
  * ============================================================================
  */
 
-#include "hlv_battery_enhancement.hpp"
-#include "hlv_bms_middleware_v2.hpp"
-#include "hlv_advanced_features.hpp"
+#include "ds_battery_enhancement.hpp"
+#include "ds_bms_middleware_v2.hpp"
+#include "ds_advanced_features.hpp"
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -127,15 +127,15 @@ void example_1_basic_monitoring() {
     const int NUM_CELLS = 96;  // Tesla-style pack
     
     // Configure for multi-cell pack
-    hlv_plugin::MiddlewareConfig config;
-    config.chemistry = hlv::advanced::ChemistryType::NMC;
+    ds_plugin::MiddlewareConfig config;
+    config.chemistry = ds::advanced::ChemistryType::NMC;
     config.nominal_capacity_ah = 75.0;
     config.nominal_voltage = 400.0;
     config.series_cells = NUM_CELLS;
-    config.mode = hlv_plugin::MiddlewareConfig::Mode::MULTI_CELL_PACK;
+    config.mode = ds_plugin::MiddlewareConfig::Mode::MULTI_CELL_PACK;
     config.enable_kalman_filter = true;
     
-    hlv_plugin::HLVBMSMiddleware middleware;
+    ds_plugin::DSBMSMiddleware middleware;
     middleware.init_advanced(config);
     
     // Create simulator
@@ -177,14 +177,14 @@ void example_2_weak_cell_detection() {
     
     const int NUM_CELLS = 96;
     
-    hlv_plugin::MiddlewareConfig config;
-    config.chemistry = hlv::advanced::ChemistryType::NMC;
+    ds_plugin::MiddlewareConfig config;
+    config.chemistry = ds::advanced::ChemistryType::NMC;
     config.nominal_capacity_ah = 75.0;
     config.nominal_voltage = 400.0;
     config.series_cells = NUM_CELLS;
-    config.mode = hlv_plugin::MiddlewareConfig::Mode::MULTI_CELL_PACK;
+    config.mode = ds_plugin::MiddlewareConfig::Mode::MULTI_CELL_PACK;
     
-    hlv_plugin::HLVBMSMiddleware middleware;
+    ds_plugin::DSBMSMiddleware middleware;
     middleware.init_advanced(config);
     
     MultiCellSimulator sim(NUM_CELLS);
@@ -242,14 +242,14 @@ void example_3_cell_imbalance() {
     
     const int NUM_CELLS = 96;
     
-    hlv_plugin::MiddlewareConfig config;
-    config.chemistry = hlv::advanced::ChemistryType::NMC;
+    ds_plugin::MiddlewareConfig config;
+    config.chemistry = ds::advanced::ChemistryType::NMC;
     config.nominal_capacity_ah = 75.0;
     config.nominal_voltage = 400.0;
     config.series_cells = NUM_CELLS;
-    config.mode = hlv_plugin::MiddlewareConfig::Mode::MULTI_CELL_PACK;
+    config.mode = ds_plugin::MiddlewareConfig::Mode::MULTI_CELL_PACK;
     
-    hlv_plugin::HLVBMSMiddleware middleware;
+    ds_plugin::DSBMSMiddleware middleware;
     middleware.init_advanced(config);
     
     MultiCellSimulator sim(NUM_CELLS);
@@ -301,10 +301,10 @@ void example_3_cell_imbalance() {
 void example_4_chemistry_comparison() {
     std::cout << "\n=== EXAMPLE 4: Chemistry Comparison (Multi-Cell) ===\n\n";
     
-    std::vector<hlv::advanced::ChemistryType> chemistries = {
-        hlv::advanced::ChemistryType::LFP,
-        hlv::advanced::ChemistryType::NMC,
-        hlv::advanced::ChemistryType::NCA
+    std::vector<ds::advanced::ChemistryType> chemistries = {
+        ds::advanced::ChemistryType::LFP,
+        ds::advanced::ChemistryType::NMC,
+        ds::advanced::ChemistryType::NCA
     };
     
     std::vector<std::string> names = {"LFP", "NMC", "NCA"};
@@ -317,14 +317,14 @@ void example_4_chemistry_comparison() {
     std::cout << std::string(48, '-') << "\n";
     
     for (size_t i = 0; i < chemistries.size(); ++i) {
-        hlv_plugin::MiddlewareConfig config;
+        ds_plugin::MiddlewareConfig config;
         config.chemistry = chemistries[i];
         config.nominal_capacity_ah = 75.0;
         config.nominal_voltage = 400.0;
         config.series_cells = cell_counts[i];
-        config.mode = hlv_plugin::MiddlewareConfig::Mode::MULTI_CELL_PACK;
+        config.mode = ds_plugin::MiddlewareConfig::Mode::MULTI_CELL_PACK;
         
-        hlv_plugin::HLVBMSMiddleware middleware;
+        ds_plugin::DSBMSMiddleware middleware;
         middleware.init_advanced(config);
         
         MultiCellSimulator sim(cell_counts[i]);
@@ -368,14 +368,14 @@ void example_5_thermal_management() {
     
     const int NUM_CELLS = 96;
     
-    hlv_plugin::MiddlewareConfig config;
-    config.chemistry = hlv::advanced::ChemistryType::NMC;
+    ds_plugin::MiddlewareConfig config;
+    config.chemistry = ds::advanced::ChemistryType::NMC;
     config.nominal_capacity_ah = 75.0;
     config.nominal_voltage = 400.0;
     config.series_cells = NUM_CELLS;
-    config.mode = hlv_plugin::MiddlewareConfig::Mode::MULTI_CELL_PACK;
+    config.mode = ds_plugin::MiddlewareConfig::Mode::MULTI_CELL_PACK;
     
-    hlv_plugin::HLVBMSMiddleware middleware;
+    ds_plugin::DSBMSMiddleware middleware;
     middleware.init_advanced(config);
     
     MultiCellSimulator sim(NUM_CELLS);
@@ -424,7 +424,7 @@ void example_5_thermal_management() {
         }
     }
     
-    std::cout << "\n💡 Tip: HLV tracks thermal entropy to predict thermal runaway risk\n";
+    std::cout << "\n💡 Tip: DS tracks thermal entropy to predict thermal runaway risk\n";
 }
 
 // ============================================================================
@@ -433,7 +433,7 @@ void example_5_thermal_management() {
 
 int main() {
     std::cout << "============================================================================\n";
-    std::cout << "HLV MULTI-CELL PACK MANAGEMENT EXAMPLES\n";
+    std::cout << "DS MULTI-CELL PACK MANAGEMENT EXAMPLES\n";
     std::cout << "============================================================================\n";
     
     try {

@@ -1,14 +1,14 @@
-#ifndef HLV_BMS_HARDWARE_ADAPTER_HPP
-#define HLV_BMS_HARDWARE_ADAPTER_HPP
+#ifndef DS_BMS_HARDWARE_ADAPTER_HPP
+#define DS_BMS_HARDWARE_ADAPTER_HPP
 /*
  * ============================================================================
- * HLV BMS Hardware Adapter – Production-lean Reference Implementation
+ * DS BMS Hardware Adapter – Production-lean Reference Implementation
  * ============================================================================
  *
  * PURPOSE:
  *   This file is a manufacturer-friendly reference adapter showing how to bridge:
  *     - Real BMS hardware (CAN / ADC / cell monitoring ICs)
- *     - HLV middleware interfaces (IPackSensors, ICellSensors, IBatteryActuators)
+ *     - DS middleware interfaces (IPackSensors, ICellSensors, IBatteryActuators)
  *
  * DESIGN GOALS:
  *   - Minimal vendor lock-in: OEMs implement ICANTransport + mapping table.
@@ -25,12 +25,12 @@
  *   1) Implement ICANTransport for your platform (SocketCAN, Vector, Kvaser, etc.)
  *   2) Fill in the CAN mapping IDs and signal scaling factors below
  *   3) If cell data comes from SPI/I2C monitor ICs, implement ICellTelemetryBackend
- *   4) Instantiate HLVHardwareAdapter in your main ECU/BMS loop
+ *   4) Instantiate DSHardwareAdapter in your main ECU/BMS loop
  *
  * ============================================================================
  */
 
-#include "hlv_bms_interfaces.hpp"
+#include "ds_bms_interfaces.hpp"
 
 #include <cstdint>
 #include <vector>
@@ -41,7 +41,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace hlv_plugin {
+namespace ds_plugin {
 
 /* ============================================================================
  * CAN TRANSPORT CONTRACT (OEM implements this)
@@ -140,7 +140,7 @@ struct CachedSignal {
 };
 
 /* ============================================================================
- * HLVHardwareAdapter
+ * DSHardwareAdapter
  * ============================================================================
  *
  * Implements:
@@ -154,14 +154,14 @@ struct CachedSignal {
  *   - Or call poll_can() in a dedicated thread (with mutex protection)
  */
 
-class HLVHardwareAdapter final
+class DSHardwareAdapter final
     : public IPackSensors
     , public ICellSensors
     , public IBatteryActuators
     , public ITimeSource
 {
 public:
-    HLVHardwareAdapter(
+    DSHardwareAdapter(
         ICANTransport& can,
         OEMSignalMap map,
         int series_cells,
@@ -400,6 +400,6 @@ private:
     std::atomic<uint32_t> can_send_failures_{0};
 };
 
-} // namespace hlv_plugin
+} // namespace ds_plugin
 
-#endif // HLV_BMS_HARDWARE_ADAPTER_HPP
+#endif // DS_BMS_HARDWARE_ADAPTER_HPP

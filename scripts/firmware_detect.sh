@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================================
-# HLV EV Battery Enhancement - Firmware Version Detection
+# DS EV Battery Enhancement - Firmware Version Detection
 # ============================================================================
 set -euo pipefail
 
@@ -16,16 +16,16 @@ if [ ! -f "$STATUS_FILE" ]; then
     STATUS_FILE="${BASE_DIR}/config/vehicle_status.json"
 fi
 
-if [ ! -f "$STATUS_FILE" ] && [ -d "/opt/hlv_enhancement/config" ]; then
-    STATUS_FILE="/opt/hlv_enhancement/config/vehicle_status.json"
+if [ ! -f "$STATUS_FILE" ] && [ -d "/opt/ds_enhancement/config" ]; then
+    STATUS_FILE="/opt/ds_enhancement/config/vehicle_status.json"
 fi
 
 echo "===================================================================="
-echo "HLV EV FIRMWARE DETECTION"
+echo "DS EV FIRMWARE DETECTION"
 echo "===================================================================="
 
-if [ -n "${HLV_FIRMWARE:-}" ]; then
-    echo "Current Firmware: ${HLV_FIRMWARE} (Overridden via HLV_FIRMWARE env)"
+if [ -n "${DS_FIRMWARE:-}" ]; then
+    echo "Current Firmware: ${DS_FIRMWARE} (Overridden via DS_FIRMWARE env)"
 elif [ -f "$STATUS_FILE" ]; then
     # Parse firmware_version using python standard json module to avoid jq dependency
     FW_VERSION=$(python3 -c "import json; print(json.load(open('$STATUS_FILE')).get('firmware_version', 'Unknown'))" 2>/dev/null || echo "Unknown")
@@ -33,6 +33,6 @@ elif [ -f "$STATUS_FILE" ]; then
     echo "Vehicle Model:    ${MODEL}"
     echo "Current Firmware: ${FW_VERSION} (Read from vehicle_status.json)"
 else
-    echo "Error: Could not locate vehicle_status.json and no HLV_FIRMWARE override set."
+    echo "Error: Could not locate vehicle_status.json and no DS_FIRMWARE override set."
     exit 1
 fi

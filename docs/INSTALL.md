@@ -1,6 +1,6 @@
-# HLV EV Battery Enhancement Software - Installation Guide
+# DS EV Battery Enhancement Software - Installation Guide
 
-Welcome to the production-grade installation and deployment manual for the Helix-Light-Vortex (HLV) EV Battery Enhancement Software. This system deploys advanced dual-state (Ψ, Φ) physics-based algorithms directly alongside your vehicle's existing Battery Management System (BMS) to optimize battery life, fast charging profiles, and regenerative braking.
+Welcome to the production-grade installation and deployment manual for the Dual-State (DS) EV Battery Enhancement Software. This system deploys advanced dual-state (Ψ, Φ) physics-based algorithms directly alongside your vehicle's existing Battery Management System (BMS) to optimize battery life, fast charging profiles, and regenerative braking.
 
 ---
 
@@ -28,7 +28,7 @@ Before starting, ensure that the vehicle computer has:
 
 ## 💻 System Requirements
 
-The HLV software stack has a lightweight footprint suitable for automotive ECU-adjacent integration:
+The DS software stack has a lightweight footprint suitable for automotive ECU-adjacent integration:
 * **Memory**: ~50KB per battery pack instance.
 * **CPU**: <3% overhead at 100Hz BMS loop update frequency.
 * **Execution Latency**: sub-100µs (C++ core).
@@ -38,16 +38,16 @@ The HLV software stack has a lightweight footprint suitable for automotive ECU-a
 ## 📂 Target Directory Layout
 
 When installed, the package is deployed to the system root under:
-`/opt/hlv_enhancement/`
+`/opt/ds_enhancement/`
 
 The directories are organized as follows:
-* `/opt/hlv_enhancement/bin` — Compiled high-performance C++ CLI tool (`hlv_enhancer`) and helper scripts.
-* `/opt/hlv_enhancement/lib` — Shared library files (`libhlv_enhancer.so`) and high-performance Python bindings (`hlv_enhancer_pybind.so`).
-* `/opt/hlv_enhancement/python` — Python `ctypes` bindings for C++ library integrations.
-* `/opt/hlv_enhancement/python_fallback` — Pure-Python mathematical fallback module.
-* `/opt/hlv_enhancement/config` — Vehicle profiles, safety thresholds, and installation policies.
-* `/opt/hlv_enhancement/logs` — Comprehensive log files including `install.log`.
-* `/opt/hlv_enhancement/backups` — Timestamped, historical system rollback states.
+* `/opt/ds_enhancement/bin` — Compiled high-performance C++ CLI tool (`ds_enhancer`) and helper scripts.
+* `/opt/ds_enhancement/lib` — Shared library files (`libds_enhancer.so`) and high-performance Python bindings (`ds_enhancer_pybind.so`).
+* `/opt/ds_enhancement/python` — Python `ctypes` bindings for C++ library integrations.
+* `/opt/ds_enhancement/python_fallback` — Pure-Python mathematical fallback module.
+* `/opt/ds_enhancement/config` — Vehicle profiles, safety thresholds, and installation policies.
+* `/opt/ds_enhancement/logs` — Comprehensive log files including `install.log`.
+* `/opt/ds_enhancement/backups` — Timestamped, historical system rollback states.
 
 ---
 
@@ -74,7 +74,7 @@ make diagnostics
 ```
 
 ### 4. `sudo make install`
-Safe, root-gated installation that compiles and deploys the entire stack to `/opt/hlv_enhancement/`:
+Safe, root-gated installation that compiles and deploys the entire stack to `/opt/ds_enhancement/`:
 ```bash
 sudo make install
 ```
@@ -86,7 +86,7 @@ sudo make update
 ```
 
 ### 6. `sudo make rollback`
-Restores the most recent timestamped backup from `/opt/hlv_enhancement/backups/`:
+Restores the most recent timestamped backup from `/opt/ds_enhancement/backups/`:
 ```bash
 sudo make rollback
 ```
@@ -128,9 +128,9 @@ To run Valgrind on the CLI tool and find any potential memory leaks or illegal a
    cmake --build build
    ```
 
-2. Run the `hlv_enhancer` CLI tool under Valgrind's leak checker:
+2. Run the `ds_enhancer` CLI tool under Valgrind's leak checker:
    ```bash
-   valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --track-origins=yes ./hlv_core/bin/hlv_enhancer -v 355.0 -c 50.0 -t 25.0 -s 0.65 -d 0.1
+   valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --track-origins=yes ./ds_core/bin/ds_enhancer -v 355.0 -c 50.0 -t 25.0 -s 0.65 -d 0.1
    ```
 
 3. Review the outputs:
@@ -141,10 +141,10 @@ To run Valgrind on the CLI tool and find any potential memory leaks or illegal a
 
 ## 🔄 Backup & Revert Rollback
 
-Before any file in `/opt/hlv_enhancement` is altered or updated, the system triggers `/opt/hlv_enhancement/bin/rollback.sh backup`.
-* Backups are stored as a timestamped directory in `/opt/hlv_enhancement/backups/YYYYMMDD_HHMMSS`.
+Before any file in `/opt/ds_enhancement` is altered or updated, the system triggers `/opt/ds_enhancement/bin/rollback.sh backup`.
+* Backups are stored as a timestamped directory in `/opt/ds_enhancement/backups/YYYYMMDD_HHMMSS`.
 * To revert to the previous version, run:
   ```bash
   sudo make rollback
   ```
-  This cleanly wipes active binaries, configurations, and scripts, copies the backup files back into place, and writes a success event to the `/opt/hlv_enhancement/logs/install.log` file.
+  This cleanly wipes active binaries, configurations, and scripts, copies the backup files back into place, and writes a success event to the `/opt/ds_enhancement/logs/install.log` file.

@@ -1,9 +1,9 @@
 /*
  * ============================================================================
- * HLV REST API SERVER v1.0
+ * DS REST API SERVER v1.0
  * ============================================================================
  *
- * Read-only HTTP/JSON REST API for HLV Battery Management, Torque Enhancement,
+ * Read-only HTTP/JSON REST API for DS Battery Management, Torque Enhancement,
  * and Regenerative Braking system.
  *
  * FEATURES:
@@ -23,7 +23,7 @@
  *   GET /api/energy_cycle      - Energy cycle metrics
  *
  * INTEGRATION:
- *   hlv::api::RestApiServer server;
+ *   ds::api::RestApiServer server;
  *   server.start();  // Starts in background thread
  *   // ... your control loop ...
  *   server.update_state(enhanced_state, torque_result, regen_result, diag);
@@ -38,13 +38,13 @@
  * ============================================================================
  */
 
-#ifndef HLV_REST_API_HPP
-#define HLV_REST_API_HPP
+#ifndef DS_REST_API_HPP
+#define DS_REST_API_HPP
 
-#include "hlv_battery_enhancement.hpp"
-#include "hlv_bms_middleware_v2.hpp"
+#include "ds_battery_enhancement.hpp"
+#include "ds_bms_middleware_v2.hpp"
 #include "torque_enhancement.hpp"
-#include "hlv_regen_braking_manager_v1.hpp"
+#include "ds_regen_braking_manager_v1.hpp"
 
 #include <string>
 #include <sstream>
@@ -65,7 +65,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-namespace hlv {
+namespace ds {
 namespace api {
 
 // ============================================================================
@@ -179,16 +179,16 @@ struct ApiStateSnapshot {
     double timestamp_ms;
     
     // Battery state
-    hlv::EnhancedState battery_state;
+    ds::EnhancedState battery_state;
     
     // Torque result
-    hlv::drive::TorqueResult torque_result;
+    ds::drive::TorqueResult torque_result;
     
     // Regen result
-    hlv::drive::RegenResult regen_result;
+    ds::drive::RegenResult regen_result;
     
     // Diagnostics
-    hlv_plugin::DiagnosticReport diagnostics;
+    ds_plugin::DiagnosticReport diagnostics;
     
     // Energy cycle metrics
     struct EnergyCycle {
@@ -349,10 +349,10 @@ public:
     
     // Update shared state (called from control loop)
     void update_state(
-        const hlv::EnhancedState& battery_state,
-        const hlv::drive::TorqueResult& torque_result,
-        const hlv::drive::RegenResult& regen_result,
-        const hlv_plugin::DiagnosticReport& diagnostics)
+        const ds::EnhancedState& battery_state,
+        const ds::drive::TorqueResult& torque_result,
+        const ds::drive::RegenResult& regen_result,
+        const ds_plugin::DiagnosticReport& diagnostics)
     {
         std::lock_guard<std::mutex> lock(state_mutex_);
         
@@ -582,7 +582,7 @@ private:
         // Scaling factors
         json.add_object_start("scaling_factors");
         json.add_number("base_motor", current_state_.torque_result.base_motor_scaling);
-        json.add_number("hlv", current_state_.torque_result.hlv_scaling);
+        json.add_number("ds", current_state_.torque_result.ds_scaling);
         json.add_number("thermal", current_state_.torque_result.thermal_scaling);
         json.add_number("soc", current_state_.torque_result.soc_scaling);
         json.add_number("health", current_state_.torque_result.health_scaling);
@@ -628,7 +628,7 @@ private:
         json.add_number("f_voltage", current_state_.regen_result.diag.f_voltage);
         json.add_number("f_temp", current_state_.regen_result.diag.f_temp);
         json.add_number("f_cell", current_state_.regen_result.diag.f_cell);
-        json.add_number("f_hlv", current_state_.regen_result.diag.f_hlv);
+        json.add_number("f_ds", current_state_.regen_result.diag.f_ds);
         json.add_number("f_stability", current_state_.regen_result.diag.f_stability);
         json.add_object_end();
         
@@ -714,12 +714,12 @@ private:
         json.add_bool("weak_cell", current_state_.diagnostics.weak_cell_warning);
         json.add_object_end();
         
-        // HLV metrics
-        json.add_object_start("hlv_metrics");
-        json.add_number("metric_trace", current_state_.diagnostics.hlv_metric_trace);
-        json.add_number("phi_magnitude", current_state_.diagnostics.hlv_phi_magnitude);
-        json.add_number("entropy_level", current_state_.diagnostics.hlv_entropy);
-        json.add_number("confidence", current_state_.diagnostics.hlv_confidence);
+        // DS metrics
+        json.add_object_start("ds_metrics");
+        json.add_number("metric_trace", current_state_.diagnostics.ds_metric_trace);
+        json.add_number("phi_magnitude", current_state_.diagnostics.ds_phi_magnitude);
+        json.add_number("entropy_level", current_state_.diagnostics.ds_entropy);
+        json.add_number("confidence", current_state_.diagnostics.ds_confidence);
         json.add_object_end();
         
         // Additional fields
@@ -803,6 +803,6 @@ private:
 };
 
 } // namespace api
-} // namespace hlv
+} // namespace ds
 
-#endif // HLV_REST_API_HPP
+#endif // DS_REST_API_HPP

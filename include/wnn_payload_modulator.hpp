@@ -1,14 +1,14 @@
-#ifndef HLV_WNN_PAYLOAD_MODULATOR_HPP
-#define HLV_WNN_PAYLOAD_MODULATOR_HPP
+#ifndef DS_WNN_PAYLOAD_MODULATOR_HPP
+#define DS_WNN_PAYLOAD_MODULATOR_HPP
 
 #include <chrono>
 #include <cmath>
 #include <numbers>
 #include <type_traits>
 
-#include "hlv_wnn_telemetry_bridge.hpp"
+#include "ds_wnn_telemetry_bridge.hpp"
 
-namespace hlv_wnn {
+namespace ds_wnn {
 
 /**
  * @brief Represents a state value and its Kahan compensation term.
@@ -31,13 +31,13 @@ inline void kahan_add(KahanState& state, long double term) {
 }
 
 /**
- * @brief Modulates WNN Duffing Oscillator wave parameters based on HLV telemetry.
+ * @brief Modulates WNN Duffing Oscillator wave parameters based on DS telemetry.
  */
 class WNNPayloadModulator {
 public:
-    explicit WNNPayloadModulator(HLVWNNBridge& bridge) : bridge_(bridge) {}
+    explicit WNNPayloadModulator(DSWNNBridge& bridge) : bridge_(bridge) {}
 
-    // Non-copyable and non-movable: holds a non-owning reference to HLVWNNBridge
+    // Non-copyable and non-movable: holds a non-owning reference to DSWNNBridge
     WNNPayloadModulator(const WNNPayloadModulator&) = delete;
     WNNPayloadModulator& operator=(const WNNPayloadModulator&) = delete;
     WNNPayloadModulator(WNNPayloadModulator&&) = delete;
@@ -53,7 +53,7 @@ public:
     }
 
     /**
-     * @brief Computes Marcel Krüger's Spiral-Time phase salt.
+     * @brief Computes the Spiral-Time phase salt.
      * This acts as a physical nonce to prevent replay attacks.
      *
      * Computed deterministically based on simulation time `t` to preserve
@@ -105,7 +105,7 @@ public:
     }
 
 private:
-    HLVWNNBridge& bridge_;
+    DSWNNBridge& bridge_;
     WNNThermodynamicPayload latest_payload_{};
 };
 
@@ -191,6 +191,6 @@ private:
     KahanState time_;    // Simulation time
 };
 
-} // namespace hlv_wnn
+} // namespace ds_wnn
 
-#endif // HLV_WNN_PAYLOAD_MODULATOR_HPP
+#endif // DS_WNN_PAYLOAD_MODULATOR_HPP

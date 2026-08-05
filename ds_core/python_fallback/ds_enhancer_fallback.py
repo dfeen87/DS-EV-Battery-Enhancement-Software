@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-HLV EV Battery Enhancement - Pure Python Fallback (Option C)
+DS EV Battery Enhancement - Pure Python Fallback (Option C)
 ============================================================
 
-A pure-Python, zero-dependency mathematical approximation of the HLV physics
+A pure-Python, zero-dependency mathematical approximation of the DS physics
 and dual-state battery model. Ideal for low-resource environments or rapid prototyping
 where C++ compilation is unavailable.
 """
 
 import math
 
-class HLVEnhancerFallback:
+class DSEnhancerFallback:
     def __init__(self, capacity_ah=75.0, nominal_voltage_v=400.0):
         self.capacity_ah = capacity_ah
         self.nominal_voltage_v = nominal_voltage_v
@@ -32,7 +32,7 @@ class HLVEnhancerFallback:
 
     def enhance_cycle(self, voltage, current, temperature, soc, dt=0.1):
         """
-        Pure Python fallback for the HLV update cycle.
+        Pure Python fallback for the DS update cycle.
         Accurately maps the thermodynamic and information-physical states (Ψ, Φ).
         """
         # Clamp inputs
@@ -66,7 +66,7 @@ class HLVEnhancerFallback:
         prev_cycle_count = self.cycle_count
         self.cycle_count = self.charge_throughput_ah / (2.0 * self.capacity_ah)
 
-        # 2. HLV Geometric Metric Approximation (g^eff trace approximation)
+        # 2. DS Geometric Metric Approximation (g^eff trace approximation)
         # Gradient approximation based on state changes
         grad_phi_0 = -self.phi_decay_rate * math.sqrt(self.entropy**2 + self.degradation**2)
         grad_phi_1 = self.entropy * (1.0 - clamped_soc)
@@ -81,12 +81,12 @@ class HLVEnhancerFallback:
         cycle_delta = self.cycle_count - prev_cycle_count
         base_degradation = cycle_delta * 0.0001
         thermal_degradation = temp_contrib * 0.0005 * dt
-        hlv_correction = g_eff_trace * 0.00001
+        ds_correction = g_eff_trace * 0.00001
 
-        self.degradation += base_degradation + thermal_degradation + hlv_correction
+        self.degradation += base_degradation + thermal_degradation + ds_correction
         self.degradation = min(self.degradation, 1.0)
 
-        # 4. Generate results compatible with HLVEnhancer wrapper
+        # 4. Generate results compatible with DSEnhancer wrapper
         remaining_capacity_percent = (1.0 - self.degradation) * 100.0
 
         # Health calculations
@@ -94,7 +94,7 @@ class HLVEnhancerFallback:
         cycles_to_80_percent = max(0.0, (0.2 - self.degradation) / max(degradation_rate, 1e-8))
 
         metric_stability = 1.0 / (1.0 + abs(g_eff_trace - 2.0))
-        hlv_confidence = metric_stability * (1.0 - self.degradation)
+        ds_confidence = metric_stability * (1.0 - self.degradation)
 
         # Charging optimization
         recommended_current_limit = 100.0 * metric_stability * (1.0 - self.degradation)
@@ -111,7 +111,7 @@ class HLVEnhancerFallback:
             "degradation": self.degradation,
             "remaining_capacity_percent": remaining_capacity_percent,
             "cycles_to_80_percent": cycles_to_80_percent,
-            "hlv_confidence": hlv_confidence,
+            "ds_confidence": ds_confidence,
             "recommended_current_limit": recommended_current_limit,
             "recommended_voltage_limit": recommended_voltage_limit,
             "recommended_temperature": recommended_temperature,
@@ -123,7 +123,7 @@ class HLVEnhancerFallback:
 
 if __name__ == "__main__":
     print("Running Pure Python Fallback Self-Test...")
-    enhancer = HLVEnhancerFallback(capacity_ah=75.0, nominal_voltage_v=400.0)
+    enhancer = DSEnhancerFallback(capacity_ah=75.0, nominal_voltage_v=400.0)
     res = enhancer.enhance_cycle(voltage=355.0, current=50.0, temperature=25.0, soc=0.65, dt=0.1)
     print("Fallback self-test SUCCESS! Results:")
     for k, v in res.items():
