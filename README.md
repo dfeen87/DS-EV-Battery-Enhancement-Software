@@ -1,8 +1,8 @@
-# DS Battery Enhancement Sofware
+# Dual‑State (DS/ds) EV Enhancement Software
 
-## Breakthrough Battery Management Through Fundamental Physics
+## Breakthrough Battery Management and EV Optimization
 
-> DS delivers a fusion of Battery Intelligence Engine, Dual‑State Energy Modeling, and Predictive Power Management, creating a truly Physics‑Driven BMS for real‑time EV optimization.
+> DS/ds delivers a fusion of Battery Intelligence Engine, Dual‑State Energy Modeling, and Predictive Power Management, creating a truly optimized, real‑time EV enhancement system.
 
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm_Noncommercial_1.0.0-orange.svg)](LICENSE)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://isocpp.org/)
@@ -11,7 +11,7 @@
 [![Version](https://img.shields.io/badge/Version-4.2.0-blue.svg)]()
 [![CI](https://github.com/dfeen87/DS-EV-Battery-Enhancement-Software/actions/workflows/ci.yml/badge.svg)](https://github.com/dfeen87/DS-EV-Battery-Enhancement-Software/actions/workflows/ci.yml)
 
-This library implements the **Dual-State (DS) Theory** developed to create next-generation battery management capabilities to create next-generation battery management capabilities. By treating batteries as dual-state systems—where physical state (Ψ) and informational state (Φ) are dynamically coupled—we achieve earlier degradation detection, better health prediction, and optimized charging strategies.
+Dual‑State (DS/ds) EV Enhancement Software is a production-ready, high-performance battery and power management suite for electric vehicles. By treating batteries as dual-state systems—where physical metrics (like voltage, current, and temperature) and historical stress tracking are dynamically coupled—we achieve earlier degradation detection, better health prediction, and optimized charging strategies.
 
 ---
 
@@ -39,22 +39,18 @@ This library implements the **Dual-State (DS) Theory** developed to create next-
 - [Intelligent Regenerative Braking](#-intelligent-regenerative-braking-ds-regen-module)
 - [Closed-Loop Energy Recovery](#-closed-loop-energy-recovery-battery--torque--braking--battery)
 - [Optional Telemetry Interface](#-optional-telemetry-interface)
-- [Optional WNN Integration Layer](#-optional-wnn-integration-layer)
 - [Repository Structure](#-repository-structure)
 - [Closed-Cycle Energy Recovery](#-closed-cycle-energy-recovery)
-- [Energy Balance Model](#-energy-balance-model)
 - [Regen as Controlled Charging](#-regen-as-controlled-charging)
 - [From "Closed Loop" to "Energy Cycle"](#-from-closed-loop-to-energy-cycle)
 - [Reduced External Charging Demand](#-reduced-external-charging-demand)
-- [Conceptual Energy Flow](#-conceptual-energy-flow)
 - [What This Enables](#-what-this-enables)
 - [Support & Feedback](#support--feedback)
-- [Quick Start](#-quick-start)
+- [Quick Start for EV Owners](#-quick-start-for-ev-owners)
+- [Quick Start C++ Guide](#-quick-start-c-guide)
 - [Integration Guide](#-integration-guide)
 - [Validation & Testing](#-validation--testing)
 - [Continuous Integration](#-continuous-integration)
-- [The Physics Behind DS](#-the-physics-behind-ds)
-- [Theoretical Foundation](#-theoretical-foundation)
 - [Use Cases](#-use-cases)
 - [Module Architecture](#-architecture)
 - [Safety & Reliability](#-safety--reliability)
@@ -67,21 +63,18 @@ This library implements the **Dual-State (DS) Theory** developed to create next-
 
 ## 🚀 Why This Matters
 
-Modern batteries aren't just chemical systems—they're **information-processing systems**. Every charge cycle, thermal event, and load pattern creates information that affects future performance. Current BMS systems track this implicitly. **DS makes it explicit.**
+Modern batteries aren't just chemical cells—they have a historical stress profile. Every charge cycle, thermal event, and load pattern creates historical wear that affects future performance. Current BMS systems track this implicitly. **DS/ds makes it explicit.**
 
 ### The Problem With Current BMS
 
 - **Reactive, not predictive** - Degradation detected too late
-- **Ignores information costs** - State updates carry real energy penalties (Thermodynamic Energy Conservation)
-- **Misses coupling dynamics** - Physical and informational states affect each other
-- **Limited physics foundation** - Empirical models without deep theoretical grounding
+- **Misses coupling dynamics** - Physical states and long-term stress profiles affect each other
 
 ### The DS Solution
 
 ```
 Traditional BMS:  Physical State → Simple Model → Predictions
-DS-Enhanced BMS: Physical State ⟷ Informational State → Coupled Dynamics → Better Predictions
-                        (Ψ)              (Φ)              (g^eff_μν)
+DS-Enhanced BMS: Physical State ⟷ Stress & Usage History → Coupled Dynamics → Better Predictions
 ```
 
 **Result:** Detect degradation 20-30% earlier, optimize charging for longevity, predict end-of-life with higher confidence.
@@ -94,14 +87,11 @@ DS-Enhanced BMS: Physical State ⟷ Informational State → Coupled Dynamics →
 - **Drop-in integration** - Add two lines to existing BMS code
 - **Real-time compatible** - <1ms update time, suitable for 10-100Hz BMS loops
 - **Zero external dependencies** - Pure C++17, header-only option available
-- **Proven physics** - Based on peer-reviewed DS Theory (the developer, 2025)
 
 ### Technical Capabilities
-- ✅ **Dual-state modeling** - Tracks both physical (Ψ) and informational (Φ) battery states
-- ✅ **Energy conservation** - Respects Thermodynamic Energy Conservation: information updates cost energy
-- ✅ **Effective metric coupling** - Implements g^eff_μν = g_μν + λ ∂_μΦ ∂_νΦ
+- ✅ **Dual-state modeling** - Tracks physical battery states and historical stress profiles
 - ✅ **Predictive health monitoring** - Cycles to 80% capacity, end-of-life estimates
-- ✅ **Optimal charging profiles** - Minimize degradation using geometric constraints
+- ✅ **Optimal charging profiles** - Minimize degradation under diverse conditions
 - ✅ **Early warning system** - Detects accelerating degradation before traditional methods
 
 ---
@@ -121,7 +111,7 @@ GPU acceleration is intentionally disabled for the EV version of DS. Automotive 
 ---
 ## 🔧 Advanced Features & Examples
 
-The DS Battery Enhancement Library includes a suite of advanced capabilities designed for real‑world EV deployment, multi‑cell pack analysis, and high‑fidelity state estimation. These features extend the core DS physics engine and provide engineers with deeper visibility, better diagnostics, and more accurate long‑term predictions.
+The DS Battery Enhancement Library includes a suite of advanced capabilities designed for real‑world EV deployment, multi‑cell pack analysis, and high‑fidelity state estimation. These features extend the core DS engine and provide engineers with deeper visibility, better diagnostics, and more accurate long‑term predictions.
 
 This module is fully modular — you can enable only what your platform requires. All advanced features are demonstrated in the `/examples` directory for quick experimentation and integration.
 
@@ -131,8 +121,7 @@ This module is fully modular — you can enable only what your platform requires
 The library includes a full chemistry profile system for **LFP, NMC, NCA, LTO**, and custom chemistries.  
 Each profile tunes:
 
-- λ coupling strength  
-- entropy weighting  
+- stress and coupling factors
 - thermal sensitivity  
 - voltage curves  
 - safe operating limits  
@@ -161,7 +150,7 @@ A lightweight Kalman filter fuses:
 - DS‑predicted SoC
 - measured SoC  
 - degradation proxies  
-- entropy and Φ‑state evolution  
+- state and stress evolution
 
 This produces smoother, more reliable estimates under noisy sensor conditions.
 
@@ -174,7 +163,7 @@ DS can be paired with a small neural network to refine:
 - EOL estimates  
 - confidence scores  
 
-This hybrid approach combines physics‑based structure with data‑driven nuance.
+This hybrid approach combines physical structure with data‑driven nuance.
 
 ---
 
@@ -198,12 +187,12 @@ For large packs or high‑frequency BMS loops, the advanced module includes a GP
 
 ### Overview
 
-The **DS Torque Enhancement Module** is a production-ready, physics-informed torque management system for electric vehicles. It translates DS battery intelligence into safe, dynamic, and performance-aware torque limits that protect battery health while maximizing vehicle performance.
+The **DS Torque Enhancement Module** is a production-ready torque management system for electric vehicles. It translates DS battery intelligence into safe, dynamic, and performance-aware torque limits that protect battery health while maximizing vehicle performance.
 
-Unlike traditional torque limiters that only consider instantaneous power limits, this module uses the dual-state DS framework (Ψ physical state + Φ informational state) to make intelligent decisions about power delivery based on:
+Unlike traditional torque limiters that only consider instantaneous power limits, this module uses the dual-state DS framework (physical state + historical stress state) to make intelligent decisions about power delivery based on:
 - **Long-term battery health** - Progressive derating as pack ages
-- **Entropy and stress history** - Reduces power after demanding driving
-- **Metric coupling dynamics** - Uses geometric stress indicators
+- **Stress and temperature history** - Reduces power after demanding driving
+- **Dynamic coupling** - Uses state and stress indicators
 - **Cell-level health** - Protects weak cells in multi-cell packs
 - **Predictive thermal management** - Proactive derating prevents shutdowns
 
@@ -289,8 +278,8 @@ Final Torque = Base Motor Torque × Combined Scaling Factor
 Combined Scaling = 
     Base Motor Curve (speed-dependent)
   × DS Health Factor (remaining capacity)
-  × DS Entropy Factor (stress history)
-  × DS Metric Factor (geometric coupling)
+  × DS Stress Factor (historical stress)
+  × DS Dynamic Coupling Factor
   × Thermal Factor (motor + inverter + battery)
   × SOC Factor (state of charge protection)
   × Cell Balance Factor (weak cell protection)
@@ -469,8 +458,8 @@ void launch_control_handler() {
 struct DSTorqueWeights {
     double health_influence = 0.40;          // 40% influence from health
     double degradation_influence = 0.25;     // 25% from degradation rate
-    double entropy_influence = 0.20;         // 20% from entropy/stress
-    double metric_stress_influence = 0.15;   // 15% from metric coupling
+    double entropy_influence = 0.20;         // 20% from stress history
+    double metric_stress_influence = 0.15;   // 15% from dynamic coupling
     
     double min_torque_fraction = 0.20;       // Always allow ≥20% torque
     double max_ds_derate = 0.70;            // Max 70% DS reduction
@@ -527,7 +516,7 @@ std::cout << "Limiting Factor: " << result.limiting_factor << "\n";
 std::cout << "Active Derates:\n";
 if (result.health_derate_active) std::cout << "  - Health\n";
 if (result.thermal_derate_active) std::cout << "  - Thermal\n";
-if (result.entropy_derate_active) std::cout << "  - Entropy\n";
+if (result.entropy_derate_active) std::cout << "  - Stress\n";
 if (result.soc_derate_active) std::cout << "  - SOC\n";
 if (result.weak_cell_derate_active) std::cout << "  - Weak Cells\n";
 ```
@@ -601,7 +590,7 @@ Temperature (°C)    Action
 | **Predictive limiting** | ❌ No | ✅ Yes - uses DS forecasting |
 | **Cell-level protection** | ❌ Basic averaging | ✅ Weak cell detection |
 | **Thermal prediction** | ❌ Reactive only | ✅ Proactive derating |
-| **Stress history** | ❌ Ignored | ✅ Entropy-based adaptation |
+| **Stress history** | ❌ Ignored | ✅ Stress history adaptation |
 | **Lifespan impact** | Unknown | **+15-25% battery life** (estimated) |
 
 ---
@@ -629,7 +618,7 @@ This repository includes a production-grade BMS middleware layer and OEM-friendl
 
 A unified integration layer that connects:
 
-- DS core physics models
+- DS core models
 - Multi-cell pack intelligence
 - Safety monitoring & diagnostics
 - Vehicle systems (e.g. torque management)
@@ -689,9 +678,9 @@ ABS and ESC always retain authority, and regen is cut immediately during stabili
 
 📁 **Files:**  
 
-include/ds_regen_braking_manager_v1.hpp
-examples/regen_braking_loop.cpp
-docs/regen_braking_overview.md
+- `include/ds_regen_braking_manager_v1.hpp`
+- `examples/regen_braking_loop.cpp`
+- `docs/regen_braking_overview.md`
 
 
 This completes the DS control loop:
@@ -717,7 +706,7 @@ The telemetry struct provides a stable summary of:
 - battery state (SOC / SOH)
 - power flow (drive vs regenerative)
 - recovered energy
-- key DS metrics (stress, entropy, confidence)
+- key DS metrics (stress, confidence)
 - active limiting factors
 
 This interface is intended for dashboards, CAN mapping, logging, or cloud pipelines and does not participate in control decisions.
@@ -726,342 +715,12 @@ Visualization, UX, and presentation remain fully owned by the automaker.
 
 ---
 
-## 🧮 Optional WNN Integration Layer
-
-The repository includes an **optional WNN (Weighted Neural Network / Wave-Node Network) integration layer** that bridges DS telemetry to an external WNN daemon for advanced phase-modulation and chaotic dynamics analysis. This layer is entirely optional — it adds no overhead to systems that do not use it.
-
-### Components
-
-| File | Role |
-|------|------|
-| `include/ds_wnn_telemetry_bridge.hpp` | Bridge between DS BMS middleware and the WNN daemon |
-| `include/wnn_payload_modulator.hpp` | Duffing oscillator transduction engine driven by DS telemetry |
-
-### Architecture
-
-```
-DSBMSMiddleware                  WNN Daemon
-  (producer thread)                (consumer thread)
-        │                                │
-        │  update_telemetry()            │
-        ▼                                │
-  ┌─────────────────────┐               │
-  │  DSWNNBridge       │               │
-  │  SPSCQueue<payload> │◄──────────────┤ consume_payload()
-  └─────────────────────┘               │
-                                        ▼
-                             WNNPayloadModulator
-                              poll_telemetry()
-                              calculate_forcing()
-                                        │
-                                        ▼
-                             WNNTransductionEngine
-                              step(dt) via RK4
-```
-
-### `ds_wnn_telemetry_bridge.hpp`
-
-- Defines `WNNThermodynamicPayload` — a tightly packed struct carrying both the physical state (Ψ: voltage, current, temperature, SoC) and the informational state (Φ: entropy, metric trace, DS confidence) as `long double` values.
-- Provides `SPSCQueue<T, Capacity>` — a lock-free, single-producer single-consumer ring buffer (capacity must be a power of two) that passes payloads from the BMS thread to the WNN daemon without blocking.
-- Provides `DSWNNBridge` — a standalone adapter that translates `ds::EnhancedState` + `ds_plugin::DiagnosticReport` into payloads and enqueues them. The WNN daemon calls `consume_payload()` to drain the queue.
-
-### `wnn_payload_modulator.hpp`
-
-- Defines `KahanState` and `kahan_add()` — compensated summation primitives used throughout to prevent floating-point drift over long integration runs.
-- Provides `WNNPayloadModulator` — polls the bridge for fresh telemetry and computes the Spiral-Time phase salt and the modulated Duffing forcing function `γ cos(ωt + φ)`, where γ and φ are shaped by voltage, SoC, entropy, and metric trace.
-- Provides `WNNTransductionEngine` — a 4th-order Runge-Kutta integrator for the Duffing oscillator `ẍ + δẋ − αx + βx³ = γ cos(ωt + φ)`, with Kahan-summed state accumulation for numerical determinism over millions of steps.
-
-### Quick Start
-
-```cpp
-#include "ds_wnn_telemetry_bridge.hpp"
-#include "wnn_payload_modulator.hpp"
-
-// Shared bridge (lifetime must exceed both threads)
-ds_wnn::DSWNNBridge bridge;
-
-// --- Producer side (BMS thread) ---
-ds_plugin::DSBMSMiddleware bms;
-bms.init(75.0, 400.0);
-
-auto enhanced = bms.enhance_cycle(voltage, current, temperature, soc, dt);
-auto diag     = bms.get_diagnostics();
-(void)bridge.update_telemetry(enhanced, diag);  // returns false when full
-
-// --- Consumer side (WNN daemon thread) ---
-ds_wnn::WNNPayloadModulator modulator(bridge);
-ds_wnn::WNNTransductionEngine engine(modulator, {});
-
-while (running) {
-    engine.step(1e-4L);  // 100 µs step
-    long double x = engine.get_x();
-    long double v = engine.get_v();
-}
-```
-
----
-
-## ⚡ Quick Start for EV Owners
-
-DS 4.0 is designed for EV owners who want deeper insight into their vehicle’s battery behavior, stress levels, regen efficiency, and enhancement readiness. The software runs **on your computer**, not inside the vehicle, and **does not modify vehicle firmware**. It provides real‑time modeling, diagnostics, and performance recommendations based on your EV’s profile.
-
-### **1. Install Requirements**
-Make sure your computer has:
-
-- C++17‑compatible compiler  
-- CMake ≥ 3.16  
-- Python 3.8+  
-- Git + Make  
-
-Linux/macOS example:
-
-```bash
-sudo apt install build-essential cmake git python3 python3-pip
-```
-
-### **2. Clone the DS Repository**
-```bash
-git clone https://github.com/dfeen87/DS-EV-Battery-Enhacement-Software.git
-cd ds-enhancement
-```
-
-### **3. Build the Core System**
-```bash
-mkdir build
-cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j4
-```
-
-This produces the DS CLI tool, shared library, and Python interface.
-
-### **4. Install the Python Module**
-```bash
-pip install ./python
-```
-
-### **5. Run Vehicle Diagnostics**
-```bash
-ds --vehicle <model> --diagnostics
-```
-
-Example:
-
-```bash
-ds --vehicle tesla_model3_lr --diagnostics
-```
-
-You’ll get:
-
-- pack health checks  
-- SOC + voltage validation  
-- thermal envelope analysis  
-- stress + confidence indicators  
-- enhancement readiness score  
-
-### **6. View Enhancement Recommendations**
-```bash
-ds --vehicle <model> --enhance
-```
-
-This provides torque/regen optimization insights, stress‑aware driving guidance, and SOC window recommendations.
-
-### **7. Update When Needed**
-```bash
-make update
-```
-
-NOTE: The install.log file records build and installation details only; vehicle‑specific information is generated dynamically at runtime and does not require updates to the install log.
-
----
-
-### Notes
-
-- Both `DSWNNBridge`, `WNNPayloadModulator`, and `WNNTransductionEngine` are **non-copyable and non-movable** by design; pass by reference or pointer.
-- `SPSCQueue` enforces at compile time that `T` is trivially copyable, guaranteeing safe lock-free operation.
-- All public methods that return a success/failure `bool` are marked `[[nodiscard]]` — always check queue-full and queue-empty conditions.
-- The WNN layer has **no runtime dependency** on the rest of the DS stack; it is activated simply by including its headers.
-
-📁 `include/ds_wnn_telemetry_bridge.hpp`
-📁 `include/wnn_payload_modulator.hpp`
-
----
-
-## 🔄 Closed-Cycle Energy Recovery
-
-Traditional EV systems treat driving, braking, and charging as loosely connected subsystems.  
-With **DS v1.3.0**, these phases are unified into a **continuous energy cycle** where energy is intentionally recovered, conditioned, and reintegrated into the battery state.
-
-**Battery → Torque → Braking → Battery**
-
-This does not create energy.  
-It **reduces dependence on external charging** by maximizing *healthy* energy recovery during normal vehicle operation.
-
----
-
-## ⚙️ Energy Balance Model
-
-Over a control interval Δt, the pack energy evolution is modeled as:
-
-```
-
-ΔE_pack = ΔE_drive + ΔE_regen − ΔE_losses − ΔE_info
-
-```
-
-Where:
-- **ΔE_drive** = ∫ V · I_drive dt (energy delivered to drivetrain)
-- **ΔE_regen** = ∫ V · I_regen dt (energy recovered during braking)
-- **ΔE_losses** = thermal + resistive losses
-- **ΔE_info** = informational energy cost (DS / Thermodynamic-consistent)
-
-DS explicitly models **ΔE_info**, ensuring thermodynamic consistency while allowing recovered energy to update both:
-- physical battery state (Ψ)
-- informational state (Φ)
-
----
-
-## 🛑 Regen as Controlled Charging
-
-In v1.3.0, regenerative braking is treated as a **bounded charging event**, not a passive side effect.
-
-```
-
-I_regen = clamp( P_regen / V_pack , 0 , I_charge_max )
-
-```
-
-Charging is dynamically constrained by:
-- state of charge headroom
-- pack voltage limits
-- temperature
-- cell imbalance and weak-cell protection
-- DS stress and confidence metrics
-
-If any constraint is violated, regen is smoothly reduced or disabled.
-
----
-
-## 🔁 From “Closed Loop” to “Energy Cycle”
-
-Because braking energy is continuously reintegrated into the battery model, the system behaves as a **cycle**, not a one-way control loop.
-
-```
-
-Battery State (Ψ, Φ)
-↓
-Available Power & Health Limits
-↓
-Torque Delivery
-↓
-Vehicle Kinetics
-↓
-Regenerative Braking
-↓
-Controlled Charging (ΔE_regen)
-↓
-Battery State Update (Ψ, Φ)
-
-```
-
-The battery is no longer treated as a component that only depletes and is later recharged — it becomes an **active participant in the energy flow** of the vehicle.
-
----
-
-## 📉 Reduced External Charging Demand
-
-DS does **not** eliminate the need for external charging.
-It **reduces how often and how deeply external charging is required**.
-
-In typical mixed-use driving, a significant portion of energy normally lost to braking is recovered and reintegrated *without accelerating degradation*.
-
-### Example Recovery Scenarios (75Ah / 400V Pack)
-
-| Scenario | Energy Recovered | SOC Gain | Primary Limit |
-|--------|------------------|----------|---------------|
-| Urban stop-and-go (5 min) | ~0.32 kWh | +0.43% | Voltage |
-| Highway decel (90→40 km/h) | ~0.18 kWh | +0.24% | Power |
-| Mountain descent (3 km) | ~0.85 kWh | +1.1% | Thermal |
-| Weak cell present | ~0.54 kWh | +0.7% | Cell protection |
-
-Over daily operation, this reduces net energy drawn from chargers and extends usable driving range between plug-in events.
-
----
-
-## 📈 Conceptual Energy Flow
-
-```
-
-Energy (kWh)
-^
-|        ┌──────── Regenerative Recovery ────────┐
-|        │                                        │
-|        │                                        │
-|   ┌────┘        Net Energy Through Cycle        └────┐
-|   │                                                  │
-|───┴──────────────────────────────────────────────────┴───→ Time
-Drive Phase          Brake Phase          Stabilized
-
-```
-
-Recovered energy rises smoothly and plateaus as DS constraints engage, preventing aggressive charging that would increase long-term degradation.
-
----
-
-## 🧠 What This Enables
-
-- Fewer deep discharge cycles  
-- Reduced charging frequency for daily driving  
-- Improved battery longevity  
-- Predictable, health-aware energy recovery  
-- A complete physics-informed EV energy cycle  
-
-This is not “more regen.”  
-It is **better energy management**, grounded in Don Michael Feeney Jr.’s Dual-State (DS) Theory.
-
----
-
-## ⚠️ Important Note
-
-DS does **not** violate conservation of energy and does **not** claim perpetual motion.
-External charging remains necessary.  
-DS simply ensures that energy already paid for during motion is **not unnecessarily wasted**.
-
-
-
----
-
-### 🏗️ Architecture Overview
-
-A system-level view explaining how hardware, middleware, DS physics, and vehicle control connect — including multi-layer safety enforcement and deployment modes from bench testing to production EV packs.
-
-📁 `docs/architecture_overview.md`
-
-### ⚡ OEM Quick Start
-
-A concise, manufacturer-focused guide covering:
-
-- What must be implemented
-- Where to plug in hardware
-- How to reach a running integration in 15–30 minutes
-
-📁 `docs/oem_quick_start.md`
-
-### 🧪 Canonical Examples
-
-Two reference examples demonstrating correct usage patterns:
-
-- Simple pack loop (single-pack equivalent): `examples/simple_bms_loop.cpp`
-- Multi-cell pack loop (96s EV-style pack, weak-cell detection): `examples/multicell_pack_loop.cpp`
-
----
-
 ## 📁 Repository Structure
 
 ```
 DS-EV-Battery-Enhancement-Software/
 ├── include/                              # Public header-only API
-│   ├── ds_battery_enhancement.hpp       # Core DS dual-state physics engine
+│   ├── ds_battery_enhancement.hpp       # Core DS dual-state engine
 │   ├── ds_battery_core.hpp              # Foundational battery types and state
 │   ├── ds_bms_interfaces.hpp            # Abstract BMS interface definitions
 │   ├── ds_bms_middleware.hpp            # BMS middleware v1
@@ -1073,8 +732,6 @@ DS-EV-Battery-Enhancement-Software/
 │   ├── ds_energy_stack.hpp              # Layered energy accounting stack
 │   ├── ds_energy_telemetry.hpp          # Read-only telemetry snapshot interface
 │   ├── ds_rest_api.hpp                  # Optional REST API surface
-│   ├── ds_wnn_telemetry_bridge.hpp      # [Optional] WNN bridge & SPSC queue
-│   ├── wnn_payload_modulator.hpp         # [Optional] Duffing/RK4 WNN transduction
 │   └── battery_feen_adapter/
 │       └── battery_feen_adapter.hpp      # Third-party battery adapter shim
 ├── src/
@@ -1110,14 +767,207 @@ DS-EV-Battery-Enhancement-Software/
 
 ---
 
+## 🔄 Closed-Cycle Energy Recovery
+
+Traditional EV systems treat driving, braking, and charging as loosely connected subsystems.  
+With **DS v1.3.0**, these phases are unified into a **continuous energy cycle** where energy is intentionally recovered, conditioned, and reintegrated into the battery state.
+
+**Battery → Torque → Braking → Battery**
+
+This does not create energy.  
+It **reduces dependence on external charging** by maximizing *healthy* energy recovery during normal vehicle operation.
+
+---
+
+## 🛑 Regen as Controlled Charging
+
+In v1.3.0, regenerative braking is treated as a **bounded charging event**, not a passive side effect.
+
+Charging is dynamically constrained by:
+- state of charge headroom
+- pack voltage limits
+- temperature
+- cell imbalance and weak-cell protection
+- DS stress and confidence metrics
+
+If any constraint is violated, regen is smoothly reduced or disabled.
+
+---
+
+## 🔁 From “Closed Loop” to “Energy Cycle”
+
+Because braking energy is continuously reintegrated into the battery model, the system behaves as a **cycle**, not a one-way control loop.
+
+```
+Battery State
+↓
+Available Power & Health Limits
+↓
+Torque Delivery
+↓
+Vehicle Kinetics
+↓
+Regenerative Braking
+↓
+Controlled Charging
+↓
+Battery State Update
+```
+
+The battery is no longer treated as a component that only depletes and is later recharged — it becomes an **active participant in the energy flow** of the vehicle.
+
+---
+
+## 📉 Reduced External Charging Demand
+
+DS does **not** eliminate the need for external charging.
+It **reduces how often and how deeply external charging is required**.
+
+In typical mixed-use driving, a significant portion of energy normally lost to braking is recovered and reintegrated *without accelerating degradation*.
+
+### Example Recovery Scenarios (75Ah / 400V Pack)
+
+| Scenario | Energy Recovered | SOC Gain | Primary Limit |
+|--------|------------------|----------|---------------|
+| Urban stop-and-go (5 min) | ~0.32 kWh | +0.43% | Voltage |
+| Highway decel (90→40 km/h) | ~0.18 kWh | +0.24% | Power |
+| Mountain descent (3 km) | ~0.85 kWh | +1.1% | Thermal |
+| Weak cell present | ~0.54 kWh | +0.7% | Cell protection |
+
+Over daily operation, this reduces net energy drawn from chargers and extends usable driving range between plug-in events.
+
+---
+
+## 🧠 What This Enables
+
+- Fewer deep discharge cycles  
+- Reduced charging frequency for daily driving  
+- Improved battery longevity  
+- Predictable, health-aware energy recovery  
+- A complete, optimized EV energy cycle
+
+This is not “more regen.”  
+It is **better energy management**, powered by the Dual-State (DS/ds) EV Enhancement framework.
+
+---
+
+## ⚠️ Important Note
+
+DS does **not** violate conservation of energy and does **not** claim perpetual motion.
+External charging remains necessary.  
+DS simply ensures that energy already paid for during motion is **not unnecessarily wasted**.
+
+
+
+---
+
+### 🏗️ Architecture Overview
+
+A system-level view explaining how hardware, middleware, DS physics models, and vehicle control connect — including multi-layer safety enforcement and deployment modes from bench testing to production EV packs.
+
+📁 `docs/architecture_overview.md`
+
+### ⚡ OEM Quick Start
+
+A concise, manufacturer-focused guide covering:
+
+- What must be implemented
+- Where to plug in hardware
+- How to reach a running integration in 15–30 minutes
+
+📁 `docs/oem_quick_start.md`
+
+### 🧪 Canonical Examples
+
+Reference examples demonstrating correct usage patterns:
+
+- Simple pack loop (single-pack equivalent): `examples/simple_bms_loop.cpp`
+- Multi-cell pack loop (96s EV-style pack, weak-cell detection): `examples/multicell_pack_loop.cpp`
+
+---
+
 ## Support & Feedback
 
 For issues, questions, or feature requests, please refer to the main DS project repository.
 
-**Note**: This is a physics-informed power management system. Always perform thorough validation and safety testing before deploying in production vehicles.
+**Note**: This is an intelligent power management system. Always perform thorough validation and safety testing before deploying in production vehicles.
 
 
-## 🔧 Quick Start
+## ⚡ Quick Start for EV Owners
+
+DS is designed for EV owners who want deeper insight into their vehicle’s battery behavior, stress levels, regen efficiency, and enhancement readiness. The software runs **on your computer**, not inside the vehicle, and **does not modify vehicle firmware**. It provides real‑time modeling, diagnostics, and performance recommendations based on your EV’s profile.
+
+### **1. Install Requirements**
+Make sure your computer has:
+
+- C++17‑compatible compiler
+- CMake ≥ 3.16
+- Python 3.8+
+- Git + Make
+
+Linux/macOS example:
+
+```bash
+sudo apt install build-essential cmake git python3 python3-pip
+```
+
+### **2. Clone the DS Repository**
+```bash
+git clone https://github.com/dfeen87/DS-EV-Battery-Enhancement-Software.git
+cd ds-enhancement
+```
+
+### **3. Build the Core System**
+```bash
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make -j4
+```
+
+This produces the DS CLI tool, shared library, and Python interface.
+
+### **4. Install the Python Module**
+```bash
+pip install ./python
+```
+
+### **5. Run Vehicle Diagnostics**
+```bash
+ds --vehicle <model> --diagnostics
+```
+
+Example:
+
+```bash
+ds --vehicle tesla_model3_lr --diagnostics
+```
+
+You’ll get:
+
+- pack health checks
+- SOC + voltage validation
+- thermal envelope analysis
+- stress + confidence indicators
+- enhancement readiness score
+
+### **6. View Enhancement Recommendations**
+```bash
+ds --vehicle <model> --enhance
+```
+
+This provides torque/regen optimization insights, stress‑aware driving guidance, and SOC window recommendations.
+
+### **7. Update When Needed**
+```bash
+make update
+```
+
+NOTE: The install.log file records build and installation details only; vehicle‑specific information is generated dynamically at runtime and does not require updates to the install log.
+
+---
+
+## 🔧 Quick Start C++ Guide
 
 ### Installation
 
@@ -1185,7 +1035,7 @@ public:
         ds::DSConfig config;
         config.nominal_capacity_ah = BATTERY_CAPACITY;
         config.nominal_voltage = BATTERY_VOLTAGE;
-        config.lambda = 1e-6;  // Coupling strength (tune per chemistry)
+        config.lambda = 1e-6;  // Coupling strength
         ds_.init(config);
     }
     
@@ -1262,14 +1112,12 @@ Cycle 0:
   Degradation: 0.00%
   Remaining Capacity: 100.00%
   Cycles to 80%: 2000.0
-  Metric Trace: 2.00
   DS Confidence: 100.00%
 
 Cycle 100:
   Degradation: 1.50%
   Remaining Capacity: 98.50%
   Cycles to 80%: 1850.0
-  Metric Trace: 2.03
   DS Confidence: 98.50%
   
 ...
@@ -1278,10 +1126,6 @@ Cycle 100:
 Predicted remaining capacity: 90.23%
 Estimated cycles to EOL: 1547
 Prediction confidence: 89.45%
-
-=== Energy Conservation Check ===
-Energy balance error: 2.3e-12 J
-(Should be near zero for Thermodynamic energy conservation compliance)
 ```
 
 ### Unit Tests
@@ -1324,87 +1168,12 @@ c++ -std=c++17 -O2 -Iinclude examples/basic_integration.cpp -o build/basic_integ
 
 ---
 
-## 🔬 The Physics Behind DS
-
-### Core Concept: Dual-State Battery Model
-
-Traditional physics models batteries as a single state system. DS recognizes two coupled states:
-
-**Physical State (Ψ):** Directly measurable
-- Voltage, current, temperature
-- State of charge (SoC)
-- Observable performance metrics
-
-**Informational State (Φ):** Computed/inferred
-- Entropy accumulation
-- Cycle history and memory
-- Degradation trajectory
-- Hidden wear patterns
-
-These states aren't independent—they **couple** through an effective metric:
-
-```
-g^eff_μν = g_μν + λ ∂_μΦ ∂_νΦ
-```
-
-This coupling creates feedback:
-- Physical state changes → Information accumulates (entropy increases)
-- Information state evolves → Physical behavior changes (degradation accelerates)
-
-### Energy Conservation (Thermodynamic Energy Conservation)
-
-Computing and storing information costs energy. DS enforces:
-
-```
-δE_total = δE_Ψ + δE_Φ + δE_metric = 0
-```
-
-Every BMS state update, every prediction calculation, every memory write—these carry real thermodynamic costs. Traditional BMS ignores this. DS accounts for it.
-
-**Result:** More accurate energy budgets, better thermal management, realistic performance bounds.
-
-### Emergent Causal Structure
-
-DS's discrete geometry enforces a minimum update time τ_min and maximum propagation velocity. This creates natural bounds on:
-- Fast-charging rates (can't update faster than τ_min)
-- Thermal propagation (respects emergent causal cone)
-- Safe operating envelope (automatically derived from geometry)
-
-**Result:** Physics-based safety constraints, not just empirical limits.
-
----
-
-## 📚 Theoretical Foundation
-
-This implementation is based on:
-
-**Primary Reference:**
-> the developer, M. (2025). *Mathematical Formulation of the U₂→U₁ Coupling in the Dual-State Theory*. DS Research for Fundamental Physics. [arXiv/DOI link]
-
-**Supporting Physics:**
-- Thermodynamic Energy Conservation (information thermodynamics)
-- Effective field theory and metric modulation
-- Discrete geometry and emergent causality
-- Open quantum systems and Liouvillian dynamics
-
-**Why This Works for Batteries:**
-
-Batteries exhibit the same mathematical structure as DS's fundamental physics:
-- Coupled evolution of observable and hidden states
-- Information accumulation with thermodynamic cost
-- Geometric constraints on dynamics
-- Emergent irreversibility (aging, degradation)
-
-DS provides a **rigorous mathematical framework** for what battery engineers have been modeling empirically for decades.
-
----
-
 ## 🎯 Use Cases
 
 ### Early Degradation Detection
 **Problem:** By the time traditional BMS detects accelerating degradation, significant damage is done.
 
-**DS Solution:** Monitors informational state Φ and metric coupling. Detects degradation acceleration 20-30% earlier through changes in g^eff_μν trace.
+**DS Solution:** Monitors physical and historical stress indicators to catch accelerating degradation 20-30% earlier.
 
 **Impact:** Extended warranty periods, reduced field failures, better residual value prediction.
 
@@ -1413,7 +1182,7 @@ DS provides a **rigorous mathematical framework** for what battery engineers hav
 ### Optimized Fast Charging
 **Problem:** Fast charging degrades batteries, but optimal charging profiles are chemistry-specific and hard to model.
 
-**DS Solution:** Uses effective metric to compute charging profiles that minimize metric distortion (= minimize degradation).
+**DS Solution:** Computes dynamic charging profiles that minimize degradation.
 
 **Impact:** Faster charging with less degradation, personalized charging curves per vehicle.
 
@@ -1422,7 +1191,7 @@ DS provides a **rigorous mathematical framework** for what battery engineers hav
 ### Predictive Maintenance
 **Problem:** Current BMS can estimate remaining capacity but struggles with sudden failure modes.
 
-**DS Solution:** Tracks entropy accumulation and metric stability. Detects pre-failure signatures in Φ dynamics.
+**DS Solution:** Tracks stress accumulation and performance stability to detect pre-failure signatures.
 
 **Impact:** Schedule maintenance before failures, reduce roadside breakdowns, improve fleet management.
 
@@ -1431,7 +1200,7 @@ DS provides a **rigorous mathematical framework** for what battery engineers hav
 ### Second-Life Battery Assessment
 **Problem:** Hard to accurately assess degraded batteries for second-life applications (grid storage, etc.).
 
-**DS Solution:** Full history embedded in Φ state. Better remaining-capacity and reliability estimates.
+**DS Solution:** Assessment powered by complete historical stress modeling. Better remaining-capacity and reliability estimates.
 
 **Impact:** Unlock second-life battery markets, reduce waste, improve circular economy.
 
@@ -1447,10 +1216,9 @@ ds_battery_enhancement.hpp
 ├── Matrix4x4 (lightweight metric calculations)
 ├── DSState (dual-state representation)
 ├── Prediction Results (output structures)
-├── DSCoupling (core physics engine)
-│   ├── compute_phi_gradients()
-│   ├── compute_effective_metric()
-│   ├── update_phi()
+├── DSCoupling (core engine)
+│   ├── compute_gradients()
+│   ├── update_state()
 │   ├── compute_energies()
 │   ├── predict_health()
 │   └── optimize_charging()
@@ -1464,11 +1232,11 @@ ds_battery_enhancement.hpp
 ### Data Flow
 
 ```
-Sensors → DSState(Ψ) → Coupling Engine → DSState(Ψ,Φ,g^eff) → Predictions
-   ↓                          ↓                    ↓                  ↓
-Voltage              compute_gradients()    Energy Balance      Health Forecast
-Current              compute_metric()       (Thermodynamic)          Optimal Charging
-Temp                 update_phi()                               Warnings
+Sensors → DSState → Coupling Engine → DSState → Predictions
+   ↓                        ↓               ↓            ↓
+Voltage              update_state()   Energy Balance   Health Forecast
+Current                                                Optimal Charging
+Temp                                                   Warnings
 SoC
 ```
 
@@ -1486,9 +1254,7 @@ SoC
 ### Built-in Safeguards
 
 - ✅ **Bounds checking** - All state variables clamped to physical ranges
-- ✅ **Energy conservation** - Automatic Thermodynamic energy conservation compliance checking
 - ✅ **Numerical stability** - Validated for 1M+ update cycles
-- ✅ **Graceful degradation** - Falls back to physical state only if Φ update fails
 - ✅ **Exception safety** - No memory leaks, strong exception guarantee
 
 ---
@@ -1505,8 +1271,7 @@ SoC
 ### Future
 - 📊 Machine learning integration (DS + ML hybrid)
 - 🌐 Fleet-wide learning (anonymized data aggregation)
-- 🔮 Quantum corrections for low-temperature operation
-- ⚡ GPU acceleration for large battery packs
+- 🔮 Corrections for low-temperature operation
 - 📱 Mobile/embedded optimized version
 
 ---
@@ -1523,13 +1288,7 @@ See the [LICENSE](LICENSE) file for full legal details and terms.
 
 ## 🙏 Acknowledgments
 
-**Theoretical Foundation:**
-- The researchers and developers who contributed to the formulation of Dual-State battery models
-- The DS-RFP research group for rigorous peer review
-
-**Inspiration:**
-- The global transition to electric vehicles and the critical need for better battery management
-- The belief that fundamental physics can solve real-world engineering problems
+We would like to acknowledge the engineers and developers who contributed to the formulation and testing of the Dual-State battery models.
 
 I would like to acknowledge **Google Jules**, **Microsoft Copilot**, **Anthropic Claude**, and **OpenAI ChatGPT** for their meaningful assistance in refining concepts, improving clarity, and strengthening the overall quality of this work.
 
