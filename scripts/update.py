@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-HLV EV Battery Enhancement - Safe Software Update Utility
+DS EV Battery Enhancement - Safe Software Update Utility
 =========================================================
 
 Handles safe software updates by checking git or fetching from configured URL,
@@ -18,8 +18,8 @@ import subprocess
 import tempfile
 import platform
 
-INSTALL_DIR = "/opt/hlv_enhancement"
-LOG_FILE = "/opt/hlv_enhancement/logs/install.log"
+INSTALL_DIR = "/opt/ds_enhancement"
+LOG_FILE = "/opt/ds_enhancement/logs/install.log"
 LOCAL_LOG = "logs/install.log"
 
 def log_message(msg):
@@ -104,7 +104,7 @@ def main():
             log_message(f"CRITICAL: Failed to load update_source.json: {e}")
             sys.exit(3)
 
-        url = update_cfg.get("fallback_url", "https://github.com/dfeen87/HLV-EV-Battery-Enhancement-Software/releases/download/v4.1.0/payload.tar.gz")
+        url = update_cfg.get("fallback_url", "https://github.com/dfeen87/DS-EV-Battery-Enhancement-Software/releases/download/v4.2.0/payload.tar.gz")
         log_message(f"Source URL from configuration: {url}")
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -121,7 +121,7 @@ def main():
                 log_message(f"WARNING: Download failed or network unavailable: {e}")
 
                 # Check for mock payload or simulate
-                local_mock = update_cfg.get("local_mock_source", "/opt/hlv_enhancement/remote_payload/")
+                local_mock = update_cfg.get("local_mock_source", "/opt/ds_enhancement/remote_payload/")
                 mock_archive = os.path.join(local_mock, "payload.tar.gz") if local_mock else None
                 if mock_archive and os.path.exists(mock_archive):
                     log_message(f"Found local mock payload at: {mock_archive}")
@@ -132,7 +132,7 @@ def main():
                     # Build a temporary archive from current directory to allow the pipeline to proceed deterministically
                     try:
                         with tarfile.open(archive_path, "w:gz") as tar:
-                            for folder in ["hlv_core", "scripts", "config", "docs", "tests", "include", "src"]:
+                            for folder in ["ds_core", "scripts", "config", "docs", "tests", "include", "src"]:
                                 if os.path.exists(folder):
                                     tar.add(folder)
                             for file in ["CMakeLists.txt", "Makefile", "LICENSE", "README.md"]:
@@ -173,7 +173,7 @@ def main():
             else:
                 log_message("WARNING: Diagnostics script not found in staging area.")
 
-            # Perform a safe replace/update of /opt/hlv_enhancement
+            # Perform a safe replace/update of /opt/ds_enhancement
             # Trigger backup first using scripts/rollback.sh
             log_message("Creating system backup before applying updates...")
             rollback_script = "scripts/rollback.sh" if os.path.exists("scripts/rollback.sh") else os.path.join(INSTALL_DIR, "bin/rollback.sh")
@@ -229,7 +229,7 @@ def main():
         log_message("CRITICAL: Compilation failed for updated code. Restoring backup!")
         sys.exit(7)
 
-    log_message("✓ Updated code compiled successfully. Deploying to /opt/hlv_enhancement...")
+    log_message("✓ Updated code compiled successfully. Deploying to /opt/ds_enhancement...")
 
     # We can invoke the Makefile's install target under sudo, but avoid loops.
     # Let's perform a clean, manual installation of the target files to avoid loop,
@@ -240,9 +240,9 @@ def main():
         os.makedirs(os.path.join(INSTALL_DIR, dir_name), exist_ok=True)
 
     # Deploy binaries
-    shutil.copy2("hlv_core/bin/hlv_enhancer", os.path.join(INSTALL_DIR, "bin/"))
-    for f in os.listdir("hlv_core/lib"):
-        shutil.copy2(os.path.join("hlv_core/lib", f), os.path.join(INSTALL_DIR, "lib/"))
+    shutil.copy2("ds_core/bin/ds_enhancer", os.path.join(INSTALL_DIR, "bin/"))
+    for f in os.listdir("ds_core/lib"):
+        shutil.copy2(os.path.join("ds_core/lib", f), os.path.join(INSTALL_DIR, "lib/"))
 
     # Deploy scripts
     for f in os.listdir("scripts"):
@@ -251,8 +251,8 @@ def main():
         os.chmod(dest_path, 0o755)
 
     # Deploy python bindings and wrappers
-    shutil.copy2("hlv_core/python/hlv_enhancer.py", os.path.join(INSTALL_DIR, "python/"))
-    shutil.copy2("hlv_core/python_fallback/hlv_enhancer_fallback.py", os.path.join(INSTALL_DIR, "python_fallback/"))
+    shutil.copy2("ds_core/python/ds_enhancer.py", os.path.join(INSTALL_DIR, "python/"))
+    shutil.copy2("ds_core/python_fallback/ds_enhancer_fallback.py", os.path.join(INSTALL_DIR, "python_fallback/"))
 
     # Deploy configurations
     for f in os.listdir("config"):

@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * HLV BATTERY ENHANCEMENT - MULTI-CELL BENCHMARK
+ * DS BATTERY ENHANCEMENT - MULTI-CELL BENCHMARK
  * ============================================================================
  * 
  * Performance benchmark for multi-cell pack operations
@@ -8,8 +8,8 @@
  * ============================================================================
  */
 
-#include "hlv_advanced_features.hpp"
-#include "hlv_battery_enhancement.hpp"
+#include "ds_advanced_features.hpp"
+#include "ds_battery_enhancement.hpp"
 #include <iostream>
 #include <chrono>
 #include <iomanip>
@@ -17,16 +17,16 @@
 
 int main() {
     std::cout << "============================================================================\n";
-    std::cout << "HLV MULTI-CELL PACK BENCHMARK\n";
+    std::cout << "DS MULTI-CELL PACK BENCHMARK\n";
     std::cout << "============================================================================\n\n";
     
     const int NUM_CELLS = 96;
     const int NUM_ITERATIONS = 10000;
     
-    auto profile = hlv::advanced::ChemistryLibrary().get_profile(
-        hlv::advanced::ChemistryType::NMC);
+    auto profile = ds::advanced::ChemistryLibrary().get_profile(
+        ds::advanced::ChemistryType::NMC);
     
-    hlv::advanced::MultiCellPack pack(NUM_CELLS, profile);
+    ds::advanced::MultiCellPack pack(NUM_CELLS, profile);
     
     std::vector<double> voltages(NUM_CELLS);
     std::vector<double> temps(NUM_CELLS);

@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * HLV BATTERY ENHANCEMENT - ADVANCED FEATURE TESTS
+ * DS BATTERY ENHANCEMENT - ADVANCED FEATURE TESTS
  * ============================================================================
  * 
  * Tests for advanced features: multi-cell packs, Kalman filtering, etc.
@@ -8,18 +8,18 @@
  * ============================================================================
  */
 
-#include "hlv_advanced_features.hpp"
-#include "hlv_battery_enhancement.hpp"
+#include "ds_advanced_features.hpp"
+#include "ds_battery_enhancement.hpp"
 #include <iostream>
 #include <cassert>
 
 bool test_multi_cell_pack() {
     std::cout << "Testing multi-cell pack..." << std::flush;
     
-    auto profile = hlv::advanced::ChemistryLibrary().get_profile(
-        hlv::advanced::ChemistryType::NMC);
+    auto profile = ds::advanced::ChemistryLibrary().get_profile(
+        ds::advanced::ChemistryType::NMC);
     
-    hlv::advanced::MultiCellPack pack(96, profile);
+    ds::advanced::MultiCellPack pack(96, profile);
     
     std::vector<double> voltages(96, 3.7);
     std::vector<double> temps(96, 25.0);
@@ -38,9 +38,9 @@ bool test_multi_cell_pack() {
 bool test_kalman_filter() {
     std::cout << "Testing Kalman filter..." << std::flush;
     
-    hlv::advanced::KalmanHLVFilter filter;
+    ds::advanced::KalmanDSFilter filter;
     
-    hlv::HLVState state;
+    ds::DSState state;
     state.state_of_charge = 0.8;
     state.degradation = 0.0;
     
@@ -58,11 +58,11 @@ bool test_kalman_filter() {
 bool test_chemistry_profiles() {
     std::cout << "Testing chemistry profiles..." << std::flush;
     
-    auto lib = hlv::advanced::ChemistryLibrary();
+    auto lib = ds::advanced::ChemistryLibrary();
     
-    auto lfp = lib.get_profile(hlv::advanced::ChemistryType::LFP);
-    auto nmc = lib.get_profile(hlv::advanced::ChemistryType::NMC);
-    auto nca = lib.get_profile(hlv::advanced::ChemistryType::NCA);
+    auto lfp = lib.get_profile(ds::advanced::ChemistryType::LFP);
+    auto nmc = lib.get_profile(ds::advanced::ChemistryType::NMC);
+    auto nca = lib.get_profile(ds::advanced::ChemistryType::NCA);
     
     assert(lfp.name == "Lithium Iron Phosphate");
     assert(nmc.name == "Nickel Manganese Cobalt");
@@ -76,7 +76,7 @@ bool test_chemistry_profiles() {
 
 int main() {
     std::cout << "============================================================================\n";
-    std::cout << "HLV ADVANCED FEATURE TESTS\n";
+    std::cout << "DS ADVANCED FEATURE TESTS\n";
     std::cout << "============================================================================\n\n";
     
     try {

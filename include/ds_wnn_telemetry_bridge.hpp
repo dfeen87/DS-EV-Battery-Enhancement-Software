@@ -1,15 +1,15 @@
-#ifndef HLV_WNN_TELEMETRY_BRIDGE_HPP
-#define HLV_WNN_TELEMETRY_BRIDGE_HPP
+#ifndef DS_WNN_TELEMETRY_BRIDGE_HPP
+#define DS_WNN_TELEMETRY_BRIDGE_HPP
 
 #include <atomic>
 #include <cstddef>
 #include <type_traits>
 #include <vector>
 
-#include "hlv_battery_core.hpp"
-#include "hlv_bms_middleware_v2.hpp"
+#include "ds_battery_core.hpp"
+#include "ds_bms_middleware_v2.hpp"
 
-namespace hlv_wnn {
+namespace ds_wnn {
 
 #pragma pack(push, 1)
 /**
@@ -29,7 +29,7 @@ struct WNNThermodynamicPayload {
     // Informational state variables (Φ)
     long double entropy_accumulation; // Normalized entropy
     long double metric_trace;         // g^eff_μν trace
-    long double hlv_confidence;       // Confidence score
+    long double ds_confidence;       // Confidence score
 };
 #pragma pack(pop)
 
@@ -107,32 +107,32 @@ private:
 };
 
 /**
- * @brief Standalone adapter class bridging HLV Battery Middleware to WNN.
+ * @brief Standalone adapter class bridging DS Battery Middleware to WNN.
  *
  * Serializes thermodynamic data into a lock-free queue, allowing the
  * WNN daemon to read without being blocked by BMS routines.
  */
-class HLVWNNBridge {
+class DSWNNBridge {
 public:
-    HLVWNNBridge() = default;
-    ~HLVWNNBridge() = default;
+    DSWNNBridge() = default;
+    ~DSWNNBridge() = default;
 
     // Non-copyable and non-movable: owns a lock-free queue with producer/consumer state
-    HLVWNNBridge(const HLVWNNBridge&) = delete;
-    HLVWNNBridge& operator=(const HLVWNNBridge&) = delete;
-    HLVWNNBridge(HLVWNNBridge&&) = delete;
-    HLVWNNBridge& operator=(HLVWNNBridge&&) = delete;
+    DSWNNBridge(const DSWNNBridge&) = delete;
+    DSWNNBridge& operator=(const DSWNNBridge&) = delete;
+    DSWNNBridge(DSWNNBridge&&) = delete;
+    DSWNNBridge& operator=(DSWNNBridge&&) = delete;
 
     /**
-     * @brief Ingests an EnhancedState and DiagnosticReport from HLVBMSMiddleware,
+     * @brief Ingests an EnhancedState and DiagnosticReport from DSBMSMiddleware,
      *        translates them to WNNThermodynamicPayload, and pushes to queue.
      *
      * @param state The current enhanced state from the BMS.
      * @param diag The diagnostic report from the BMS.
      * @return true if pushed to the queue successfully, false if full.
      */
-    [[nodiscard]] bool update_telemetry(const hlv::EnhancedState& state,
-                          const hlv_plugin::DiagnosticReport& diag) {
+    [[nodiscard]] bool update_telemetry(const ds::EnhancedState& state,
+                          const ds_plugin::DiagnosticReport& diag) {
         WNNThermodynamicPayload payload{};
 
         // Extract Physical State Ψ
@@ -142,10 +142,10 @@ public:
         payload.state_of_charge = static_cast<long double>(state.state.state_of_charge);
 
         // Extract Informational State Φ
-        // Note: Using HLVState's entropy directly, and diag's metrics for the rest.
+        // Note: Using DSState's entropy directly, and diag's metrics for the rest.
         payload.entropy_accumulation = static_cast<long double>(state.state.entropy);
-        payload.metric_trace = static_cast<long double>(diag.hlv_metric_trace);
-        payload.hlv_confidence = static_cast<long double>(diag.hlv_confidence);
+        payload.metric_trace = static_cast<long double>(diag.ds_metric_trace);
+        payload.ds_confidence = static_cast<long double>(diag.ds_confidence);
 
         return queue_.push(payload);
     }
@@ -166,6 +166,6 @@ private:
     SPSCQueue<WNNThermodynamicPayload, 1024> queue_;
 };
 
-} // namespace hlv_wnn
+} // namespace ds_wnn
 
-#endif // HLV_WNN_TELEMETRY_BRIDGE_HPP
+#endif // DS_WNN_TELEMETRY_BRIDGE_HPP

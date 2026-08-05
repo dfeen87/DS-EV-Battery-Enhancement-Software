@@ -1,8 +1,8 @@
-# HLV REST API Documentation
+# DS REST API Documentation
 
 ## Overview
 
-The HLV REST API provides read-only HTTP/JSON access to the HLV Battery Management, Torque Enhancement, and Regenerative Braking system state. The API is designed for observability and monitoring without any control surfaces, making it safe for automotive use.
+The DS REST API provides read-only HTTP/JSON access to the DS Battery Management, Torque Enhancement, and Regenerative Braking system state. The API is designed for observability and monitoring without any control surfaces, making it safe for automotive use.
 
 ## Key Features
 
@@ -19,7 +19,7 @@ The HLV REST API provides read-only HTTP/JSON access to the HLV Battery Manageme
 The server can be configured to bind to a different address/port during initialization:
 
 ```cpp
-hlv::api::RestApiServer server("0.0.0.0", 8080);
+ds::api::RestApiServer server("0.0.0.0", 8080);
 server.start();
 ```
 
@@ -93,7 +93,7 @@ Returns the complete battery state including physical (Ψ), informational (Φ), 
 - `temperature_c`: Average pack temperature in Celsius
 - `state_of_charge`: State of charge (0.0 = empty, 1.0 = full)
 
-**Informational State (Φ)** - HLV-computed informational metrics:
+**Informational State (Φ)** - DS-computed informational metrics:
 - `entropy`: Normalized entropy measure (information content)
 - `cycle_count`: Equivalent full charge/discharge cycles
 - `degradation`: Battery degradation factor (0.0 = new, 1.0 = end-of-life)
@@ -106,7 +106,7 @@ Returns the complete battery state including physical (Ψ), informational (Φ), 
 - `confidence`: Confidence in prediction (0.0 to 1.0)
 - `warning_triggered`: Early degradation warning flag
 
-**Energy** - Energy conservation tracking (Landauer principle):
+**Energy** - Energy conservation tracking (Thermodynamic principle):
 - `energy_psi_j`: Energy in physical state (Joules)
 - `energy_phi_j`: Energy in informational state (Joules)
 - `energy_metric_j`: Energy in metric coupling (Joules)
@@ -116,7 +116,7 @@ Returns the complete battery state including physical (Ψ), informational (Φ), 
 
 ### GET /api/torque
 
-Returns torque limits and derating information from the HLV Torque Enhancement module.
+Returns torque limits and derating information from the DS Torque Enhancement module.
 
 **Response Example**:
 ```json
@@ -127,7 +127,7 @@ Returns torque limits and derating information from the HLV Torque Enhancement m
   "max_power_kw": 245.8,
   "scaling_factors": {
     "base_motor": 1.0,
-    "hlv": 0.98,
+    "ds": 0.98,
     "thermal": 0.95,
     "soc": 1.0,
     "health": 0.99,
@@ -153,7 +153,7 @@ Returns torque limits and derating information from the HLV Torque Enhancement m
 - `max_power_kw`: Maximum electrical power in kilowatts
 - `scaling_factors`: Individual derating factors (0.0 to 1.0)
   - `base_motor`: Base motor curve scaling
-  - `hlv`: HLV-based reduction
+  - `ds`: DS-based reduction
   - `thermal`: Temperature derating
   - `soc`: State-of-charge protection
   - `health`: Long-term health preservation
@@ -161,7 +161,7 @@ Returns torque limits and derating information from the HLV Torque Enhancement m
   - `overall`: Combined scaling factor (product of all)
 - `derate_active`: Boolean flags indicating which derating mechanisms are active
 - `limiting_factor`: Description of primary limiting factor (string)
-- `confidence_level`: Confidence in HLV prediction (0.0 to 1.0)
+- `confidence_level`: Confidence in DS prediction (0.0 to 1.0)
 
 ---
 
@@ -182,7 +182,7 @@ Returns regenerative braking limits and charge acceptance constraints.
     "f_voltage": 1.0,
     "f_temp": 1.0,
     "f_cell": 1.0,
-    "f_hlv": 0.98,
+    "f_ds": 0.98,
     "f_stability": 1.0
   },
   "events": {
@@ -203,7 +203,7 @@ Returns regenerative braking limits and charge acceptance constraints.
   - `f_voltage`: Pack voltage headroom constraint
   - `f_temp`: Temperature-based derating
   - `f_cell`: Cell-level balance/health derating
-  - `f_hlv`: HLV stress indicator derating
+  - `f_ds`: DS stress indicator derating
   - `f_stability`: ABS/ESC stability reduction
 - `events`: Counters for safety-related events
   - `abs_events`: Number of ABS activation events
@@ -254,7 +254,7 @@ Returns combined limits from battery, torque, and regen systems in a compact for
 
 ### GET /api/diagnostics
 
-Returns pack diagnostics including weak cells, imbalance, thermal spread, and HLV metrics.
+Returns pack diagnostics including weak cells, imbalance, thermal spread, and DS metrics.
 
 **Response Example**:
 ```json
@@ -272,7 +272,7 @@ Returns pack diagnostics including weak cells, imbalance, thermal spread, and HL
     "imbalance": false,
     "weak_cell": true
   },
-  "hlv_metrics": {
+  "ds_metrics": {
     "metric_trace": 4.0234,
     "phi_magnitude": 0.0156,
     "entropy_level": 0.0234,
@@ -295,11 +295,11 @@ Returns pack diagnostics including weak cells, imbalance, thermal spread, and HL
   - `thermal`: Thermal issue detected
   - `imbalance`: Cell imbalance issue
   - `weak_cell`: Weak cell detected
-- `hlv_metrics`: HLV-specific metrics
+- `ds_metrics`: DS-specific metrics
   - `metric_trace`: Trace of effective metric tensor
   - `phi_magnitude`: Magnitude of informational state
   - `entropy_level`: Normalized entropy level
-  - `confidence`: Overall HLV confidence (0.0 to 1.0)
+  - `confidence`: Overall DS confidence (0.0 to 1.0)
 - `last_update_time_ms`: Most recent update computation time (milliseconds)
 - `average_update_time_ms`: Average update computation time (milliseconds)
 
@@ -333,7 +333,7 @@ Returns energy cycle metrics including drive, regen, losses, and efficiency.
 - `drive_energy_kwh`: Total drive (discharge) energy in kilowatt-hours
 - `regen_energy_kwh`: Total regenerative energy captured in kilowatt-hours
 - `loss_energy_kwh`: Total energy losses in kilowatt-hours
-- `delta_info_energy_j`: Change in informational energy (Landauer term) in Joules
+- `delta_info_energy_j`: Change in informational energy (Thermodynamic term) in Joules
 - `total_cycles`: Total equivalent full charge/discharge cycles
 - `efficiency_percent`: Regenerative efficiency (regen/drive × 100)
 - `safety`: Safety status flags
@@ -368,10 +368,10 @@ All error responses follow this format:
 ### C++ Integration
 
 ```cpp
-#include "hlv_rest_api.hpp"
+#include "ds_rest_api.hpp"
 
 // Initialize API server
-hlv::api::RestApiServer api_server("0.0.0.0", 8080);
+ds::api::RestApiServer api_server("0.0.0.0", 8080);
 api_server.start();
 
 // In your control loop...

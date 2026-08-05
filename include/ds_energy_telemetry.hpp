@@ -1,17 +1,17 @@
-#ifndef HLV_ENERGY_TELEMETRY_HPP
-#define HLV_ENERGY_TELEMETRY_HPP
+#ifndef DS_ENERGY_TELEMETRY_HPP
+#define DS_ENERGY_TELEMETRY_HPP
 
 #include <string>
 
-namespace hlv {
+namespace ds {
 
 /*
  * ============================================================================
- * HLV Energy Telemetry (Optional)
+ * DS Energy Telemetry (Optional)
  * ============================================================================
  *
  * PURPOSE:
- *   Provide a minimal, OEM-friendly snapshot of HLV energy state for
+ *   Provide a minimal, OEM-friendly snapshot of DS energy state for
  *   dashboards, logging, CAN mapping, or cloud pipelines.
  *
  * DESIGN PRINCIPLES:
@@ -24,7 +24,7 @@ namespace hlv {
  * ============================================================================
  */
 
-struct HLVEnergyTelemetry {
+struct DSEnergyTelemetry {
     // Battery state
     double soc_percent = 0.0;
     double soh_percent = 0.0;
@@ -34,15 +34,15 @@ struct HLVEnergyTelemetry {
     double regen_power_kw = 0.0;       // positive when recovering
     double recovered_energy_kwh = 0.0;
 
-    // HLV metrics
-    double hlv_metric_trace = 0.0;
-    double hlv_entropy = 0.0;
-    double hlv_confidence = 0.0;
+    // DS metrics
+    double ds_metric_trace = 0.0;
+    double ds_entropy = 0.0;
+    double ds_confidence = 0.0;
 
     // Control context
     std::string limiting_factor = "NONE"; // e.g. SOC, THERMAL, CELL, ABS
 };
 
-} // namespace hlv
+} // namespace ds
 
-#endif // HLV_ENERGY_TELEMETRY_HPP
+#endif // DS_ENERGY_TELEMETRY_HPP

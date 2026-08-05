@@ -1,9 +1,9 @@
 /*
  * ============================================================================
- * HLV TORQUE ENHANCEMENT MODULE v2.0 - PRODUCTION READY
+ * DS TORQUE ENHANCEMENT MODULE v2.0 - PRODUCTION READY
  * ============================================================================
  *
- * Physics-informed torque management using HLV dual-state battery intelligence.
+ * Physics-informed torque management using DS dual-state battery intelligence.
  * Provides comprehensive torque limiting with safety systems, diagnostics,
  * and real-time adaptation for production EV deployments.
  *
@@ -19,7 +19,7 @@
  *   - Smooth torque transitions (rate limiting)
  *
  * INTEGRATION:
- *   HLVTorqueManager torque_mgr(config);
+ *   DSTorqueManager torque_mgr(config);
  *   auto result = torque_mgr.compute_torque_limit(enhanced_state, motor_rpm);
  *   motor_command = std::min(driver_request, result.max_drive_torque_nm);
  *
@@ -31,11 +31,11 @@
  * ============================================================================
  */
 
-#ifndef HLV_TORQUE_ENHANCEMENT_V2_HPP
-#define HLV_TORQUE_ENHANCEMENT_V2_HPP
+#ifndef DS_TORQUE_ENHANCEMENT_V2_HPP
+#define DS_TORQUE_ENHANCEMENT_V2_HPP
 
-#include "hlv_battery_enhancement.hpp"
-#include "hlv_bms_middleware_v2.hpp"
+#include "ds_battery_enhancement.hpp"
+#include "ds_bms_middleware_v2.hpp"
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
@@ -45,7 +45,7 @@
 #include <memory>
 #include <limits>
 
-namespace hlv {
+namespace ds {
 namespace drive {
 
 // ============================================================================
@@ -77,7 +77,7 @@ enum class RegenMode {
     LOW,        // Minimal regen, coast-like
     MEDIUM,     // Moderate one-pedal driving
     HIGH,       // Aggressive one-pedal, maximum energy recovery
-    ADAPTIVE    // HLV-optimized based on battery state
+    ADAPTIVE    // DS-optimized based on battery state
 };
 
 // ============================================================================
@@ -173,11 +173,11 @@ struct BatteryConstraints {
 };
 
 // ============================================================================
-// HLV TUNING PARAMETERS
+// DS TUNING PARAMETERS
 // ============================================================================
 
-struct HLVTorqueWeights {
-    // How much each HLV metric influences torque
+struct DSTorqueWeights {
+    // How much each DS metric influences torque
     double health_influence = 0.40;          // Remaining capacity impact
     double degradation_influence = 0.25;     // Degradation rate impact
     double entropy_influence = 0.20;         // Entropy/stress impact
@@ -190,10 +190,10 @@ struct HLVTorqueWeights {
     
     // Protection thresholds
     double min_torque_fraction = 0.20;       // Always allow 20% minimum
-    double max_hlv_derate = 0.70;            // Max 70% reduction from HLV
+    double max_ds_derate = 0.70;            // Max 70% reduction from DS
     double critical_health_threshold = 0.70; // Below 70% health = conservative
     
-    // Predictive derating (use HLV forecast)
+    // Predictive derating (use DS forecast)
     bool enable_predictive_limiting = true;
     double forecast_horizon_cycles = 50.0;   // Look ahead N cycles
     double forecast_safety_margin = 1.2;     // 20% safety margin
@@ -209,7 +209,7 @@ struct HLVTorqueWeights {
 struct TorqueConfig {
     DrivetrainConfig drivetrain;
     BatteryConstraints battery;
-    HLVTorqueWeights hlv_weights;
+    DSTorqueWeights ds_weights;
     
     // Operating mode
     DriveMode drive_mode = DriveMode::NORMAL;
@@ -251,7 +251,7 @@ struct TorqueResult {
     
     // Scaling factors applied
     double base_motor_scaling;               // From motor curve
-    double hlv_scaling;                      // HLV-based reduction
+    double ds_scaling;                      // DS-based reduction
     double thermal_scaling;                  // Temperature derating
     double soc_scaling;                      // SOC protection
     double health_scaling;                   // Long-term health
@@ -276,7 +276,7 @@ struct TorqueResult {
     // Diagnostics
     double computation_time_us;
     std::string limiting_factor;             // What's limiting torque most
-    double confidence_level;                 // Confidence in HLV prediction
+    double confidence_level;                 // Confidence in DS prediction
 };
 
 // ============================================================================
@@ -302,8 +302,8 @@ struct TorqueDiagnostics {
     double max_inverter_temp_c;
     double max_battery_temp_c;
     
-    // HLV-specific
-    double average_hlv_scaling;
+    // DS-specific
+    double average_ds_scaling;
     int derate_event_count;
     double total_derate_time_s;
     
@@ -325,7 +325,7 @@ struct TorqueDiagnostics {
         max_motor_temp_c = 0.0;
         max_inverter_temp_c = 0.0;
         max_battery_temp_c = 0.0;
-        average_hlv_scaling = 1.0;
+        average_ds_scaling = 1.0;
         derate_event_count = 0;
         total_derate_time_s = 0.0;
         update_count = 0;
@@ -388,7 +388,7 @@ public:
 // MAIN TORQUE MANAGER CLASS
 // ============================================================================
 
-class HLVTorqueManager {
+class DSTorqueManager {
 private:
     TorqueConfig config_;
     TorqueDiagnostics diagnostics_;
@@ -433,8 +433,8 @@ private:
         return std::min(motor.peak_torque_nm, power_limited_torque);
     }
     
-    // HLV-based health scaling
-    double compute_health_scaling(const hlv::EnhancedState& enhanced) const {
+    // DS-based health scaling
+    double compute_health_scaling(const ds::EnhancedState& enhanced) const {
         double health_pct = enhanced.health.remaining_capacity_percent / 100.0;
         health_pct = std::clamp(health_pct, 0.0, 1.0);
         
@@ -442,12 +442,12 @@ private:
         double health_scale = 0.5 + 0.5 * health_pct; // 0.5 to 1.0 range
         
         // Apply weighting
-        double w = config_.hlv_weights.health_influence;
+        double w = config_.ds_weights.health_influence;
         return (1.0 - w) + w * health_scale;
     }
     
-    // HLV entropy/stress scaling
-    double compute_entropy_scaling(const hlv::EnhancedState& enhanced) const {
+    // DS entropy/stress scaling
+    double compute_entropy_scaling(const ds::EnhancedState& enhanced) const {
         double entropy = std::clamp(enhanced.state.entropy, 0.0, 1.0);
         double phi_mag = std::clamp(enhanced.state.phi_magnitude, 0.0, 2.0);
         
@@ -458,12 +458,12 @@ private:
         double combined = entropy_factor * phi_factor;
         combined = std::clamp(combined, 0.6, 1.0);
         
-        double w = config_.hlv_weights.entropy_influence;
+        double w = config_.ds_weights.entropy_influence;
         return (1.0 - w) + w * combined;
     }
     
-    // HLV metric stress scaling
-    double compute_metric_scaling(const hlv::EnhancedState& enhanced) const {
+    // DS metric stress scaling
+    double compute_metric_scaling(const ds::EnhancedState& enhanced) const {
         double trace = enhanced.state.g_eff.trace();
         double deviation = std::abs(trace - 2.0); // 2.0 is "relaxed" state
         
@@ -471,12 +471,12 @@ private:
         double metric_scale = 1.0 / (1.0 + 0.4 * deviation);
         metric_scale = std::clamp(metric_scale, 0.5, 1.0);
         
-        double w = config_.hlv_weights.metric_stress_influence;
+        double w = config_.ds_weights.metric_stress_influence;
         return (1.0 - w) + w * metric_scale;
     }
     
     // Thermal scaling (battery + motor + inverter)
-    double compute_thermal_scaling(const hlv::EnhancedState& enhanced) const {
+    double compute_thermal_scaling(const ds::EnhancedState& enhanced) const {
         double battery_temp = enhanced.state.temperature;
         double motor_temp = thermal_model_.get_motor_temp();
         double inverter_temp = thermal_model_.get_inverter_temp();
@@ -522,7 +522,7 @@ private:
     }
     
     // SOC-based scaling
-    double compute_soc_scaling(const hlv::EnhancedState& enhanced) const {
+    double compute_soc_scaling(const ds::EnhancedState& enhanced) const {
         double soc = std::clamp(enhanced.state.state_of_charge, 0.0, 1.0);
         double scaling = 1.0;
         
@@ -544,8 +544,8 @@ private:
     }
     
     // Cell-aware scaling (if multi-cell pack detected)
-    double compute_cell_scaling(const hlv_plugin::DiagnosticReport* diag) const {
-        if (!config_.hlv_weights.enable_cell_aware_limiting || !diag) {
+    double compute_cell_scaling(const ds_plugin::DiagnosticReport* diag) const {
+        if (!config_.ds_weights.enable_cell_aware_limiting || !diag) {
             return 1.0;
         }
         
@@ -573,20 +573,20 @@ private:
     double get_drive_mode_fraction() const {
         switch (config_.drive_mode) {
             case DriveMode::ECO:
-                return config_.hlv_weights.eco_power_fraction;
+                return config_.ds_weights.eco_power_fraction;
             case DriveMode::NORMAL:
-                return config_.hlv_weights.normal_power_fraction;
+                return config_.ds_weights.normal_power_fraction;
             case DriveMode::SPORT:
-                return config_.hlv_weights.sport_power_fraction;
+                return config_.ds_weights.sport_power_fraction;
             case DriveMode::CUSTOM:
-                return config_.hlv_weights.normal_power_fraction;
+                return config_.ds_weights.normal_power_fraction;
             default:
                 return 0.85;
         }
     }
     
     // Compute regen limit
-    double compute_regen_limit(const hlv::EnhancedState& enhanced,
+    double compute_regen_limit(const ds::EnhancedState& enhanced,
                               double motor_rpm) const {
         const auto& motor = config_.drivetrain.rear_motor;
         double base_regen = motor.peak_torque_nm * 0.7; // 70% of peak
@@ -613,7 +613,7 @@ private:
             case RegenMode::MEDIUM: mode_factor = 0.75; break;
             case RegenMode::HIGH: mode_factor = 1.0; break;
             case RegenMode::ADAPTIVE:
-                // Use HLV to optimize regen
+                // Use DS to optimize regen
                 mode_factor = 0.5 + 0.5 * (1.0 - enhanced.state.degradation);
                 break;
         }
@@ -634,10 +634,10 @@ private:
         std::vector<std::pair<std::string, double>> factors;
         
         factors.push_back({"Motor Curve", result.base_motor_scaling});
-        factors.push_back({"HLV Health", result.health_scaling});
+        factors.push_back({"DS Health", result.health_scaling});
         factors.push_back({"Thermal", result.thermal_scaling});
         factors.push_back({"SOC", result.soc_scaling});
-        factors.push_back({"HLV Overall", result.hlv_scaling});
+        factors.push_back({"DS Overall", result.ds_scaling});
         factors.push_back({"Cell Balance", result.cell_balancing_scaling});
         
         auto min_factor = std::min_element(factors.begin(), factors.end(),
@@ -647,7 +647,7 @@ private:
     }
 
 public:
-    HLVTorqueManager()
+    DSTorqueManager()
         : config_(),
           thermal_model_(),
           last_torque_limit_nm_(0.0),
@@ -657,7 +657,7 @@ public:
         diagnostics_.reset();
     }
     
-    explicit HLVTorqueManager(const TorqueConfig& config)
+    explicit DSTorqueManager(const TorqueConfig& config)
         : config_(config),
           thermal_model_(),
           last_torque_limit_nm_(0.0),
@@ -696,13 +696,13 @@ public:
     // ========================================================================
     
     TorqueResult compute_torque_limit(
-        const hlv::EnhancedState& enhanced,
+        const ds::EnhancedState& enhanced,
         double motor_speed_rpm,
         double dt = 0.01,
-        const hlv_plugin::DiagnosticReport* pack_diagnostics = nullptr) {
+        const ds_plugin::DiagnosticReport* pack_diagnostics = nullptr) {
         
         if (!initialized_) {
-            throw std::runtime_error("HLVTorqueManager not initialized");
+            throw std::runtime_error("DSTorqueManager not initialized");
         }
         
         auto start_time = std::chrono::high_resolution_clock::now();
@@ -713,22 +713,22 @@ public:
         result.max_drive_torque_nm = 0.0;
         result.max_regen_torque_nm = 0.0;
         result.overall_scaling = 1.0;
-        result.confidence_level = enhanced.hlv_confidence;
+        result.confidence_level = enhanced.ds_confidence;
         
         // --- 1. Base motor torque from speed ---
         const auto& motor = config_.drivetrain.rear_motor;
         double base_torque = compute_base_motor_torque(motor_speed_rpm, motor);
         result.base_motor_scaling = base_torque / motor.peak_torque_nm;
         
-        // --- 2. HLV-based scaling factors ---
+        // --- 2. DS-based scaling factors ---
         result.health_scaling = compute_health_scaling(enhanced);
         double entropy_scale = compute_entropy_scaling(enhanced);
         double metric_scale = compute_metric_scaling(enhanced);
         result.entropy_derate_active = (entropy_scale < 0.95);
         result.metric_derate_active = (metric_scale < 0.95);
         
-        // Combined HLV scaling
-        result.hlv_scaling = result.health_scaling * entropy_scale * metric_scale;
+        // Combined DS scaling
+        result.ds_scaling = result.health_scaling * entropy_scale * metric_scale;
         
         // --- 3. Thermal scaling ---
         result.thermal_scaling = compute_thermal_scaling(enhanced);
@@ -748,7 +748,7 @@ public:
         
         // --- 7. Combine all scaling factors ---
         double combined_scaling = result.base_motor_scaling *
-                                 result.hlv_scaling *
+                                 result.ds_scaling *
                                  result.thermal_scaling *
                                  result.soc_scaling *
                                  result.cell_balancing_scaling *
@@ -756,13 +756,13 @@ public:
         
         // Apply protection limits
         combined_scaling = std::clamp(combined_scaling,
-                                     config_.hlv_weights.min_torque_fraction,
+                                     config_.ds_weights.min_torque_fraction,
                                      1.0);
         
-        // Respect max HLV derate
-        double hlv_only_derate = 1.0 - result.hlv_scaling;
-        if (hlv_only_derate > config_.hlv_weights.max_hlv_derate) {
-            double adjustment = hlv_only_derate - config_.hlv_weights.max_hlv_derate;
+        // Respect max DS derate
+        double ds_only_derate = 1.0 - result.ds_scaling;
+        if (ds_only_derate > config_.ds_weights.max_ds_derate) {
+            double adjustment = ds_only_derate - config_.ds_weights.max_ds_derate;
             combined_scaling += adjustment;
         }
         
@@ -838,9 +838,9 @@ public:
              result.max_drive_torque_nm) / diagnostics_.update_count;
         diagnostics_.peak_torque_nm = std::max(diagnostics_.peak_torque_nm,
                                               result.max_drive_torque_nm);
-        diagnostics_.average_hlv_scaling = 
-            (diagnostics_.average_hlv_scaling * (diagnostics_.update_count - 1) +
-             result.hlv_scaling) / diagnostics_.update_count;
+        diagnostics_.average_ds_scaling =
+            (diagnostics_.average_ds_scaling * (diagnostics_.update_count - 1) +
+             result.ds_scaling) / diagnostics_.update_count;
         
         if (result.overall_scaling < 0.95) {
             diagnostics_.derate_event_count++;
@@ -881,7 +881,7 @@ public:
     }
     
     std::string get_status_summary() const {
-        std::string status = "=== HLV Torque Manager Status ===\n";
+        std::string status = "=== DS Torque Manager Status ===\n";
         status += "Drive Mode: ";
         switch (config_.drive_mode) {
             case DriveMode::ECO: status += "ECO"; break;
@@ -901,8 +901,8 @@ public:
             std::to_string(diagnostics_.average_torque_nm) + " Nm\n";
         status += "  Peak Torque: " + 
             std::to_string(diagnostics_.peak_torque_nm) + " Nm\n";
-        status += "  Average HLV Scaling: " + 
-            std::to_string(diagnostics_.average_hlv_scaling * 100.0) + "%\n";
+        status += "  Average DS Scaling: " +
+            std::to_string(diagnostics_.average_ds_scaling * 100.0) + "%\n";
         status += "  Derate Events: " + 
             std::to_string(diagnostics_.derate_event_count) + "\n";
         status += "  Motor Temp: " + 
@@ -923,9 +923,9 @@ public:
 };
 
 } // namespace drive
-} // namespace hlv
+} // namespace ds
 
-#endif // HLV_TORQUE_ENHANCEMENT_V2_HPP
+#endif // DS_TORQUE_ENHANCEMENT_V2_HPP
 
 /*
  * ============================================================================
@@ -933,18 +933,18 @@ public:
  * ============================================================================
  *
  * #include "torque_enhancement.hpp"
- * #include "hlv_bms_middleware_v2.hpp"
+ * #include "ds_bms_middleware_v2.hpp"
  *
  * // Initialize systems
- * hlv_plugin::HLVBMSMiddleware bms;
+ * ds_plugin::DSBMSMiddleware bms;
  * bms.init(75.0, 400.0);
  *
- * hlv::drive::TorqueConfig torque_cfg;
- * torque_cfg.drive_mode = hlv::drive::DriveMode::SPORT;
+ * ds::drive::TorqueConfig torque_cfg;
+ * torque_cfg.drive_mode = ds::drive::DriveMode::SPORT;
  * torque_cfg.drivetrain.rear_motor.peak_torque_nm = 400.0;
  * torque_cfg.battery.max_discharge_power_kw = 250.0;
  *
- * hlv::drive::HLVTorqueManager torque_mgr(torque_cfg);
+ * ds::drive::DSTorqueManager torque_mgr(torque_cfg);
  *
  * // In your control loop (100Hz typical):
  * double dt = 0.01; // 10ms
@@ -977,24 +977,24 @@ public:
  * ============================================================================
  *
  * // Initialize multi-cell pack BMS
- * hlv_plugin::MiddlewareConfig bms_cfg;
- * bms_cfg.mode = hlv_plugin::MiddlewareConfig::Mode::MULTI_CELL_PACK;
- * bms_cfg.chemistry = hlv::advanced::ChemistryType::NMC;
+ * ds_plugin::MiddlewareConfig bms_cfg;
+ * bms_cfg.mode = ds_plugin::MiddlewareConfig::Mode::MULTI_CELL_PACK;
+ * bms_cfg.chemistry = ds::advanced::ChemistryType::NMC;
  * bms_cfg.series_cells = 96;
  * bms_cfg.enable_kalman_filter = true;
  *
- * hlv_plugin::HLVBMSMiddleware bms;
+ * ds_plugin::DSBMSMiddleware bms;
  * bms.init_advanced(bms_cfg);
  *
  * // Configure torque manager for dual-motor
- * hlv::drive::TorqueConfig torque_cfg;
+ * ds::drive::TorqueConfig torque_cfg;
  * torque_cfg.drivetrain.has_front_motor = true;
  * torque_cfg.drivetrain.has_rear_motor = true;
  * torque_cfg.drivetrain.front_motor.peak_torque_nm = 300.0;
  * torque_cfg.drivetrain.rear_motor.peak_torque_nm = 400.0;
- * torque_cfg.hlv_weights.enable_cell_aware_limiting = true;
+ * torque_cfg.ds_weights.enable_cell_aware_limiting = true;
  *
- * hlv::drive::HLVTorqueManager torque_mgr(torque_cfg);
+ * ds::drive::DSTorqueManager torque_mgr(torque_cfg);
  *
  * // In control loop:
  * std::vector<double> cell_voltages = read_all_cell_voltages();

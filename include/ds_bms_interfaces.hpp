@@ -1,16 +1,16 @@
-#ifndef HLV_BMS_INTERFACES_HPP
-#define HLV_BMS_INTERFACES_HPP
+#ifndef DS_BMS_INTERFACES_HPP
+#define DS_BMS_INTERFACES_HPP
 
 #include <vector>
 #include <string>
 
-namespace hlv_plugin {
+namespace ds_plugin {
 
 /*
  * ============================================================================
  * HARDWARE ABSTRACTION INTERFACES
  * ============================================================================
- * These interfaces decouple HLV middleware from:
+ * These interfaces decouple DS middleware from:
  *  - CAN bus implementations
  *  - ADC drivers
  *  - Simulators / HIL rigs
@@ -69,6 +69,6 @@ public:
     virtual void log_event(const std::string& message) = 0;
 };
 
-} // namespace hlv_plugin
+} // namespace ds_plugin
 
-#endif // HLV_BMS_INTERFACES_HPP
+#endif // DS_BMS_INTERFACES_HPP

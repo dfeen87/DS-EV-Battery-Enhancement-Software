@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================================
-# HLV EV Battery Enhancement - Battery Health Check Utility
+# DS EV Battery Enhancement - Battery Health Check Utility
 # ============================================================================
 set -euo pipefail
 
@@ -9,7 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DIAG_SCRIPT="${SCRIPT_DIR}/diagnostics.py"
 
 echo "===================================================================="
-echo "HLV EV BATTERY HEALTH CHECK"
+echo "DS EV BATTERY HEALTH CHECK"
 echo "===================================================================="
 
 # Run diagnostics with focus on SOH and battery metrics

@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * HLV Energy Recovery Coordinator v1.0
+ * DS Energy Recovery Coordinator v1.0
  * ============================================================================
  *
  * PURPOSE:
@@ -9,7 +9,7 @@
  *   This module:
  *     1) Takes regen torque limits from the Regen Braking Manager
  *     2) Converts allowed regen torque into an estimated electrical regen power/current
- *     3) Feeds the result into HLVBMSMiddleware as a charging event (negative current)
+ *     3) Feeds the result into DSBMSMiddleware as a charging event (negative current)
  *     4) Tracks recovered energy (kWh) and exposes clean diagnostics
  *
  * WHAT THIS MODULE IS:
@@ -34,16 +34,16 @@
  * ============================================================================
  */
 
-#ifndef HLV_ENERGY_RECOVERY_COORDINATOR_V1_HPP
-#define HLV_ENERGY_RECOVERY_COORDINATOR_V1_HPP
+#ifndef DS_ENERGY_RECOVERY_COORDINATOR_V1_HPP
+#define DS_ENERGY_RECOVERY_COORDINATOR_V1_HPP
 
-#include "hlv_bms_middleware_v2.hpp"
-#include "hlv_regen_braking_manager_v1.hpp"
+#include "ds_bms_middleware_v2.hpp"
+#include "ds_regen_braking_manager_v1.hpp"
 #include <string>
 #include <algorithm>
 #include <cmath>
 
-namespace hlv {
+namespace ds {
 namespace drive {
 
 constexpr int RECOVERY_VERSION_MAJOR = 1;
@@ -100,15 +100,15 @@ struct EnergyRecoveryResult {
     double regen_power_kw_est = 0.0;
 
     // Updated enhanced state + diagnostics
-    hlv::EnhancedState enhanced;
-    hlv_plugin::DiagnosticReport bms_diag;
+    ds::EnhancedState enhanced;
+    ds_plugin::DiagnosticReport bms_diag;
 
     EnergyRecoveryDiagnostics diag;
 };
 
-class HLVEnergyRecoveryCoordinator {
+class DSEnergyRecoveryCoordinator {
 public:
-    explicit HLVEnergyRecoveryCoordinator(const EnergyRecoveryConfig& cfg = EnergyRecoveryConfig())
+    explicit DSEnergyRecoveryCoordinator(const EnergyRecoveryConfig& cfg = EnergyRecoveryConfig())
         : cfg_(cfg), est_current_a_(0.0) {}
 
     static std::string get_version() { return energy_recovery_version(); }
@@ -118,17 +118,17 @@ public:
     //   - Update BMS using measured or estimated pack current
     //
     // Inputs:
-    //   bms: HLVBMSMiddleware instance
+    //   bms: DSBMSMiddleware instance
     //   enhanced_prev: last enhanced state (optional; not required)
-    //   regen: regen result from HLVRegenBrakingManager
+    //   regen: regen result from DSRegenBrakingManager
     //   pack_voltage_v, pack_temperature_c: measured pack values
     //   pack_current_a_measured: measured pack current (signed) if available
     //   soc_input: OEM SOC estimate or last SOC (0..1)
     //   motor_omega_rad_s: motor electrical/mechanical omega in rad/s (if estimating current)
     //
     EnergyRecoveryResult step(
-        hlv_plugin::HLVBMSMiddleware& bms,
-        const hlv::drive::RegenResult& regen,
+        ds_plugin::DSBMSMiddleware& bms,
+        const ds::drive::RegenResult& regen,
         double pack_voltage_v,
         double pack_temperature_c,
         double pack_current_a_measured,
@@ -240,6 +240,6 @@ private:
 };
 
 } // namespace drive
-} // namespace hlv
+} // namespace ds
 
-#endif // HLV_ENERGY_RECOVERY_COORDINATOR_V1_HPP
+#endif // DS_ENERGY_RECOVERY_COORDINATOR_V1_HPP

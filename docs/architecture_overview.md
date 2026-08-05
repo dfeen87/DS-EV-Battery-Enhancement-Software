@@ -1,7 +1,7 @@
-# HLV Battery Management System  
+# DS Battery Management System
 ## Architecture Overview
 
-**Version:** 4.1.0
+**Version:** 4.2.0
 **Audience:** OEMs, Tier-1 suppliers, system architects, safety engineers  
 **Scope:** Conceptual and software architecture (not hardware schematics)
 
@@ -9,12 +9,12 @@
 
 ## 1. Purpose of This Document
 
-This document provides a **system-level overview** of the HLV Battery
+This document provides a **system-level overview** of the DS Battery
 Management System (BMS) architecture.
 
 It explains:
 - How data flows from hardware to decision-making
-- How HLV physics integrates with conventional BMS logic
+- How DS physics integrates with conventional BMS logic
 - Where OEMs plug in their own hardware, CAN stacks, and safety logic
 - How the system scales from simple packs to multi-cell production packs
 
@@ -27,7 +27,7 @@ This document is intended to complement:
 
 ## 2. Architectural Philosophy
 
-The HLV BMS is designed around four core principles:
+The DS BMS is designed around four core principles:
 
 1. **Separation of concerns**  
    Physics, hardware access, safety, and vehicle control are cleanly separated.
@@ -57,14 +57,14 @@ The system is organized into five logical layers:
 +-------------------------▲------------------------+
 |
 +-------------------------|------------------------+
-| HLV BMS Middleware Layer |
-| - HLVBMSMiddleware |
+| DS BMS Middleware Layer |
+| - DSBMSMiddleware |
 | - Diagnostics & Safety |
 +-------------------------▲------------------------+
 |
 +-------------------------|------------------------+
-| HLV Core & Advanced Models |
-| - HLVEnhancement (physics-informed model) |
+| DS Core & Advanced Models |
+| - DSEnhancement (physics-informed model) |
 | - MultiCellPack / Health Prediction |
 +-------------------------▲------------------------+
 |
@@ -107,7 +107,7 @@ OEMs implement these interfaces using their preferred hardware stack.
 
 ### 4.2 Hardware Adapter
 
-The reference `HLVHardwareAdapter` demonstrates:
+The reference `DSHardwareAdapter` demonstrates:
 
 - CAN-based pack telemetry ingestion
 - Optional cell telemetry via SPI/I2C
@@ -119,11 +119,11 @@ and safety interlocks, allowing OEMs to integrate without vendor lock-in.
 
 ---
 
-## 5. HLV Core Layer
+## 5. DS Core Layer
 
-### 5.1 HLVEnhancement (Core Physics)
+### 5.1 DSEnhancement (Core Physics)
 
-At the heart of the system is the HLV physics-informed model, which augments
+At the heart of the system is the DS physics-informed model, which augments
 traditional BMS state estimation by incorporating:
 
 - Energy flow coherence
@@ -154,11 +154,11 @@ These modules increase diagnostic resolution without changing the external API.
 
 ### 6.1 Role of the Middleware
 
-`HLVBMSMiddleware` is the **integration contract** between physics,
+`DSBMSMiddleware` is the **integration contract** between physics,
 hardware, and vehicle systems.
 
 Its responsibilities include:
-- Coordinating HLV core and advanced models
+- Coordinating DS core and advanced models
 - Maintaining a stable enhanced state
 - Producing deterministic diagnostics
 - Enforcing safety constraints
@@ -248,7 +248,7 @@ It is a **physics-informed enhancement and integration layer**.
 
 ## 11. Summary
 
-The HLV BMS architecture provides:
+The DS BMS architecture provides:
 
 - A clean separation between hardware and intelligence
 - Deterministic, safety-first behavior

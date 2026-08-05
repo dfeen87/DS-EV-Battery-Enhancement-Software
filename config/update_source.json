@@ -1,8 +1,8 @@
 {
   "update_policy": {
     "prefer_git": true,
-    "fallback_url": "https://github.com/dfeen87/HLV-EV-Battery-Enhancement-Software/releases/download/v4.1.0/payload.tar.gz",
-    "local_mock_source": "/opt/hlv_enhancement/remote_payload/",
+    "fallback_url": "https://github.com/dfeen87/DS-EV-Battery-Enhancement-Software/releases/download/v4.2.0/payload.tar.gz",
+    "local_mock_source": "/opt/ds_enhancement/remote_payload/",
     "auto_rollback_on_failure": true
   }
 }

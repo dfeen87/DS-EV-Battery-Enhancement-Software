@@ -1,7 +1,7 @@
-# HLV Intelligent Regenerative Braking  
+# DS Intelligent Regenerative Braking
 ## Architecture & OEM Integration Overview
 
-**Module:** HLV Regen Braking Manager v1.0  
+**Module:** DS Regen Braking Manager v1.0
 **Audience:** OEMs, Tier-1 suppliers, brake / chassis / controls engineers  
 **Scope:** Regenerative braking limits, blending guidance, and safety cooperation  
 **Status:** Production-lean, integration-ready
@@ -10,7 +10,7 @@
 
 ## 1. Purpose
 
-This document describes the design and integration expectations of the **HLV Intelligent Regenerative Braking Manager**.
+This document describes the design and integration expectations of the **DS Intelligent Regenerative Braking Manager**.
 
 The module translates **battery-aware intelligence** into safe, stable regenerative braking limits while respecting:
 
@@ -53,10 +53,10 @@ Brake Pedal
 Brake Request Mapping (OEM)
 ↓
 ┌────────────────────────────────────┐
-│ HLV Regen Braking Manager │
+│ DS Regen Braking Manager │
 │ - Battery acceptance limits │
 │ - Stability cooperation │
-│ - HLV stress awareness │
+│ - DS stress awareness │
 └───────────────▲────────────────────┘
 │
 Regen Torque Limit + Fraction
@@ -82,7 +82,7 @@ ABS / ESC / Actuators
 - Time step (`dt`)
 
 ### Strongly Recommended
-- `DiagnosticReport` from HLV BMS Middleware
+- `DiagnosticReport` from DS BMS Middleware
 - ABS active flag
 - Wheel slip flag
 
@@ -112,8 +112,8 @@ The module computes regen limits using **multiplicative derating**, ensuring no 
 - Regen reduced when imbalance increases
 - Prevents pushing weakest cells beyond safe limits
 
-### 5.5 HLV Stress & Confidence
-- Regen conservatively reduced when HLV confidence is low
+### 5.5 DS Stress & Confidence
+- Regen conservatively reduced when DS confidence is low
 - Allows long-term stress history to influence braking behavior
 
 ### 5.6 Stability Events (ABS / ESC)
@@ -204,9 +204,9 @@ OEMs are expected to:
 
 ## 11. Summary
 
-The HLV Regen Braking Manager provides a **battery-aware, stability-respecting, production-lean approach** to regenerative braking.
+The DS Regen Braking Manager provides a **battery-aware, stability-respecting, production-lean approach** to regenerative braking.
 
-It extends HLV intelligence beyond propulsion into braking — where energy recovery, safety, and battery health intersect most critically.
+It extends DS intelligence beyond propulsion into braking — where energy recovery, safety, and battery health intersect most critically.
 
 This module completes the loop:
 **Battery → Torque → Braking → Battery**

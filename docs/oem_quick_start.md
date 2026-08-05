@@ -1,13 +1,13 @@
-# HLV BMS – OEM Quick Start Guide
+# DS BMS – OEM Quick Start Guide
 
 **Audience:** OEMs, Tier-1 suppliers, BMS / ECU integration teams  
-**Goal:** Bring HLV BMS Middleware online with real hardware as quickly and safely as possible
+**Goal:** Bring DS BMS Middleware online with real hardware as quickly and safely as possible
 
 ---
 
 ## 1. What You Are Integrating
 
-The HLV BMS Middleware is a **physics-informed enhancement layer** that sits
+The DS BMS Middleware is a **physics-informed enhancement layer** that sits
 *above* hardware drivers and *below* vehicle control logic.
 
 It does **not** replace:
@@ -26,7 +26,7 @@ It **does** provide:
 
 ## 2. Minimal Integration Checklist (15–30 minutes)
 
-To run HLV middleware on real hardware, you must implement **only one thing**:
+To run DS middleware on real hardware, you must implement **only one thing**:
 
 ### ✅ A hardware adapter that supplies pack telemetry
 
@@ -45,7 +45,7 @@ Optionally:
 
 A production-lean reference adapter is provided:
 
-`src/hlv_bms_hardware_adapter.hpp`
+`src/ds_bms_hardware_adapter.hpp`
 
 Most OEMs adapt this file rather than starting from scratch.
 
@@ -122,7 +122,7 @@ On fault:
 - Control outputs should be derated or disabled
 - Higher-level safety controllers take precedence
 
-HLV middleware never overrides OEM safety logic.
+DS middleware never overrides OEM safety logic.
 
 ---
 

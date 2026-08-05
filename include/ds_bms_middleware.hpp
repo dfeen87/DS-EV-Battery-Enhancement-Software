@@ -1,9 +1,9 @@
 /*
  * ============================================================================
- * HLV BMS MIDDLEWARE PLUGIN v2.0
+ * DS BMS MIDDLEWARE PLUGIN v2.0
  * ============================================================================
  *
- * Enhanced middleware integrating both core HLV and advanced features.
+ * Enhanced middleware integrating both core DS and advanced features.
  * Provides a unified interface for EV Battery Management Systems.
  *
  * NEW in v2.0:
@@ -15,17 +15,17 @@
  *   - Advanced health monitoring and diagnostics
  *
  * The middleware automatically selects the appropriate backend:
- *   - Single battery: Uses core HLV enhancement
+ *   - Single battery: Uses core DS enhancement
  *   - Multi-cell pack: Uses advanced features with per-cell tracking
  *
  * ============================================================================
  */
 
-#ifndef HLV_BMS_MIDDLEWARE_HPP
-#define HLV_BMS_MIDDLEWARE_HPP
+#ifndef DS_BMS_MIDDLEWARE_HPP
+#define DS_BMS_MIDDLEWARE_HPP
 
-#include "hlv_battery_enhancement.hpp"
-#include "hlv_advanced_features.hpp"
+#include "ds_battery_enhancement.hpp"
+#include "ds_advanced_features.hpp"
 #include <stdexcept>
 #include <vector>
 #include <string>
@@ -33,7 +33,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace hlv_plugin {
+namespace ds_plugin {
 
 // ============================================================================
 // CONFIGURATION STRUCTURE
@@ -46,11 +46,11 @@ struct MiddlewareConfig {
     int series_cells = 96;  // For multi-cell mode
     
     // Chemistry selection
-    hlv::advanced::ChemistryType chemistry = hlv::advanced::ChemistryType::NMC;
+    ds::advanced::ChemistryType chemistry = ds::advanced::ChemistryType::NMC;
     
     // Operating mode
     enum class Mode {
-        SINGLE_BATTERY,  // Use core HLV only
+        SINGLE_BATTERY,  // Use core DS only
         MULTI_CELL_PACK  // Use advanced features
     } mode = Mode::SINGLE_BATTERY;
     
@@ -89,35 +89,35 @@ struct DiagnosticReport {
     bool imbalance_warning = false;
     bool weak_cell_warning = false;
     
-    // HLV metrics
+    // DS metrics
     double metric_trace = 0.0;
     double phi_magnitude = 0.0;
     double entropy_level = 0.0;
-    double hlv_confidence = 0.0;
+    double ds_confidence = 0.0;
 };
 
 // ============================================================================
 // ENHANCED MIDDLEWARE CLASS
 // ============================================================================
 
-class HLVBMSMiddleware {
+class DSBMSMiddleware {
 private:
     // Configuration
     MiddlewareConfig config_;
     bool initialized_;
     
-    // Core HLV (for single battery mode)
-    std::unique_ptr<hlv::HLVEnhancement> core_hlv_;
+    // Core DS (for single battery mode)
+    std::unique_ptr<ds::DSEnhancement> core_ds_;
     
     // Advanced features (for multi-cell pack mode)
-    std::unique_ptr<hlv::advanced::AdvancedHLVSystem> advanced_system_;
+    std::unique_ptr<ds::advanced::AdvancedDSSystem> advanced_system_;
     
     // Diagnostics
     DiagnosticReport last_diagnostic_;
     double total_update_time_ms_;
     int update_count_;
 
-    hlv::advanced::ChemistryLibrary chemistry_lib_;
+    ds::advanced::ChemistryLibrary chemistry_lib_;
     
     // Timing helpers
     double get_time_ms() const {
@@ -126,7 +126,7 @@ private:
     }
     
     void update_diagnostics(double update_time_ms, 
-                          const hlv::EnhancedState* single_state = nullptr) {
+                          const ds::EnhancedState* single_state = nullptr) {
         last_diagnostic_.last_update_time_ms = update_time_ms;
         total_update_time_ms_ += update_time_ms;
         update_count_++;
@@ -147,8 +147,8 @@ private:
                 single_state->state.phi_magnitude;
             last_diagnostic_.entropy_level = 
                 single_state->state.entropy;
-            last_diagnostic_.hlv_confidence = 
-                single_state->hlv_confidence;
+            last_diagnostic_.ds_confidence =
+                single_state->ds_confidence;
             
             // No multi-cell warnings in single mode
             last_diagnostic_.weak_cell_ids.clear();
@@ -180,7 +180,7 @@ private:
             last_diagnostic_.metric_trace = advanced_system_->get_metric_trace();
             last_diagnostic_.phi_magnitude = advanced_system_->get_phi_magnitude();
             last_diagnostic_.entropy_level = advanced_system_->get_entropy_level();
-            last_diagnostic_.hlv_confidence = advanced_system_->get_ml_confidence();
+            last_diagnostic_.ds_confidence = advanced_system_->get_ml_confidence();
         }
         
         // Thermal warning (simplified - would use chemistry-specific limits)
@@ -203,7 +203,7 @@ private:
     }
     
 public:
-    HLVBMSMiddleware() 
+    DSBMSMiddleware()
         : initialized_(false), 
           total_update_time_ms_(0.0), 
           update_count_(0) {}
@@ -219,16 +219,16 @@ public:
         config_.nominal_capacity_ah = nominal_capacity_ah;
         config_.nominal_voltage = nominal_voltage;
         config_.mode = MiddlewareConfig::Mode::SINGLE_BATTERY;
-        config_.chemistry = hlv::advanced::ChemistryType::NMC;
+        config_.chemistry = ds::advanced::ChemistryType::NMC;
         
-        // Initialize core HLV
-        hlv::HLVConfig hlv_config;
-        hlv_config.nominal_capacity_ah = nominal_capacity_ah;
-        hlv_config.nominal_voltage = nominal_voltage;
-        hlv_config.max_temperature = max_temperature;
+        // Initialize core DS
+        ds::DSConfig ds_config;
+        ds_config.nominal_capacity_ah = nominal_capacity_ah;
+        ds_config.nominal_voltage = nominal_voltage;
+        ds_config.max_temperature = max_temperature;
         
-        core_hlv_ = std::make_unique<hlv::HLVEnhancement>();
-        core_hlv_->init(hlv_config);
+        core_ds_ = std::make_unique<ds::DSEnhancement>();
+        core_ds_->init(ds_config);
         
         initialized_ = true;
     }
@@ -238,20 +238,20 @@ public:
         config_ = config;
         
         if (config_.mode == MiddlewareConfig::Mode::SINGLE_BATTERY) {
-            // Use core HLV with chemistry-optimized parameters
-            hlv::advanced::ChemistryLibrary chem_lib;
-            auto hlv_config = chem_lib.create_config(
+            // Use core DS with chemistry-optimized parameters
+            ds::advanced::ChemistryLibrary chem_lib;
+            auto ds_config = chem_lib.create_config(
                 config_.chemistry,
                 config_.nominal_capacity_ah,
                 config_.series_cells
             );
             
-            core_hlv_ = std::make_unique<hlv::HLVEnhancement>();
-            core_hlv_->init(hlv_config);
+            core_ds_ = std::make_unique<ds::DSEnhancement>();
+            core_ds_->init(ds_config);
             
         } else {
             // Use advanced system for multi-cell packs
-            advanced_system_ = std::make_unique<hlv::advanced::AdvancedHLVSystem>();
+            advanced_system_ = std::make_unique<ds::advanced::AdvancedDSSystem>();
             advanced_system_->init(
                 config_.chemistry,
                 config_.nominal_capacity_ah,
@@ -270,13 +270,13 @@ public:
     // ========================================================================
     
     // Single battery update (legacy interface - backward compatible)
-    hlv::EnhancedState enhance_cycle(double voltage, 
+    ds::EnhancedState enhance_cycle(double voltage,
                                     double current,
                                     double temperature, 
                                     double soc,
                                     double dt = 0.1) {
         if (!initialized_) {
-            throw std::runtime_error("HLVBMSMiddleware not initialized.");
+            throw std::runtime_error("DSBMSMiddleware not initialized.");
         }
         
         if (config_.mode != MiddlewareConfig::Mode::SINGLE_BATTERY) {
@@ -288,8 +288,8 @@ public:
         
         double start_time = get_time_ms();
         
-        // Call core HLV
-        auto result = core_hlv_->enhance(voltage, current, temperature, soc, dt);
+        // Call core DS
+        auto result = core_ds_->enhance(voltage, current, temperature, soc, dt);
         
         double end_time = get_time_ms();
         
@@ -306,7 +306,7 @@ public:
                     double pack_current,
                     double dt = 0.1) {
         if (!initialized_) {
-            throw std::runtime_error("HLVBMSMiddleware not initialized.");
+            throw std::runtime_error("DSBMSMiddleware not initialized.");
         }
         
         if (config_.mode != MiddlewareConfig::Mode::MULTI_CELL_PACK) {
@@ -342,29 +342,29 @@ public:
     // ========================================================================
     
     // Get health prediction
-    hlv::HealthPrediction get_health_forecast(double cycles_ahead = 100.0) {
+    ds::HealthPrediction get_health_forecast(double cycles_ahead = 100.0) {
         if (!initialized_) {
-            throw std::runtime_error("HLVBMSMiddleware not initialized.");
+            throw std::runtime_error("DSBMSMiddleware not initialized.");
         }
         
         if (config_.mode == MiddlewareConfig::Mode::SINGLE_BATTERY) {
-            return core_hlv_->get_health_forecast(cycles_ahead);
+            return core_ds_->get_health_forecast(cycles_ahead);
         } else {
             return advanced_system_->get_pack_health(cycles_ahead);
         }
     }
     
     // Get optimal charging profile
-    hlv::OptimalChargingProfile get_optimal_charging() {
+    ds::OptimalChargingProfile get_optimal_charging() {
         if (!initialized_) {
-            throw std::runtime_error("HLVBMSMiddleware not initialized.");
+            throw std::runtime_error("DSBMSMiddleware not initialized.");
         }
         
         if (config_.mode == MiddlewareConfig::Mode::SINGLE_BATTERY) {
-            return core_hlv_->get_optimal_charging();
+            return core_ds_->get_optimal_charging();
         } else {
             const auto& chemistry_profile = chemistry_lib_.get_profile(config_.chemistry);
-            hlv::OptimalChargingProfile profile_out;
+            ds::OptimalChargingProfile profile_out;
 
             const double max_current =
                 chemistry_profile.max_charge_rate * config_.nominal_capacity_ah;
@@ -433,7 +433,7 @@ public:
     
     // Get summary status
     std::string get_status_summary() const {
-        std::string status = "HLV BMS Status:\n";
+        std::string status = "DS BMS Status:\n";
         status += "  Mode: " + std::string(
             config_.mode == MiddlewareConfig::Mode::SINGLE_BATTERY 
             ? "Single Battery" : "Multi-Cell Pack"
@@ -469,18 +469,18 @@ public:
     }
 };
 
-} // namespace hlv_plugin
+} // namespace ds_plugin
 
-#endif // HLV_BMS_MIDDLEWARE_HPP
+#endif // DS_BMS_MIDDLEWARE_HPP
 
 /*
  * ============================================================================
  * EXAMPLE USAGE - SINGLE BATTERY MODE (Backward Compatible)
  * ============================================================================
  *
- * #include "hlv_bms_middleware_v2.hpp"
+ * #include "ds_bms_middleware_v2.hpp"
  *
- * hlv_plugin::HLVBMSMiddleware middleware;
+ * ds_plugin::DSBMSMiddleware middleware;
  * 
  * // Simple init (uses defaults)
  * middleware.init(75.0, 400.0);
@@ -496,22 +496,22 @@ public:
  * EXAMPLE USAGE - MULTI-CELL PACK MODE (New)
  * ============================================================================
  *
- * #include "hlv_bms_middleware_v2.hpp"
+ * #include "ds_bms_middleware_v2.hpp"
  *
- * using namespace hlv_plugin;
+ * using namespace ds_plugin;
  *
  * // Configure for Tesla-style pack (96S NMC cells)
  * MiddlewareConfig config;
  * config.nominal_capacity_ah = 75.0;
  * config.nominal_voltage = 400.0;
  * config.series_cells = 96;
- * config.chemistry = hlv::advanced::ChemistryType::NMC;
+ * config.chemistry = ds::advanced::ChemistryType::NMC;
  * config.mode = MiddlewareConfig::Mode::MULTI_CELL_PACK;
  * config.enable_kalman_filter = true;
  * config.enable_ml_hybrid = false;  // Optional
  * config.enable_fleet_learning = false;  // Opt-in
  *
- * HLVBMSMiddleware middleware;
+ * DSBMSMiddleware middleware;
  * middleware.init_advanced(config);
  *
  * // In your BMS loop:
@@ -550,17 +550,17 @@ public:
  * ============================================================================
  *
  * // For LFP batteries (BYD Blade style)
- * config.chemistry = hlv::advanced::ChemistryType::LFP;
+ * config.chemistry = ds::advanced::ChemistryType::LFP;
  * config.series_cells = 120;  // Lower voltage per cell
  * config.nominal_voltage = 384.0;  // 3.2V × 120
  *
  * // For LTO batteries (fast-charging buses)
- * config.chemistry = hlv::advanced::ChemistryType::LTO;
+ * config.chemistry = ds::advanced::ChemistryType::LTO;
  * config.series_cells = 167;  // Even lower voltage per cell
  * config.nominal_voltage = 400.0;  // 2.4V × 167
  *
  * // For NCA batteries (Tesla Model S/X)
- * config.chemistry = hlv::advanced::ChemistryType::NCA;
+ * config.chemistry = ds::advanced::ChemistryType::NCA;
  * config.series_cells = 96;
  * config.nominal_voltage = 345.6;  // 3.6V × 96
  *

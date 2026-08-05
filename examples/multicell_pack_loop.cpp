@@ -3,7 +3,7 @@
  * Multi-Cell Pack Example
  * ============================================================================
  *
- * Demonstrates HLV BMS Middleware in MULTI_CELL_PACK mode with:
+ * Demonstrates DS BMS Middleware in MULTI_CELL_PACK mode with:
  *  - Per-cell voltage & temperature inputs
  *  - Weak cell detection
  *  - Voltage imbalance monitoring
@@ -21,12 +21,12 @@
 #include <chrono>
 #include <algorithm>
 
-#include "hlv_bms_middleware_v2.hpp"
+#include "ds_bms_middleware_v2.hpp"
 
-using namespace hlv_plugin;
+using namespace ds_plugin;
 
 int main() {
-    std::cout << "=== HLV BMS Middleware – Multi-Cell Pack Example ===\n\n";
+    std::cout << "=== DS BMS Middleware – Multi-Cell Pack Example ===\n\n";
 
     // ------------------------------------------------------------------------
     // Configuration
@@ -34,7 +34,7 @@ int main() {
 
     MiddlewareConfig config;
     config.mode = MiddlewareConfig::Mode::MULTI_CELL_PACK;
-    config.chemistry = hlv::advanced::ChemistryType::NMC;
+    config.chemistry = ds::advanced::ChemistryType::NMC;
     config.nominal_capacity_ah = 75.0;
     config.nominal_voltage = 400.0;
     config.series_cells = 96;
@@ -42,7 +42,7 @@ int main() {
     config.enable_cell_balancing = true;
     config.enable_logging = true;
 
-    HLVBMSMiddleware bms;
+    DSBMSMiddleware bms;
     bms.init_advanced(config);
 
     // ------------------------------------------------------------------------

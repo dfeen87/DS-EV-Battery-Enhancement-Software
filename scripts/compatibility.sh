@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================================
-# HLV EV Battery Enhancement - Compatibility Validation Utility
+# DS EV Battery Enhancement - Compatibility Validation Utility
 # ============================================================================
 set -euo pipefail
 
@@ -8,7 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DIAG_SCRIPT="${SCRIPT_DIR}/diagnostics.py"
 
 echo "===================================================================="
-echo "HLV EV VEHICLE & COMPATIBILITY VALIDATION"
+echo "DS EV VEHICLE & COMPATIBILITY VALIDATION"
 echo "===================================================================="
 
 if [ -f "$DIAG_SCRIPT" ]; then

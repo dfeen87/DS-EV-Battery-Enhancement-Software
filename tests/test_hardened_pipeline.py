@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-HLV EV Battery Enhancement - Hardened Integration and Pipeline Test Suite
+DS EV Battery Enhancement - Hardened Integration and Pipeline Test Suite
 ========================================================================
 
 Verifies safety boundaries, limp/derate modes, installer safety gates,
@@ -15,8 +15,8 @@ import subprocess
 import shutil
 import json
 
-# Add hlv_core/lib to path so we can import pybind11 module if needed
-sys.path.insert(0, os.path.abspath("hlv_core/lib"))
+# Add ds_core/lib to path so we can import pybind11 module if needed
+sys.path.insert(0, os.path.abspath("ds_core/lib"))
 
 class TestHardenedPipeline(unittest.TestCase):
 
@@ -109,19 +109,19 @@ class TestHardenedPipeline(unittest.TestCase):
 
     def test_limp_and_derate_modes(self):
         try:
-            import hlv_enhancer_pybind as h
+            import ds_enhancer_pybind as h
         except ImportError:
             self.skipTest("pybind11 module not found on path")
 
         # Create state with low SOH/degradation
-        middleware = h.HLVBMSMiddleware()
+        middleware = h.DSBMSMiddleware()
         middleware.init(75.0, 400.0)
 
         # A. Critical SOC (Limp Mode)
         # With SOC at 3% (below 5%), overall scaling should be aggressive derating (limp mode)
         enhanced = middleware.enhance_cycle(360.0, 50.0, 25.0, 0.03, 1.0)
         config = h.TorqueConfig()
-        tm = h.HLVTorqueManager(config)
+        tm = h.DSTorqueManager(config)
         result = tm.compute_torque_limit(enhanced, 4000.0, 0.01)
         self.assertTrue(result.limp_mode_active)
         self.assertTrue(result.soc_derate_active)
@@ -153,7 +153,7 @@ class TestHardenedPipeline(unittest.TestCase):
         # We can run Makefile install with env overrides under sudo
         # If SOH is set to 75% via env, install MUST be rejected
         env = os.environ.copy()
-        env["HLV_SOH"] = "75.0"
+        env["DS_SOH"] = "75.0"
 
         res = subprocess.run(["sudo", "-E", "make", "install"], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         self.assertNotEqual(res.returncode, 0)
@@ -161,10 +161,10 @@ class TestHardenedPipeline(unittest.TestCase):
 
         # If metrics are nominal (e.g. SOH 92.5%), install should succeed
         env_ok = os.environ.copy()
-        env_ok["HLV_SOH"] = "92.5"
+        env_ok["DS_SOH"] = "92.5"
         res_ok = subprocess.run(["sudo", "-E", "make", "install"], env=env_ok, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         self.assertEqual(res_ok.returncode, 0)
-        self.assertIn("HLV Software Suite successfully deployed", res_ok.stdout)
+        self.assertIn("DS Software Suite successfully deployed", res_ok.stdout)
 
     # ========================================================================
     # 4. Backup & Rollback behavior
@@ -174,8 +174,8 @@ class TestHardenedPipeline(unittest.TestCase):
         # 1. Take a safe install
         subprocess.run(["sudo", "make", "install"], stdout=subprocess.DEVNULL)
 
-        # 2. Write a dummy config file inside /opt/hlv_enhancement/config/dummy.json
-        dummy_file = "/opt/hlv_enhancement/config/dummy.json"
+        # 2. Write a dummy config file inside /opt/ds_enhancement/config/dummy.json
+        dummy_file = "/opt/ds_enhancement/config/dummy.json"
         with open(dummy_file, "w") as f:
             f.write('{"test": "rollback"}')
 

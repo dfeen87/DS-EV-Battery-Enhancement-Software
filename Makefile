@@ -1,29 +1,29 @@
 # ============================================================================
-# HLV EV Battery Enhancement - System Distribution Makefile
+# DS EV Battery Enhancement - System Distribution Makefile
 # ============================================================================
 
 .PHONY: all verify diagnostics install update rollback clean help static-analysis
 
 # Directories
-INSTALL_DIR = /opt/hlv_enhancement
+INSTALL_DIR = /opt/ds_enhancement
 LOG_FILE = $(INSTALL_DIR)/logs/install.log
 LOCAL_LOG = logs/install.log
 
 # Logger macro (single-line shell safe)
 define log_action
-	mkdir -p $(INSTALL_DIR)/logs 2>/dev/null || true; mkdir -p logs 2>/dev/null || true; echo "[`date +'%Y-%m-%d %H:%M:%S'`] VERSION: 4.1.0 | ACTION: $(1) | STATUS: $(2) | INFO: $(3)" | tee -a $(LOG_FILE) $(LOCAL_LOG) 2>/dev/null || true
+	mkdir -p $(INSTALL_DIR)/logs 2>/dev/null || true; mkdir -p logs 2>/dev/null || true; echo "[`date +'%Y-%m-%d %H:%M:%S'`] VERSION: 4.2.0 | ACTION: $(1) | STATUS: $(2) | INFO: $(3)" | tee -a $(LOG_FILE) $(LOCAL_LOG) 2>/dev/null || true
 endef
 
 all: help
 
 help:
-	@echo "HLV EV Battery Enhancement Software - Distribution Makefile"
+	@echo "DS EV Battery Enhancement Software - Distribution Makefile"
 	@echo "===================================================================="
 	@echo "Available Targets:"
 	@echo "  make verify          - Run static analysis and environment checks"
 	@echo "  make static-analysis - Run clang-tidy and cppcheck static analyses"
 	@echo "  make diagnostics     - Run pre-flight EV battery diagnostics and safety checks"
-	@echo "  make install         - Backup, compile, and install to /opt/hlv_enhancement"
+	@echo "  make install         - Backup, compile, and install to /opt/ds_enhancement"
 	@echo "  make update          - Pull updates and safely redeploy via scripts/update.py"
 	@echo "  make rollback        - Restore the previous stable version using the last backup"
 	@echo "  make clean           - Clean temporary build outputs"
@@ -33,9 +33,9 @@ help:
 static-analysis:
 	@echo "Running Static Analysis..."
 	@echo "Running cppcheck..."
-	@cppcheck --enable=warning,performance,portability --inline-suppr --error-exitcode=1 -I include include/ hlv_core/src/
+	@cppcheck --enable=warning,performance,portability --inline-suppr --error-exitcode=1 -I include include/ ds_core/src/
 	@echo "Running clang-tidy..."
-	@clang-tidy hlv_core/src/hlv_enhancer.cpp -- -std=c++17 -Iinclude -Ihlv_core/src 2>/dev/null || echo "NOTICE: clang-tidy analysis completed (with platform warnings ignored)."
+	@clang-tidy ds_core/src/ds_enhancer.cpp -- -std=c++17 -Iinclude -Ids_core/src 2>/dev/null || echo "NOTICE: clang-tidy analysis completed (with platform warnings ignored)."
 	@$(call log_action,static-analysis,SUCCESS,Passed cppcheck and clang-tidy analysis)
 
 # 2. verify — run environment checks
@@ -65,7 +65,7 @@ install:
 	fi
 
 	@echo "===================================================================="
-	@echo "HLV EV SOFTWARE INSTALLATION PROCESS"
+	@echo "DS EV SOFTWARE INSTALLATION PROCESS"
 	@echo "===================================================================="
 
 	@# Enforce safety: Refuse installation if diagnostics fail
@@ -92,15 +92,15 @@ install:
 	@./scripts/rollback.sh backup
 
 	@# Compile high-performance C++ CLI, Shared Library, and pybind11 module
-	@echo "Compiling high-performance C++ HLV components..."
+	@echo "Compiling high-performance C++ DS components..."
 	@cmake -B build -DCMAKE_BUILD_TYPE=Release
 	@cmake --build build
 
 	@# Copy compiled assets to target directory
 	@echo "Deploying binaries and shared libraries..."
-	@cp -p hlv_core/bin/hlv_enhancer $(INSTALL_DIR)/bin/
-	@cp -p hlv_core/lib/libhlv_enhancer.* $(INSTALL_DIR)/lib/
-	@cp -p hlv_core/lib/hlv_enhancer_pybind.* $(INSTALL_DIR)/lib/ 2>/dev/null || cp -p hlv_core/lib/hlv_enhancer_pybind.*.so $(INSTALL_DIR)/lib/
+	@cp -p ds_core/bin/ds_enhancer $(INSTALL_DIR)/bin/
+	@cp -p ds_core/lib/libds_enhancer.* $(INSTALL_DIR)/lib/
+	@cp -p ds_core/lib/ds_enhancer_pybind.* $(INSTALL_DIR)/lib/ 2>/dev/null || cp -p ds_core/lib/ds_enhancer_pybind.*.so $(INSTALL_DIR)/lib/
 
 	@# Copy scripts and utilities
 	@echo "Deploying system scripts..."
@@ -110,8 +110,8 @@ install:
 
 	@# Copy Python wrapper and fallbacks
 	@echo "Deploying Python integration wrappers..."
-	@cp -p hlv_core/python/hlv_enhancer.py $(INSTALL_DIR)/python/
-	@cp -p hlv_core/python_fallback/hlv_enhancer_fallback.py $(INSTALL_DIR)/python_fallback/
+	@cp -p ds_core/python/ds_enhancer.py $(INSTALL_DIR)/python/
+	@cp -p ds_core/python_fallback/ds_enhancer_fallback.py $(INSTALL_DIR)/python_fallback/
 
 	@# Copy configuration profiles
 	@echo "Deploying configurations..."
@@ -127,9 +127,9 @@ install:
 
 	@# Log the outcome
 	@echo "Logging installation details..."
-	@$(call log_action,install,SUCCESS,HLV EV Software suite successfully installed to $(INSTALL_DIR))
+	@$(call log_action,install,SUCCESS,DS EV Software suite successfully installed to $(INSTALL_DIR))
 	@echo "===================================================================="
-	@echo "✓ HLV Software Suite successfully deployed to $(INSTALL_DIR)."
+	@echo "✓ DS Software Suite successfully deployed to $(INSTALL_DIR)."
 	@echo "===================================================================="
 
 # 5. update — pull latest version, re-run safety checks, apply updates
@@ -141,10 +141,10 @@ update:
 	fi
 
 	@echo "===================================================================="
-	@echo "HLV EV SOFTWARE UPDATE PROCESS"
+	@echo "DS EV SOFTWARE UPDATE PROCESS"
 	@echo "===================================================================="
 	@if python3 scripts/update.py; then \
-		$(call log_action,update,SUCCESS,HLV Software suite updated successfully); \
+		$(call log_action,update,SUCCESS,DS Software suite updated successfully); \
 	else \
 		$(call log_action,update,FAILED,Update failed); \
 		exit 1; \
@@ -159,10 +159,10 @@ rollback:
 	fi
 
 	@echo "===================================================================="
-	@echo "HLV EV SOFTWARE ROLLBACK PROCESS"
+	@echo "DS EV SOFTWARE ROLLBACK PROCESS"
 	@echo "===================================================================="
 	@if ./scripts/rollback.sh restore; then \
-		$(call log_action,rollback,SUCCESS,HLV Software suite rolled back successfully); \
+		$(call log_action,rollback,SUCCESS,DS Software suite rolled back successfully); \
 	else \
 		$(call log_action,rollback,FAILED,Rollback failed); \
 		exit 1; \

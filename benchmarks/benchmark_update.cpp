@@ -1,25 +1,25 @@
 /*
  * ============================================================================
- * HLV BATTERY ENHANCEMENT - UPDATE BENCHMARK
+ * DS BATTERY ENHANCEMENT - UPDATE BENCHMARK
  * ============================================================================
  * 
- * Performance benchmark for HLV update cycle
+ * Performance benchmark for DS update cycle
  * 
  * ============================================================================
  */
 
-#include "hlv_battery_enhancement.hpp"
+#include "ds_battery_enhancement.hpp"
 #include <iostream>
 #include <chrono>
 #include <iomanip>
 
 int main() {
     std::cout << "============================================================================\n";
-    std::cout << "HLV UPDATE CYCLE BENCHMARK\n";
+    std::cout << "DS UPDATE CYCLE BENCHMARK\n";
     std::cout << "============================================================================\n\n";
     
-    hlv::HLVEnhancement enhancer;
-    hlv::HLVConfig config;
+    ds::DSEnhancement enhancer;
+    ds::DSConfig config;
     enhancer.init(config);
     
     const int NUM_ITERATIONS = 100000;

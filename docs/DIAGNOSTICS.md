@@ -1,12 +1,12 @@
-# HLV EV Battery Enhancement - Diagnostics Reference
+# DS EV Battery Enhancement - Diagnostics Reference
 
-This document describes the design, rules, thresholds, and execution of the Pre-Flight Diagnostics layer of the Helix-Light-Vortex (HLV) EV Battery Enhancement Software.
+This document describes the design, rules, thresholds, and execution of the Pre-Flight Diagnostics layer of the Dual-State (DS) EV Battery Enhancement Software.
 
 ---
 
 ## 🔍 Pre-Flight Diagnostics Overview
 
-Before deploying, updating, or performing maintenance on the high-performance HLV core, the vehicle environment must satisfy rigorous safety criteria. Diagnostics run dynamically using `scripts/diagnostics.py` (which is fully integrated into the top-level `Makefile`).
+Before deploying, updating, or performing maintenance on the high-performance DS core, the vehicle environment must satisfy rigorous safety criteria. Diagnostics run dynamically using `scripts/diagnostics.py` (which is fully integrated into the top-level `Makefile`).
 
 ### Safety Gates
 If **any** diagnostic check fails, the installer **refuses** to proceed, and the deployment is **BLOCKED**. This is a safety-critical hard gate to ensure the enhancement software is never loaded under unsafe physical, OS, or firmware conditions.
@@ -19,7 +19,7 @@ The diagnostics layer reads vehicle telemetry from `/tmp/vehicle_status.json`, `
 
 ### 1. State of Health (SOH)
 * **Threshold**: **SOH ≥ 80.0%**
-* **Reasoning**: Batteries below 80% SOH exhibit non-linear chemical degradation, unstable internal resistances, and potential cell degradation that violates the coupling assumptions of the HLV physics engine. Enabling enhancement on such cells is blocked to prevent accelerated wear or localized cell overheating.
+* **Reasoning**: Batteries below 80% SOH exhibit non-linear chemical degradation, unstable internal resistances, and potential cell degradation that violates the coupling assumptions of the DS physics engine. Enabling enhancement on such cells is blocked to prevent accelerated wear or localized cell overheating.
 
 ### 2. State of Charge (SOC)
 * **Threshold**: **20.0% ≤ SOC ≤ 90.0%**
@@ -57,12 +57,12 @@ Developers and automated test rigs can simulate and override diagnostics via CLI
 
 ### 2. Environment Variable Overrides
 ```bash
-export HLV_SOH=85.0
-export HLV_TEMP_C=25.0
-export HLV_SOC=60.0
-export HLV_VOLTAGE_V=360.0
-export HLV_MODEL=Tesla_Model_3_LR
-export HLV_FIRMWARE=v2024.12.15
+export DS_SOH=85.0
+export DS_TEMP_C=25.0
+export DS_SOC=60.0
+export DS_VOLTAGE_V=360.0
+export DS_MODEL=Tesla_Model_3_LR
+export DS_FIRMWARE=v2024.12.15
 
 make diagnostics
 ```
@@ -82,4 +82,4 @@ The `scripts/diagnostics.py` script exits with specific integer codes indicating
 | **4** | **SAFETY VIOLATION** | SOH, Temperature, SOC, or Voltage outside of safe ranges. |
 
 All diagnostic actions and results are logged securely to:
-`/opt/hlv_enhancement/logs/install.log`
+`/opt/ds_enhancement/logs/install.log`

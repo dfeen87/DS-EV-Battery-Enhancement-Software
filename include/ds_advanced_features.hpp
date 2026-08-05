@@ -1,27 +1,27 @@
 /*
  * ============================================================================
- * HLV BATTERY ENHANCEMENT - ADVANCED FEATURES MODULE
+ * DS BATTERY ENHANCEMENT - ADVANCED FEATURES MODULE
  * ============================================================================
  * 
- * Advanced capabilities extending the core HLV Battery Enhancement Library:
+ * Advanced capabilities extending the core DS Battery Enhancement Library:
  *   - Chemistry-specific parameter tuning (LFP, NMC, NCA, LTO)
  *   - Multi-cell pack support with cell-to-cell variance modeling
  *   - Kalman filter integration for state estimation
- *   - ML hybrid models (HLV physics + data-driven learning)
+ *   - ML hybrid models (DS physics + data-driven learning)
  *   - Fleet-wide learning and anonymized data aggregation
  *   - GPU acceleration for large battery packs
  * 
- * This module maintains the core HLV physics while adding production-ready
+ * This module maintains the core DS physics while adding production-ready
  * features for real-world EV deployment.
  * 
  * ============================================================================
  */
 
-#ifndef HLV_ADVANCED_FEATURES_HPP
-#define HLV_ADVANCED_FEATURES_HPP
+#ifndef DS_ADVANCED_FEATURES_HPP
+#define DS_ADVANCED_FEATURES_HPP
 
-#include "hlv_battery_core.hpp"
-#include "hlv_battery_enhancement.hpp"
+#include "ds_battery_core.hpp"
+#include "ds_battery_enhancement.hpp"
 #include <vector>
 #include <array>
 #include <map>
@@ -35,7 +35,7 @@
 #include <sstream>
 #include <stdexcept>
 
-namespace hlv {
+namespace ds {
 namespace advanced {
 
 // ============================================================================
@@ -54,7 +54,7 @@ struct ChemistryProfile {
     ChemistryType type;
     std::string name;
     
-    // HLV-specific parameters tuned for chemistry
+    // DS-specific parameters tuned for chemistry
     double lambda;                  // Coupling strength
     double phi_decay_rate;          // Information decay
     double entropy_weight;          // Thermal sensitivity
@@ -163,12 +163,12 @@ public:
         return profiles_.at(type);
     }
     
-    HLVConfig create_config(ChemistryType type, 
+    DSConfig create_config(ChemistryType type,
                            double capacity_ah, 
                            int series_cells) const {
         const auto& profile = get_profile(type);
         
-        HLVConfig config;
+        DSConfig config;
         config.lambda = profile.lambda;
         config.phi_decay_rate = profile.phi_decay_rate;
         config.entropy_weight = profile.entropy_weight;
@@ -186,7 +186,7 @@ public:
 
 struct CellState {
     int cell_id;
-    HLVState state;
+    DSState state;
     double relative_capacity;  // Normalized to pack average
     double internal_resistance; // Ohms
     bool is_weak_cell;         // Flagged as problematic
@@ -196,7 +196,7 @@ struct CellState {
 // GPU ACCELERATION INTERFACE (for large packs)
 // ============================================================================
 
-#ifdef HLV_USE_GPU
+#ifdef DS_USE_GPU
 // Placeholder for GPU acceleration
 // In production: use CUDA/OpenCL for parallel cell updates
 namespace gpu {
@@ -204,13 +204,13 @@ namespace gpu {
 class GPUAccelerator {
 public:
     void update_cells_parallel(std::vector<CellState>& cells,
-                               HLVCoupling& coupling,
+                               DSCoupling& coupling,
                                double dt) {
         // GPU kernel placeholder with CPU fallback
         // Pseudocode:
         // - Copy cell states to GPU memory
         // - Launch kernel: one thread per cell
-        // - Each thread runs HLVCoupling::update()
+        // - Each thread runs DSCoupling::update()
         // - Copy results back to CPU
         for (auto& cell : cells) {
             coupling.update(cell.state, dt);
@@ -225,7 +225,7 @@ class MultiCellPack {
 private:
     std::vector<CellState> cells_;
     ChemistryProfile chemistry_;
-    HLVCoupling coupling_;
+    DSCoupling coupling_;
     
     // Pack-level statistics
     double pack_voltage_;
@@ -278,7 +278,7 @@ private:
 public:
     MultiCellPack(int num_cells, const ChemistryProfile& chemistry)
         : chemistry_(chemistry),
-          coupling_(HLVConfig()),
+          coupling_(DSConfig()),
           pack_voltage_(0.0),
           pack_current_(0.0),
           average_temperature_(0.0),
@@ -320,7 +320,7 @@ public:
             cells_[i].state.state_of_charge = std::clamp(v_norm, 0.0, 1.0);
         }
 
-#ifdef HLV_USE_GPU
+#ifdef DS_USE_GPU
         gpu::GPUAccelerator accelerator;
         accelerator.update_cells_parallel(cells_, coupling_, dt);
 #else
@@ -369,7 +369,7 @@ public:
 // KALMAN FILTER INTEGRATION
 // ============================================================================
 
-class KalmanHLVFilter {
+class KalmanDSFilter {
 private:
     // State vector: [SoC, degradation, phi_magnitude, entropy]
     std::array<double, 4> x_;     // State estimate
@@ -379,35 +379,35 @@ private:
     double process_noise_;
     double measurement_noise_;
     
-    HLVState last_hlv_state_;
+    DSState last_ds_state_;
     
 public:
-    KalmanHLVFilter(double process_noise = 1e-5,
+    KalmanDSFilter(double process_noise = 1e-5,
                    double measurement_noise = 1e-3)
         : x_{1.0, 0.0, 0.0, 0.0},
           P_{0.01, 0.01, 0.01, 0.01},
           process_noise_(process_noise),
           measurement_noise_(measurement_noise),
-          last_hlv_state_{} {
+          last_ds_state_{} {
     }
     
-    // Predict step using HLV dynamics
-    void predict(const HLVState& hlv_state, double dt) {
-        // Use HLV coupling as the state transition model
+    // Predict step using DS dynamics
+    void predict(const DSState& ds_state, double dt) {
+        // Use DS coupling as the state transition model
         // x_k|k-1 = f(x_k-1, u_k)
         
-        // Simple Euler integration of HLV dynamics
-        x_[0] = hlv_state.state_of_charge; // SoC from HLV
-        x_[1] = hlv_state.degradation;     // Degradation from HLV
-        x_[2] = hlv_state.phi_magnitude;   // Phi from HLV
-        x_[3] = hlv_state.entropy;         // Entropy from HLV
+        // Simple Euler integration of DS dynamics
+        x_[0] = ds_state.state_of_charge; // SoC from DS
+        x_[1] = ds_state.degradation;     // Degradation from DS
+        x_[2] = ds_state.phi_magnitude;   // Phi from DS
+        x_[3] = ds_state.entropy;         // Entropy from DS
         
         // Increase uncertainty (process noise)
         for (int i = 0; i < 4; ++i) {
             P_[i] += process_noise_ * dt;
         }
         
-        last_hlv_state_ = hlv_state;
+        last_ds_state_ = ds_state;
     }
     
     // Update step with measurements
@@ -446,7 +446,7 @@ public:
 };
 
 // ============================================================================
-// ML HYBRID MODEL (HLV + Neural Network)
+// ML HYBRID MODEL (DS + Neural Network)
 // ============================================================================
 
 struct MLFeatures {
@@ -456,15 +456,15 @@ struct MLFeatures {
     double current;
     double temperature;
     double cycle_count;
-    double hlv_metric_trace;
-    double hlv_phi_magnitude;
-    double hlv_entropy;
-    double hlv_predicted_degradation;
+    double ds_metric_trace;
+    double ds_phi_magnitude;
+    double ds_entropy;
+    double ds_predicted_degradation;
     
     std::vector<double> to_vector() const {
         return {soc, voltage, current, temperature, cycle_count,
-                hlv_metric_trace, hlv_phi_magnitude, hlv_entropy,
-                hlv_predicted_degradation};
+                ds_metric_trace, ds_phi_magnitude, ds_entropy,
+                ds_predicted_degradation};
     }
 };
 
@@ -583,7 +583,7 @@ struct AnonymizedBatteryData {
     int cycle_count;
     double average_temperature;
     double degradation_rate;
-    double hlv_metric_trace_avg;
+    double ds_metric_trace_avg;
     // NO personally identifiable information
 };
 
@@ -633,11 +633,11 @@ public:
 // ADVANCED FEATURES INTEGRATION CLASS
 // ============================================================================
 
-class AdvancedHLVSystem {
+class AdvancedDSSystem {
 private:
     ChemistryLibrary chemistry_lib_;
     std::unique_ptr<MultiCellPack> pack_;
-    std::unique_ptr<KalmanHLVFilter> kalman_;
+    std::unique_ptr<KalmanDSFilter> kalman_;
     std::unique_ptr<MLHybridModel> ml_model_;
     FleetLearningAggregator fleet_aggregator_;
     
@@ -656,7 +656,7 @@ private:
     double last_filtered_degradation_;
     
 public:
-    AdvancedHLVSystem()
+    AdvancedDSSystem()
         : chemistry_type_(ChemistryType::NMC),
           use_kalman_(false),
           use_ml_(false),
@@ -688,7 +688,7 @@ public:
         
         // Initialize Kalman filter
         if (use_kalman_) {
-            kalman_ = std::make_unique<KalmanHLVFilter>();
+            kalman_ = std::make_unique<KalmanDSFilter>();
         }
         
         // Initialize ML model
@@ -702,12 +702,12 @@ public:
                double pack_current,
                double dt) {
         
-        // Update all cells with HLV dynamics
+        // Update all cells with DS dynamics
         pack_->update_all_cells(cell_voltages, cell_temperatures,
                                 pack_current, dt);
 
         const auto& cells = pack_->get_cells();
-        HLVState average_state;
+        DSState average_state;
         average_state.temperature = 0.0;
         average_state.voltage = 0.0;
         average_state.current = 0.0;
@@ -832,6 +832,6 @@ public:
 };
 
 } // namespace advanced
-} // namespace hlv
+} // namespace ds
 
-#endif // HLV_ADVANCED_FEATURES_HPP
+#endif // DS_ADVANCED_FEATURES_HPP

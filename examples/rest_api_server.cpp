@@ -1,9 +1,9 @@
 /*
  * ============================================================================
- * HLV REST API SERVER - EXAMPLE APPLICATION
+ * DS REST API SERVER - EXAMPLE APPLICATION
  * ============================================================================
  *
- * This example demonstrates how to integrate the HLV REST API server with
+ * This example demonstrates how to integrate the DS REST API server with
  * your battery management, torque enhancement, and regenerative braking
  * control loops.
  *
@@ -28,11 +28,11 @@
  * ============================================================================
  */
 
-#include "hlv_battery_enhancement.hpp"
-#include "hlv_bms_middleware_v2.hpp"
+#include "ds_battery_enhancement.hpp"
+#include "ds_bms_middleware_v2.hpp"
 #include "torque_enhancement.hpp"
-#include "hlv_regen_braking_manager_v1.hpp"
-#include "hlv_rest_api.hpp"
+#include "ds_regen_braking_manager_v1.hpp"
+#include "ds_rest_api.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -145,32 +145,32 @@ BatterySensors simulate_battery(double time, const VehicleState& vehicle) {
 
 int main() {
     std::cout << "==========================================================\n";
-    std::cout << "HLV REST API Server - Example Application\n";
+    std::cout << "DS REST API Server - Example Application\n";
     std::cout << "==========================================================\n\n";
     
     // Install signal handlers
     std::signal(SIGINT, signal_handler);
     std::signal(SIGTERM, signal_handler);
     
-    // Initialize HLV middleware
-    std::cout << "Initializing HLV BMS Middleware...\n";
-    hlv_plugin::HLVBMSMiddleware middleware;
+    // Initialize DS middleware
+    std::cout << "Initializing DS BMS Middleware...\n";
+    ds_plugin::DSBMSMiddleware middleware;
     middleware.init(75.0, 400.0);  // 75Ah, 400V battery
     
     // Initialize torque manager
-    std::cout << "Initializing HLV Torque Manager...\n";
-    hlv::drive::TorqueConfig torque_config;
-    hlv::drive::HLVTorqueManager torque_mgr;
+    std::cout << "Initializing DS Torque Manager...\n";
+    ds::drive::TorqueConfig torque_config;
+    ds::drive::DSTorqueManager torque_mgr;
     torque_mgr.init(torque_config);
     
     // Initialize regen manager
-    std::cout << "Initializing HLV Regen Manager...\n";
-    hlv::drive::RegenConfig regen_config;
-    hlv::drive::HLVRegenBrakingManager regen_mgr(regen_config);
+    std::cout << "Initializing DS Regen Manager...\n";
+    ds::drive::RegenConfig regen_config;
+    ds::drive::DSRegenBrakingManager regen_mgr(regen_config);
     
     // Initialize and start REST API server
     std::cout << "Starting REST API server on 0.0.0.0:8080...\n";
-    hlv::api::RestApiServer api_server("0.0.0.0", 8080);
+    ds::api::RestApiServer api_server("0.0.0.0", 8080);
     
     if (!api_server.start()) {
         std::cerr << "ERROR: Failed to start API server!\n";
@@ -217,7 +217,7 @@ int main() {
             // Simulate battery sensors
             BatterySensors battery = simulate_battery(sim_time, vehicle);
             
-            // Update HLV middleware with sensor data
+            // Update DS middleware with sensor data
             auto enhanced_state = middleware.enhance_cycle(
                 battery.voltage,
                 battery.current,

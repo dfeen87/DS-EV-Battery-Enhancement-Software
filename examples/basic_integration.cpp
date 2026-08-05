@@ -1,9 +1,9 @@
 /*
  * ============================================================================
- * HLV BATTERY ENHANCEMENT - BASIC INTEGRATION EXAMPLE
+ * DS BATTERY ENHANCEMENT - BASIC INTEGRATION EXAMPLE
  * ============================================================================
  * 
- * This file demonstrates the simplest possible integration of HLV into
+ * This file demonstrates the simplest possible integration of DS into
  * an existing Battery Management System.
  * 
  * Compile:
@@ -15,8 +15,8 @@
  * ============================================================================
  */
 
-#include "hlv_battery_enhancement.hpp"
-#include "hlv_bms_middleware_v2.hpp"
+#include "ds_battery_enhancement.hpp"
+#include "ds_bms_middleware_v2.hpp"
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -64,11 +64,11 @@ BMSSensors simulate_sensors(double time_in_cycle) {
 void example_1_drop_in_integration() {
     std::cout << "\n=== EXAMPLE 1: Drop-In Integration ===\n\n";
     
-    // Initialize HLV middleware
-    hlv_plugin::HLVBMSMiddleware middleware;
+    // Initialize DS middleware
+    ds_plugin::DSBMSMiddleware middleware;
     middleware.init(75.0, 400.0); // 75Ah, 400V battery
     
-    std::cout << "Running 10 charge cycles with HLV enhancement...\n\n";
+    std::cout << "Running 10 charge cycles with DS enhancement...\n\n";
     
     // Simulate 10 cycles
     for (int cycle = 0; cycle < 10; ++cycle) {
@@ -79,7 +79,7 @@ void example_1_drop_in_integration() {
             // Read sensors (THIS IS YOUR EXISTING BMS CODE)
             auto sensors = simulate_sensors(time);
             
-            // ADD JUST THIS ONE LINE - Get HLV enhancement
+            // ADD JUST THIS ONE LINE - Get DS enhancement
             auto enhanced = middleware.enhance_cycle(
                 sensors.voltage,
                 sensors.current,
@@ -119,7 +119,7 @@ void example_1_drop_in_integration() {
 void example_2_diagnostics() {
     std::cout << "\n=== EXAMPLE 2: Using Diagnostics ===\n\n";
     
-    hlv_plugin::HLVBMSMiddleware middleware;
+    ds_plugin::DSBMSMiddleware middleware;
     middleware.init(75.0, 400.0);
     
     // Run a few cycles
@@ -145,7 +145,7 @@ void example_2_diagnostics() {
     std::cout << "  Metric Trace: " << diag.metric_trace << "\n";
     std::cout << "  Phi Magnitude: " << diag.phi_magnitude << "\n";
     std::cout << "  Entropy Level: " << diag.entropy_level << "\n";
-    std::cout << "  HLV Confidence: " << diag.hlv_confidence * 100 << "%\n";
+    std::cout << "  DS Confidence: " << diag.ds_confidence * 100 << "%\n";
     
     // Check warnings
     std::cout << "\nWarning Status:\n";
@@ -165,23 +165,23 @@ void example_3_chemistry_optimization() {
     std::cout << "\n=== EXAMPLE 3: Chemistry-Specific Optimization ===\n\n";
     
     // Test different chemistries
-    std::vector<hlv::advanced::ChemistryType> chemistries = {
-        hlv::advanced::ChemistryType::LFP,
-        hlv::advanced::ChemistryType::NMC,
-        hlv::advanced::ChemistryType::NCA,
-        hlv::advanced::ChemistryType::LTO
+    std::vector<ds::advanced::ChemistryType> chemistries = {
+        ds::advanced::ChemistryType::LFP,
+        ds::advanced::ChemistryType::NMC,
+        ds::advanced::ChemistryType::NCA,
+        ds::advanced::ChemistryType::LTO
     };
     
     std::vector<std::string> names = {"LFP", "NMC", "NCA", "LTO"};
     
     for (size_t i = 0; i < chemistries.size(); ++i) {
-        hlv_plugin::MiddlewareConfig config;
+        ds_plugin::MiddlewareConfig config;
         config.chemistry = chemistries[i];
         config.nominal_capacity_ah = 75.0;
         config.nominal_voltage = 400.0;
-        config.mode = hlv_plugin::MiddlewareConfig::Mode::SINGLE_BATTERY;
+        config.mode = ds_plugin::MiddlewareConfig::Mode::SINGLE_BATTERY;
         
-        hlv_plugin::HLVBMSMiddleware middleware;
+        ds_plugin::DSBMSMiddleware middleware;
         middleware.init_advanced(config);
         
         // Run 100 cycles
@@ -212,7 +212,7 @@ void example_3_chemistry_optimization() {
 void example_4_optimal_charging() {
     std::cout << "\n=== EXAMPLE 4: Optimal Charging Recommendations ===\n\n";
     
-    hlv_plugin::HLVBMSMiddleware middleware;
+    ds_plugin::DSBMSMiddleware middleware;
     middleware.init(75.0, 400.0);
     
     // Simulate battery at different states of charge
@@ -252,7 +252,7 @@ void example_4_optimal_charging() {
 void example_5_degradation_forecast() {
     std::cout << "\n=== EXAMPLE 5: Long-Term Degradation Forecast ===\n\n";
     
-    hlv_plugin::HLVBMSMiddleware middleware;
+    ds_plugin::DSBMSMiddleware middleware;
     middleware.init(75.0, 400.0);
     
     // Age the battery through 500 cycles
@@ -290,8 +290,8 @@ void example_5_degradation_forecast() {
 
 int main() {
     std::cout << "============================================================================\n";
-    std::cout << "HLV BATTERY ENHANCEMENT - INTEGRATION EXAMPLES\n";
-    std::cout << "Version: " << hlv::HLVEnhancement::get_version() << "\n";
+    std::cout << "DS BATTERY ENHANCEMENT - INTEGRATION EXAMPLES\n";
+    std::cout << "Version: " << ds::DSEnhancement::get_version() << "\n";
     std::cout << "============================================================================\n";
     
     try {

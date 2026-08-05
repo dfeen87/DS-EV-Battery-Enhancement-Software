@@ -23,36 +23,36 @@
 #include <chrono>
 #include <cmath>
 
-#include "hlv_bms_middleware_v2.hpp"
-#include "hlv_regen_braking_manager_v1.hpp"
-#include "hlv_energy_recovery_coordinator_v1.hpp"
+#include "ds_bms_middleware_v2.hpp"
+#include "ds_regen_braking_manager_v1.hpp"
+#include "ds_energy_recovery_coordinator_v1.hpp"
 
 int main() {
-    std::cout << "\n=== HLV Closed-Loop Regen Charging Demo ===\n\n";
+    std::cout << "\n=== DS Closed-Loop Regen Charging Demo ===\n\n";
 
     // ------------------------------------------------------------------------
     // Initialize BMS (simple mode)
     // ------------------------------------------------------------------------
-    hlv_plugin::HLVBMSMiddleware bms;
+    ds_plugin::DSBMSMiddleware bms;
     bms.init(75.0, 400.0);  // 75Ah, 400V pack
 
     // ------------------------------------------------------------------------
     // Regen braking manager
     // ------------------------------------------------------------------------
-    hlv::drive::RegenConfig regen_cfg;
+    ds::drive::RegenConfig regen_cfg;
     regen_cfg.peak_regen_torque_nm = 220.0;
     regen_cfg.max_regen_power_kw = 120.0;
 
-    hlv::drive::HLVRegenBrakingManager regen_mgr(regen_cfg);
+    ds::drive::DSRegenBrakingManager regen_mgr(regen_cfg);
 
     // ------------------------------------------------------------------------
     // Energy recovery coordinator
     // ------------------------------------------------------------------------
-    hlv::drive::EnergyRecoveryConfig rec_cfg;
+    ds::drive::EnergyRecoveryConfig rec_cfg;
     rec_cfg.prefer_measured_pack_current = false; // simulate estimated current
     rec_cfg.drivetrain_efficiency_regen = 0.88;
 
-    hlv::drive::HLVEnergyRecoveryCoordinator recovery(rec_cfg);
+    ds::drive::DSEnergyRecoveryCoordinator recovery(rec_cfg);
 
     // ------------------------------------------------------------------------
     // Simulated vehicle / battery state

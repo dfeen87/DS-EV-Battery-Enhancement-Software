@@ -12,7 +12,7 @@ def log_message(msg, log_paths=None):
     print(msg)
     if log_paths is None:
         log_paths = [
-            "/opt/hlv_enhancement/logs/install.log",
+            "/opt/ds_enhancement/logs/install.log",
             "logs/install.log",
             "./install.log"
         ]
@@ -78,7 +78,7 @@ def load_json(filepath):
         return None
 
 def main():
-    parser = argparse.ArgumentParser(description="HLV EV Battery Enhancement - Pre-Flight Diagnostics")
+    parser = argparse.ArgumentParser(description="DS EV Battery Enhancement - Pre-Flight Diagnostics")
     parser.add_argument("--model", type=str, help="Override vehicle model")
     parser.add_argument("--firmware", type=str, help="Override firmware version")
     parser.add_argument("--soh", type=float, help="Override battery State of Health (%)")
@@ -93,13 +93,13 @@ def main():
     search_dirs = [
         os.path.abspath("."),
         base_dir,
-        "/opt/hlv_enhancement",
-        "/opt/hlv_enhancement/config",
+        "/opt/ds_enhancement",
+        "/opt/ds_enhancement/config",
         os.path.join(base_dir, "config")
     ]
 
     log_paths = [
-        "/opt/hlv_enhancement/logs/install.log",
+        "/opt/ds_enhancement/logs/install.log",
         os.path.join(base_dir, "logs/install.log"),
         "./logs/install.log",
         "./install.log"
@@ -168,7 +168,7 @@ def main():
             log_message(f"Loaded vehicle status from: {status_file}", log_paths)
 
     # First determine the target model (arg takes priority, then env, then top-level status json)
-    model = args.model or os.environ.get("HLV_MODEL") or status.get("model", "Unknown")
+    model = args.model or os.environ.get("DS_MODEL") or status.get("model", "Unknown")
 
     # If the chosen model exists in simulated_presets, use its preset as the base status!
     presets = status.get("simulated_presets", {})
@@ -179,22 +179,22 @@ def main():
         status_base = status
 
     # Apply overrides (Env variables -> base status values)
-    firmware_version = os.environ.get("HLV_FIRMWARE", status_base.get("firmware_version", status_base.get("firmware", "Unknown")))
+    firmware_version = os.environ.get("DS_FIRMWARE", status_base.get("firmware_version", status_base.get("firmware", "Unknown")))
     battery_soh = status_base.get("battery_soh", 0.0)
-    if "HLV_SOH" in os.environ:
-        try: battery_soh = float(os.environ["HLV_SOH"])
+    if "DS_SOH" in os.environ:
+        try: battery_soh = float(os.environ["DS_SOH"])
         except ValueError: pass
     temperature_c = status_base.get("temperature_c", 0.0)
-    if "HLV_TEMP_C" in os.environ:
-        try: temperature_c = float(os.environ["HLV_TEMP_C"])
+    if "DS_TEMP_C" in os.environ:
+        try: temperature_c = float(os.environ["DS_TEMP_C"])
         except ValueError: pass
     voltage_v = status_base.get("voltage_v", 0.0)
-    if "HLV_VOLTAGE_V" in os.environ:
-        try: voltage_v = float(os.environ["HLV_VOLTAGE_V"])
+    if "DS_VOLTAGE_V" in os.environ:
+        try: voltage_v = float(os.environ["DS_VOLTAGE_V"])
         except ValueError: pass
     soc = status_base.get("soc", 0.0)
-    if "HLV_SOC" in os.environ:
-        try: soc = float(os.environ["HLV_SOC"])
+    if "DS_SOC" in os.environ:
+        try: soc = float(os.environ["DS_SOC"])
         except ValueError: pass
 
     # CLI args override everything
