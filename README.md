@@ -4,7 +4,7 @@
 
 > HLV delivers a fusion of Battery Intelligence Engine, Dual‑State Energy Modeling, and Predictive Power Management, creating a truly Physics‑Driven BMS for real‑time EV optimization.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm_Noncommercial_1.0.0-orange.svg)](LICENSE)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://isocpp.org/)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-green.svg)]()
 [![Hardened](https://img.shields.io/badge/Hardened-Edition%20Ready-Purple.svg)]()
@@ -1513,8 +1513,11 @@ SoC
 
 ## License
 
-This project is 100% open-source and available under the terms of the MIT License.
-See the [LICENSE](LICENSE) file for full details.
+This project is licensed under the **PolyForm Noncommercial License 1.0.0**.
+
+Under the terms of this license, you are free to use, modify, and distribute this software for any **noncommercial purpose** (including personal, educational, research, or hobbyist use). Commercial use of this software is strictly prohibited without obtaining a separate commercial license from the licensor.
+
+See the [LICENSE](LICENSE) file for full legal details and terms.
 
 ---
 
@@ -1533,7 +1536,7 @@ I would like to acknowledge **Google Jules**, **Microsoft Copilot**, **Anthropic
 ---
 
 ## Enterprise Consulting & Integration
-This architecture is fully open-source under the MIT License. If your organization requires custom scaling, proprietary integration, or dedicated technical consulting to deploy these models at an enterprise level, please reach out at: dfeen87@gmail.com
+This architecture is licensed under the PolyForm Noncommercial License 1.0.0. If your organization requires commercial usage, custom scaling, proprietary integration, or dedicated technical consulting to deploy these models at an enterprise level, please reach out at: dfeen87@gmail.com
 
 ---
 
