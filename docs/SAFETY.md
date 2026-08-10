@@ -10,7 +10,7 @@ Dual-State (DS) Battery Enhancement operates at the intersection of mathematical
 This enhancement system is designed to run in parallel with standard automotive BMS micro-controllers. It is an **information-physical software optimizer** and **does not bypass** any hard safety mechanisms programmed into your vehicle's original equipment manufacturer (OEM) controller or battery contactors.
 
 ### 2. Liability Limit
-This software is provided "as is" under the PolyForm Noncommercial License 1.0.0 terms. While it implements highly verified physical constraints (including thermodynamic Kahan summation and Thermodynamic energy bounds), users and vehicle engineers assume all risks associated with deploying aftermarket firmware configurations on production electric vehicles.
+This software is provided "as is" under the MIT License terms. While it implements highly verified physical constraints (including thermodynamic Kahan summation and Thermodynamic energy bounds), users and vehicle engineers assume all risks associated with deploying aftermarket firmware configurations on production electric vehicles.
 
 ---
 

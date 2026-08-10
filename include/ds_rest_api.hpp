@@ -32,7 +32,7 @@
  *
  * AUTHORS: Don Michael Feeney Jr.
  * DATE: February 2026
- * LICENSE: Licensed under the PolyForm Noncommercial License 1.0.0
+ * LICENSE: Copyright (c) Don Michael Feeney Jr. Licensed under the MIT License.
  * VERSION: 1.0.0
  *
  * ============================================================================
