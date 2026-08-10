@@ -503,7 +503,7 @@ See the `examples/` directory for complete working examples:
 
 ## License
 
-Licensed under the PolyForm Noncommercial License 1.0.0 - See LICENSE file for details
+Licensed under the MIT License - See LICENSE file for details
 
 ## Authors
 
