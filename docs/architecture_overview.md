@@ -1,7 +1,7 @@
 # DS Battery Management System
 ## Architecture Overview
 
-**Version:** 4.2.0
+**Version:** 5.0.0
 **Audience:** OEMs, Tier-1 suppliers, system architects, safety engineers  
 **Scope:** Conceptual and software architecture (not hardware schematics)
 
