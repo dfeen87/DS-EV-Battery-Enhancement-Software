@@ -8,7 +8,7 @@
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://isocpp.org/)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-green.svg)]()
 [![Hardened](https://img.shields.io/badge/Hardened-Edition%20Ready-Purple.svg)]()
-[![Version](https://img.shields.io/badge/Version-4.2.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/Version-5.0.0-blue.svg)]()
 [![CI](https://github.com/dfeen87/EV-Battery-Enhancement-Software/actions/workflows/ci.yml/badge.svg)](https://github.com/dfeen87/EV-Battery-Enhancement-Software/actions/workflows/ci.yml)
 
 Dual‑State (DS/ds) EV Enhancement Software is a production-ready, high-performance battery and power management suite for electric vehicles. By treating batteries as dual-state systems—where physical metrics (like voltage, current, and temperature) and historical stress tracking are dynamically coupled—we achieve earlier degradation detection, better health prediction, and optimized charging strategies.
@@ -35,6 +35,7 @@ Dual‑State (DS/ds) EV Enhancement Software is a production-ready, high-perform
   - [Benefits Over Traditional Torque Limiting](#benefits-over-traditional-torque-limiting)
   - [Requirements](#requirements)
   - [Thread Safety](#thread-safety)
+- [AILEE Automotive Governance Layer](#ailee-automotive-governance-layer)
 - [BMS Middleware, Hardware Adapters & OEM Integration](#bms-middleware-hardware-adapters--oem-integration)
 - [Intelligent Regenerative Braking](#-intelligent-regenerative-braking-ds-regen-module)
 - [Closed-Loop Energy Recovery](#-closed-loop-energy-recovery-battery--torque--braking--battery)
@@ -598,7 +599,7 @@ Temperature (°C)    Action
 ### Requirements
 
 - **C++11** or later
-- **DS Battery Enhancement Library** v4.2.0+
+- **DS Battery Enhancement Library** v5.0.0+
 - **DS BMS Middleware** v2.0+ (for multi-cell support)
 - Real-time operating system (recommended for control loops < 10ms)
 
@@ -607,6 +608,85 @@ Temperature (°C)    Action
 ### Thread Safety
 
 ⚠️ **Not thread-safe by default.** The torque manager maintains internal state and should be called from a single control thread. If multi-threaded access is required, implement external synchronization.
+
+---
+
+## AILEE Automotive Governance Layer
+
+### Overview
+
+The **AILEE Automotive Governance Layer** (`ds_core/python/ailee` and C++ `ds_ailee_governor`) is an integrated trust, safety, and governance suite for electric vehicle control. AILEE provides continuous validation of mechanical and electrical horsepower consistency, sensor signal validity, and vehicle operating parameters (SOC, SOH, cell temperature) to protect EV drivetrains from catastrophic failures or malicious command manipulation.
+
+### Governance Levels & Derating Matrix
+
+AILEE evaluates vehicle state and trust scores in real time and classifies operations into four distinct governance levels (configured via `config/ailee_automotive_config.yaml`):
+
+| Level | Name | Cap Fraction (HP / Torque / Current) | Description |
+|-------|------|--------------------------------------|-------------|
+| **Level 0** | **Normal Operation** | **1.00 (100%)** | Full performance envelope authorized. High signal trust and HP consistency. |
+| **Level 1** | **Soft Ceiling** | **0.90 (90%)** | Soft derating applied when mild signal drift or thermal soft limits are approached. |
+| **Level 2** | **Hard Ceiling** | **0.65 (65%)** | Hard derating applied when consistency or trust scores experience moderate anomalies. |
+| **Level 3** | **Protective Mode** | **0.25 (25%)** | Protective fallback mode applied when trust drops below critical threshold (e.g., < 0.65). |
+
+### Key Features & Components
+
+- **C++ Native Governor (`AileeHorsepowerGovernor`)**: High-performance C++ execution engine that computes mechanical horsepower ($HP_{mech} = \frac{\tau \times RPM}{7121.23}$), electrical horsepower ($HP_{elec} = \frac{V \times I}{745.7}$), and signal consistency scores.
+- **Embedded Python Trust Pipeline (`AileeTrustPipeline`)**: Embedded Pybind11 pipeline running the `ailee` trust framework with zero-latency C++ fallbacks.
+- **Black-Box Audit Logging**: Automatically logs all governance decisions, trust scores, raw signals, and derating reasons to `logs/ailee_automotive_audit.log`.
+- **Automatic Fallback Protection**: If the embedded Python environment is unreachable, `AileeHorsepowerGovernor` automatically fails safe to native C++ fallback evaluation.
+
+### C++ Integration Example
+
+```cpp
+#include "ailee_horsepower_governor.hpp"
+
+// Initialize governor
+AileeHorsepowerGovernor governor;
+
+// Prepare vehicle raw signals
+RawSignals signals;
+signals.torque_nm = 400.0;
+signals.rpm = 4000.0;
+signals.v_batt = 400.0;
+signals.i_batt = 400.0;
+signals.ctx.soc = 85.0;
+signals.ctx.soh = 95.0;
+signals.ctx.temp_c = 30.0;
+signals.ctx.sensor_valid = true;
+
+// Evaluate governance policy
+GovernanceDecisionCpp decision = governor.evaluate(signals);
+
+std::cout << "Governance Level: " << decision.level << "\n";
+std::cout << "Governed HP: " << decision.governed_hp << " HP\n";
+std::cout << "Governed Torque: " << decision.governed_torque << " Nm\n";
+std::cout << "Trust Score: " << decision.trust_score << "\n";
+std::cout << "Reason: " << decision.reason << "\n";
+```
+
+### Python Integration Example
+
+```python
+from ailee.core_min import AileeTrustPipeline
+from ailee.domains.automotive.ailee_automotive_domain import AileeAutomotiveDomain
+
+# Instantiate trust pipeline with automotive domain
+domain = AileeAutomotiveDomain(config_path="config/ailee_automotive_config.yaml")
+pipeline = AileeTrustPipeline(domain=domain)
+
+# Process signal evaluation
+context = {
+    "hp_mech": 224.68,
+    "hp_elec": 214.56,
+    "soc": 85.0,
+    "soh": 95.0,
+    "temp_c": 30.0,
+    "sensor_valid": True
+}
+
+decision = pipeline.evaluate(context)
+print(f"Level: {decision.level}, Governed HP: {decision.governed_hp}, Trust: {decision.trust_score}")
+```
 
 ---
 
@@ -1261,7 +1341,11 @@ SoC
 
 ## 🗺️ Roadmap
 
-### Delivered in v4.2.0
+### Delivered in v5.0.0
+- ✅ AILEE Automotive Governance Layer integration
+- ✅ Governance Level derating (Levels 0-3: Normal, Soft Ceiling, Hard Ceiling, Protective Fallback)
+- ✅ `AileeHorsepowerGovernor` C++ library with consistency scoring
+- ✅ Real-time audit logging (`logs/ailee_automotive_audit.log`)
 - ✅ Chemistry-specific parameter sets (LFP, NMC, NCA, LTO)
 - ✅ Advanced thermal modeling
 - ✅ Multi-cell pack support

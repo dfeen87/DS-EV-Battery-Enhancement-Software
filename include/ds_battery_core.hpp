@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * DS BATTERY ENHANCEMENT LIBRARY v4.1
+ * DS BATTERY ENHANCEMENT LIBRARY v5.0
  * ============================================================================
  * 
  * Implementation of Don Michael Feeney Jr.'s Dual-State (DS) Theory
@@ -9,14 +9,8 @@
  * Based on: "Mathematical Formulation of the U2→U1 Coupling in the 
  *            Dual-State Theory" (the developer, 2025)
  * 
- * UPDATES IN v4.1:
- * - Fixed monotonic degradation accumulation bug (use cycle delta, not absolute)
- * - Replaced exceptions in hot path with value clamping and input_clamped flag
- * - Initialized all struct members with safe defaults
- * - Added assert-based bounds checking to Matrix4x4::operator()
- * - Strengthened DSConfig::validate() with additional parameter checks
- * - Enforced energy_conservation_tolerance to flag numerical instability
- * - Version bump to 4.2.0
+ * UPDATES IN v5.0:
+ * - Version bump to 5.0.0 with integrated AILEE Automotive Governance Layer
  * 
  * ARCHITECTURE:
  * ------------
@@ -69,8 +63,8 @@ namespace ds {
 // VERSION INFORMATION
 // ============================================================================
 
-constexpr int DS_VERSION_MAJOR = 4;
-constexpr int DS_VERSION_MINOR = 2;
+constexpr int DS_VERSION_MAJOR = 5;
+constexpr int DS_VERSION_MINOR = 0;
 constexpr int DS_VERSION_PATCH = 0;
 
 inline std::string get_version_string() {

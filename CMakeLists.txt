@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 project(
     DS_Battery_Enhancement
-    VERSION 4.2.0
+    VERSION 5.0.0
     DESCRIPTION "DS Theory Battery Management & BMS Middleware"
     LANGUAGES CXX
 )
