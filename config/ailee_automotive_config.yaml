@@ -1,0 +1,37 @@
+# AILEE Trust Layer Automotive Domain Governance Configuration
+# EV Horse Power & Dynamic Limits Configuration
+
+ailee_automotive_domain:
+  thresholds:
+    hp_consistency_tolerance: 0.85
+    temp_soft_limit_c: 45.0
+    temp_hard_limit_c: 60.0
+    soc_min_normal: 20.0
+    soc_min_critical: 5.0
+    soh_min_normal: 85.0
+
+  governance_levels:
+    level_0:
+      name: "Normal Operation"
+      hp_cap_fraction: 1.00
+      torque_cap_fraction: 1.00
+      current_cap_fraction: 1.00
+    level_1:
+      name: "Soft Ceiling"
+      hp_cap_fraction: 0.90
+      torque_cap_fraction: 0.90
+      current_cap_fraction: 0.90
+    level_2:
+      name: "Hard Ceiling"
+      hp_cap_fraction: 0.65
+      torque_cap_fraction: 0.65
+      current_cap_fraction: 0.65
+    level_3:
+      name: "Protective Mode"
+      hp_cap_fraction: 0.25
+      torque_cap_fraction: 0.25
+      current_cap_fraction: 0.25
+
+  audit_logging:
+    enabled: true
+    log_file: "logs/ailee_automotive_audit.log"

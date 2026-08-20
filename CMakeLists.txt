@@ -74,6 +74,14 @@ target_include_directories(ds_battery INTERFACE
     $<INSTALL_INTERFACE:include>
 )
 
+# AILEE Automotive Domain & Governor Library
+add_library(ds_ailee_governor STATIC
+    src/ailee_horsepower_governor.cpp
+    src/ds_torque_manager.cpp
+)
+target_link_libraries(ds_ailee_governor PUBLIC ds_battery pybind11::embed)
+target_include_directories(ds_ailee_governor PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
 target_compile_features(ds_battery INTERFACE cxx_std_17)
 if(DS_ENABLE_FEEN)
     target_link_libraries(ds_battery INTERFACE $<BUILD_INTERFACE:feen>)
@@ -153,6 +161,10 @@ if(DS_BUILD_TESTS)
     add_executable(test_middleware tests/test_middleware.cpp)
     target_link_libraries(test_middleware PRIVATE ds_battery)
     add_test(NAME test_middleware COMMAND test_middleware)
+
+    add_executable(test_ailee_governor tests/test_ailee_governor.cpp)
+    target_link_libraries(test_ailee_governor PRIVATE ds_ailee_governor)
+    add_test(NAME test_ailee_governor COMMAND test_ailee_governor)
 endif()
 
 # ============================================================================
