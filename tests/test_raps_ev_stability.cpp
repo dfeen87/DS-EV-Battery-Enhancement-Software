@@ -21,17 +21,20 @@ void test_voltage_sag_mitigation() {
     auto st1 = membrane.evaluate(380.0, 100.0, 25.0);
     assert(!st1.dsm_tripped);
     assert(st1.voltage_sag_ratio == 1.0);
+    (void)st1;
 
     // Sag voltage (330V is between 320 and 340)
     auto st2 = membrane.evaluate(330.0, 100.0, 25.0);
     assert(!st2.dsm_tripped);
     assert(st2.voltage_sag_ratio < 1.0);
     assert(st2.overall_membrane_stability < 1.0);
+    (void)st2;
 
     // Severe sag below threshold -> DSM trip
     auto st3 = membrane.evaluate(310.0, 100.0, 25.0);
     assert(st3.dsm_tripped);
-    assert(st3.dsm_trip_reason == "CRITICAL_UNDERVOLTAGE_SAG");
+    assert(std::string(st3.get_dsm_trip_reason()) == "CRITICAL_UNDERVOLTAGE_SAG");
+    (void)st3;
     std::cout << "[PASS] test_voltage_sag_mitigation\n";
 }
 
@@ -46,6 +49,7 @@ void test_current_spike_damping() {
     assert(!st.dsm_tripped);
     assert(st.current_spike_ratio < 0.9);
     assert(st.overall_membrane_stability < 1.0);
+    (void)st;
     std::cout << "[PASS] test_current_spike_damping\n";
 }
 
@@ -60,6 +64,7 @@ void test_regen_surge_damping() {
     auto st = membrane.evaluate(400.0, -300.0, 25.0, nullptr, 0.01);
     assert(!st.dsm_tripped);
     assert(st.regen_surge_ratio < 1.0);
+    (void)st;
     std::cout << "[PASS] test_regen_surge_damping\n";
 }
 
@@ -74,6 +79,7 @@ void test_thermal_oscillation_stabilization() {
     auto st = membrane.evaluate(400.0, 100.0, 48.0, nullptr, 0.1);
     assert(!st.dsm_tripped);
     assert(st.thermal_stability_ratio < 1.0);
+    (void)st;
     std::cout << "[PASS] test_thermal_oscillation_stabilization\n";
 }
 
@@ -88,6 +94,7 @@ void test_cell_imbalance_drift() {
     auto st = membrane.evaluate(400.0, 100.0, 25.0, &diag);
     assert(!st.dsm_tripped);
     assert(st.cell_drift_ratio < 1.0);
+    (void)st;
     std::cout << "[PASS] test_cell_imbalance_drift\n";
 }
 

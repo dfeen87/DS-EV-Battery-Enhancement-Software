@@ -64,7 +64,7 @@ namespace drive {
 // ============================================================================
 // VERSION
 // ============================================================================
-constexpr int REGEN_VERSION_MAJOR = 1;
+constexpr int REGEN_VERSION_MAJOR = 6;
 constexpr int REGEN_VERSION_MINOR = 0;
 constexpr int REGEN_VERSION_PATCH = 0;
 
@@ -77,7 +77,7 @@ inline std::string regen_version() {
 // ============================================================================
 // CONFIG
 // ============================================================================
-struct RegenConfig {
+struct alignas(64) RegenConfig {
     // Base regen capability (motor/inverter dependent)
     double peak_regen_torque_nm = 250.0;      // absolute maximum allowed regen torque
     double max_regen_power_kw = 120.0;        // cap regen power to protect battery/inverter
@@ -120,7 +120,7 @@ struct RegenConfig {
 // ============================================================================
 // RESULT + DIAGNOSTICS
 // ============================================================================
-struct RegenDiagnostics {
+struct alignas(64) RegenDiagnostics {
     double last_max_regen_torque_nm = 0.0;
     double last_regen_fraction = 0.0;
 
@@ -144,7 +144,7 @@ struct RegenDiagnostics {
     std::string limiting_factor = "NONE";
 };
 
-struct RegenResult {
+struct alignas(64) RegenResult {
     double max_regen_torque_nm = 0.0;     // final torque limit (Nm)
     double regen_fraction = 0.0;          // 0..1 portion of braking to assign to regen
     std::string limiting_factor = "NONE";
@@ -251,11 +251,11 @@ public:
         auto raps_state = raps_membrane_.evaluate(pack_voltage, est_regen_current_a, temp_c, diag, dt);
         out.diag.f_raps_membrane = raps_state.overall_membrane_stability;
         out.diag.raps_dsm_tripped = raps_state.dsm_tripped;
-        out.diag.raps_dsm_trip_reason = raps_state.dsm_trip_reason;
+        out.diag.raps_dsm_trip_reason = raps_state.get_dsm_trip_reason();
 
         if (raps_state.dsm_tripped) {
             out.diag.safety_blocks++;
-            out.limiting_factor = "RAPS_DSM_TRIP (" + raps_state.dsm_trip_reason + ")";
+            out.limiting_factor = std::string("RAPS_DSM_TRIP (") + raps_state.get_dsm_trip_reason() + ")";
             out.max_regen_torque_nm = 0.0;
             out.regen_fraction = 0.0;
             out.diag.limiting_factor = out.limiting_factor;

@@ -53,7 +53,7 @@ namespace drive {
 // VERSION INFORMATION
 // ============================================================================
 
-constexpr int TORQUE_VERSION_MAJOR = 2;
+constexpr int TORQUE_VERSION_MAJOR = 6;
 constexpr int TORQUE_VERSION_MINOR = 0;
 constexpr int TORQUE_VERSION_PATCH = 0;
 
@@ -207,7 +207,7 @@ struct DSTorqueWeights {
 // COMPLETE CONFIGURATION
 // ============================================================================
 
-struct TorqueConfig {
+struct alignas(64) TorqueConfig {
     DrivetrainConfig drivetrain;
     BatteryConstraints battery;
     DSTorqueWeights ds_weights;
@@ -239,7 +239,7 @@ struct TorqueConfig {
 // TORQUE RESULT (Enhanced)
 // ============================================================================
 
-struct TorqueResult {
+struct alignas(64) TorqueResult {
     // Torque limits
     double max_drive_torque_nm;              // Front+rear combined
     double max_regen_torque_nm;              // Braking torque limit
@@ -766,7 +766,7 @@ public:
             result.raps_membrane_scaling = membrane_state.overall_membrane_stability;
             result.raps_boost_allowance = membrane_state.stability_boost_allowance;
             result.raps_dsm_tripped = membrane_state.dsm_tripped;
-            result.raps_dsm_trip_reason = membrane_state.dsm_trip_reason;
+            result.raps_dsm_trip_reason = membrane_state.get_dsm_trip_reason();
             result.raps_membrane_derate_active = (result.raps_membrane_scaling < 0.95);
         } else {
             result.raps_membrane_scaling = 1.0;

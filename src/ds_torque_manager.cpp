@@ -43,32 +43,38 @@ GovernedTorqueOutput DSAileeTorqueManager::processTorqueCommand(const TorqueComm
     output.raps_membrane_stability = raps_state.overall_membrane_stability;
     output.raps_boost_multiplier = raps_state.stability_boost_allowance;
     output.raps_dsm_tripped = raps_state.dsm_tripped;
-    output.raps_dsm_trip_reason = raps_state.dsm_trip_reason;
+    output.raps_dsm_trip_reason = raps_state.get_dsm_trip_reason();
     output.reason = last_decision_.reason;
-    output.max_allowed_current_a = last_decision_.governed_discharge_current * raps_state.overall_membrane_stability;
 
     if (raps_state.dsm_tripped) {
         output.applied_torque_nm = 0.0;
         output.applied_hp = 0.0;
         output.max_allowed_torque_nm = 0.0;
+        output.max_allowed_current_a = 0.0;
         output.governance_level = 3;
         output.derating_active = true;
-        output.reason = "RAPS_DSM_TRIP: " + raps_state.dsm_trip_reason;
+        output.reason = std::string("RAPS_DSM_TRIP: ") + raps_state.get_dsm_trip_reason();
         return output;
     }
 
-    // Calculate governed HP base
+    // Calculate governed HP and torque base
     double governed_hp_base = last_decision_.governed_hp;
+    double governed_torque_base = last_decision_.governed_torque;
+
     // Apply RAPS extra boost allowance when stability and trust are high
     if (last_decision_.level == 0 && output.trust_score > 0.90 && raps_state.stability_boost_allowance > 1.0) {
         governed_hp_base *= raps_state.stability_boost_allowance;
+        governed_torque_base *= raps_state.stability_boost_allowance;
+        output.max_allowed_current_a = last_decision_.governed_discharge_current * raps_state.stability_boost_allowance;
     } else {
         governed_hp_base *= raps_state.overall_membrane_stability;
+        governed_torque_base *= raps_state.overall_membrane_stability;
+        output.max_allowed_current_a = last_decision_.governed_discharge_current * raps_state.overall_membrane_stability;
     }
 
     // Calculate maximum allowed torque from governed HP ceiling at current RPM
     double torque_ceiling_from_hp = (governed_hp_base * 7121.23) / signals.rpm;
-    output.max_allowed_torque_nm = std::min(last_decision_.governed_torque * raps_state.overall_membrane_stability, torque_ceiling_from_hp);
+    output.max_allowed_torque_nm = std::min(governed_torque_base, torque_ceiling_from_hp);
 
     // Apply level-based derating and clamp requested torque to governed limit
     output.applied_torque_nm = std::min(signals.torque_nm, output.max_allowed_torque_nm);

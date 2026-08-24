@@ -21,7 +21,7 @@
 namespace ds {
 namespace drive {
 
-struct TorqueCommand {
+struct alignas(64) TorqueCommand {
     double requested_torque_nm = 0.0;
     double motor_rpm = 0.0;
     double v_batt = 400.0;
@@ -29,7 +29,7 @@ struct TorqueCommand {
     GovernanceContext ctx;
 };
 
-struct GovernedTorqueOutput {
+struct alignas(64) GovernedTorqueOutput {
     double applied_torque_nm = 0.0;
     double applied_hp = 0.0;
     double max_allowed_torque_nm = 0.0;

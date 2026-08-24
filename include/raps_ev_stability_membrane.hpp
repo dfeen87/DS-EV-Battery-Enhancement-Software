@@ -21,7 +21,7 @@
  *
  * AUTHORS: Don Michael Feeney Jr. & Jules
  * LICENSE: Copyright (c) Don Michael Feeney Jr. Licensed under the MIT License.
- * VERSION: 1.0.0
+ * VERSION: 6.0.0
  * ============================================================================
  */
 
@@ -33,12 +33,39 @@
 #include <algorithm>
 #include <cmath>
 #include <string>
-#include <vector>
 
 namespace raps {
 namespace ev {
 
-struct StabilityConfig {
+constexpr int RAPS_EV_VERSION_MAJOR = 6;
+constexpr int RAPS_EV_VERSION_MINOR = 0;
+constexpr int RAPS_EV_VERSION_PATCH = 0;
+
+inline std::string get_raps_ev_version() {
+    return std::to_string(RAPS_EV_VERSION_MAJOR) + "." +
+           std::to_string(RAPS_EV_VERSION_MINOR) + "." +
+           std::to_string(RAPS_EV_VERSION_PATCH);
+}
+
+enum class DsmTripReason {
+    NONE,
+    CRITICAL_UNDERVOLTAGE_SAG,
+    CRITICAL_OVERVOLTAGE_SURGE,
+    CRITICAL_OVERTEMPERATURE,
+    BMS_SAFETY_FAULT
+};
+
+inline const char* dsm_trip_reason_to_string(DsmTripReason reason) {
+    switch (reason) {
+        case DsmTripReason::CRITICAL_UNDERVOLTAGE_SAG: return "CRITICAL_UNDERVOLTAGE_SAG";
+        case DsmTripReason::CRITICAL_OVERVOLTAGE_SURGE: return "CRITICAL_OVERVOLTAGE_SURGE";
+        case DsmTripReason::CRITICAL_OVERTEMPERATURE: return "CRITICAL_OVERTEMPERATURE";
+        case DsmTripReason::BMS_SAFETY_FAULT: return "BMS_SAFETY_FAULT";
+        default: return "NONE";
+    }
+}
+
+struct alignas(64) StabilityConfig {
     // Voltage Sag Protection
     double min_voltage_threshold_v = 320.0;
     double max_voltage_threshold_v = 450.0;
@@ -65,9 +92,9 @@ struct StabilityConfig {
     double cell_drift_compensation_gain = 0.75;
 };
 
-struct StabilityState {
+struct alignas(64) StabilityState {
     double filtered_current_a = 0.0;
-    double last_regen_current_a = 0.0;
+    double filtered_regen_current_a = 0.0;
     double temp_derivative_c_per_s = 0.0;
     double last_temperature_c = 25.0;
     double voltage_sag_ratio = 1.0;
@@ -78,7 +105,11 @@ struct StabilityState {
     double overall_membrane_stability = 1.0;
     double stability_boost_allowance = 1.0; // Multiplier for extra boost when stable
     bool dsm_tripped = false;
-    std::string dsm_trip_reason = "NONE";
+    DsmTripReason trip_code = DsmTripReason::NONE;
+
+    const char* get_dsm_trip_reason() const {
+        return dsm_trip_reason_to_string(trip_code);
+    }
 };
 
 class RapsEVStabilityMembrane {
@@ -113,20 +144,20 @@ public:
 
         // --- 1. Deterministic Safety Monitor (DSM) Hard Bounds ---
         state_.dsm_tripped = false;
-        state_.dsm_trip_reason = "NONE";
+        state_.trip_code = DsmTripReason::NONE;
 
         if (pack_voltage < config_.min_voltage_threshold_v) {
             state_.dsm_tripped = true;
-            state_.dsm_trip_reason = "CRITICAL_UNDERVOLTAGE_SAG";
+            state_.trip_code = DsmTripReason::CRITICAL_UNDERVOLTAGE_SAG;
         } else if (pack_voltage > config_.max_voltage_threshold_v) {
             state_.dsm_tripped = true;
-            state_.dsm_trip_reason = "CRITICAL_OVERVOLTAGE_SURGE";
+            state_.trip_code = DsmTripReason::CRITICAL_OVERVOLTAGE_SURGE;
         } else if (pack_temperature >= config_.temp_hard_limit_c) {
             state_.dsm_tripped = true;
-            state_.dsm_trip_reason = "CRITICAL_OVERTEMPERATURE";
+            state_.trip_code = DsmTripReason::CRITICAL_OVERTEMPERATURE;
         } else if (diag && diag->safety_fault) {
             state_.dsm_tripped = true;
-            state_.dsm_trip_reason = "BMS_SAFETY_FAULT";
+            state_.trip_code = DsmTripReason::BMS_SAFETY_FAULT;
         }
 
         if (state_.dsm_tripped) {
@@ -163,8 +194,12 @@ public:
         // --- 4. Regenerative Braking Surge Protection ---
         if (pack_current < 0.0) { // Charging / Regen phase
             double regen_curr = std::abs(pack_current);
-            double regen_rate = (regen_curr - state_.last_regen_current_a) / dt;
-            state_.last_regen_current_a = regen_curr;
+            // Low pass filter regen current to avoid step-function derivative artifacts
+            double alpha_regen = dt / (dt + 0.05); // 50ms smoothing window
+            double prev_filtered = state_.filtered_regen_current_a;
+            state_.filtered_regen_current_a += alpha_regen * (regen_curr - state_.filtered_regen_current_a);
+
+            double regen_rate = (state_.filtered_regen_current_a - prev_filtered) / dt;
 
             if (regen_rate > config_.max_regen_surge_rate_a_per_s) {
                 double excess_surge = (regen_rate - config_.max_regen_surge_rate_a_per_s) /
@@ -175,7 +210,7 @@ public:
                 state_.regen_surge_ratio = 1.0;
             }
         } else {
-            state_.last_regen_current_a = 0.0;
+            state_.filtered_regen_current_a = 0.0;
             state_.regen_surge_ratio = 1.0;
         }
 

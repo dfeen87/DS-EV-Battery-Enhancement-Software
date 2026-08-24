@@ -28,7 +28,7 @@ int main() {
         std::cout << "  Pack Voltage: " << v << "V | Sag Ratio: "
                   << std::fixed << std::setprecision(3) << st.voltage_sag_ratio
                   << " | Overall Stability: " << st.overall_membrane_stability
-                  << " | DSM Tripped: " << (st.dsm_tripped ? "YES (" + st.dsm_trip_reason + ")" : "NO")
+                  << " | DSM Tripped: " << (st.dsm_tripped ? std::string("YES (") + st.get_dsm_trip_reason() + ")" : "NO")
                   << "\n";
     }
 
