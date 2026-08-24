@@ -53,6 +53,7 @@
 #define DS_REGEN_BRAKING_MANAGER_V1_HPP
 
 #include "ds_bms_middleware_v2.hpp"  // for ds_plugin::DiagnosticReport + EnhancedState
+#include "raps_ev_stability_membrane.hpp"
 #include <string>
 #include <algorithm>
 #include <cmath>
@@ -131,10 +132,14 @@ struct RegenDiagnostics {
     double f_cell = 1.0;
     double f_ds = 1.0;
     double f_stability = 1.0;
+    double f_raps_membrane = 1.0;
 
     int abs_events = 0;
     int slip_events = 0;
     int safety_blocks = 0;
+
+    bool raps_dsm_tripped = false;
+    std::string raps_dsm_trip_reason = "NONE";
 
     std::string limiting_factor = "NONE";
 };
@@ -151,8 +156,9 @@ struct RegenResult {
 // ============================================================================
 class DSRegenBrakingManager {
 public:
-    explicit DSRegenBrakingManager(const RegenConfig& cfg = RegenConfig())
-        : cfg_(cfg), last_cmd_torque_nm_(0.0), last_output_torque_nm_(0.0),
+    explicit DSRegenBrakingManager(const RegenConfig& cfg = RegenConfig(),
+                                  const raps::ev::StabilityConfig& raps_cfg = raps::ev::StabilityConfig())
+        : cfg_(cfg), raps_membrane_(raps_cfg), last_cmd_torque_nm_(0.0), last_output_torque_nm_(0.0),
           last_time_s_(0.0), last_abs_or_slip_time_s_(-1.0) {}
 
     static std::string get_version() { return regen_version(); }
@@ -240,6 +246,23 @@ public:
         // Stability factor (hard cut when events active; recovery smoothing when cleared)
         out.diag.f_stability = compute_stability_factor(abs_active, wheel_slip, dt);
 
+        // RAPS EV Stability Membrane evaluation (dampens surges & voltage/thermal oscillations)
+        double est_regen_current_a = -1.0 * (requested_torque_nm_approx(brake_request) * 0.5); // negative = charging
+        auto raps_state = raps_membrane_.evaluate(pack_voltage, est_regen_current_a, temp_c, diag, dt);
+        out.diag.f_raps_membrane = raps_state.overall_membrane_stability;
+        out.diag.raps_dsm_tripped = raps_state.dsm_tripped;
+        out.diag.raps_dsm_trip_reason = raps_state.dsm_trip_reason;
+
+        if (raps_state.dsm_tripped) {
+            out.diag.safety_blocks++;
+            out.limiting_factor = "RAPS_DSM_TRIP (" + raps_state.dsm_trip_reason + ")";
+            out.max_regen_torque_nm = 0.0;
+            out.regen_fraction = 0.0;
+            out.diag.limiting_factor = out.limiting_factor;
+            remember(out, dt);
+            return out;
+        }
+
         // Combine all derate factors
         double combined = out.diag.f_speed *
                           out.diag.f_soc *
@@ -247,7 +270,8 @@ public:
                           out.diag.f_temp *
                           out.diag.f_cell *
                           out.diag.f_ds *
-                          out.diag.f_stability;
+                          out.diag.f_stability *
+                          out.diag.f_raps_membrane;
 
         combined = std::clamp(combined, 0.0, 1.0);
 
@@ -285,11 +309,16 @@ public:
 
 private:
     RegenConfig cfg_;
+    raps::ev::RapsEVStabilityMembrane raps_membrane_;
     double last_cmd_torque_nm_;
     double last_output_torque_nm_;
     double last_time_s_;
     double last_abs_or_slip_time_s_;
     RegenDiagnostics last_diag_;
+
+    double requested_torque_nm_approx(double brake_request) const {
+        return brake_request * cfg_.peak_regen_torque_nm;
+    }
 
     static double clamp01(double x) { return std::clamp(x, 0.0, 1.0); }
 
@@ -404,6 +433,7 @@ private:
         if (d.f_cell < min_f) { min_f = d.f_cell; name = "CELL_IMBALANCE"; }
         if (d.f_ds < min_f) { min_f = d.f_ds; name = "DS_CONFIDENCE"; }
         if (d.f_stability < min_f) { min_f = d.f_stability; name = "STABILITY_EVENT"; }
+        if (d.f_raps_membrane < min_f) { min_f = d.f_raps_membrane; name = "RAPS_MEMBRANE"; }
 
         // If none reduced, call it NONE
         if (min_f >= 0.999) return "NONE";

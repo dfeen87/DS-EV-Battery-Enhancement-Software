@@ -67,7 +67,7 @@ void test_ailee_governor_levels() {
 
 void test_ds_torque_manager() {
     std::cout << "[TEST] DS Torque Manager Integration..." << std::endl;
-    ds::drive::DSTorqueManager torque_mgr;
+    ds::drive::DSAileeTorqueManager torque_mgr;
 
     ds::drive::TorqueCommand cmd;
     cmd.requested_torque_nm = 400.0;
