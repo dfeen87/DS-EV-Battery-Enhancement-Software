@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 project(
     DS_Battery_Enhancement
-    VERSION 5.0.0
+    VERSION 6.0.0
     DESCRIPTION "DS Theory Battery Management & BMS Middleware"
     LANGUAGES CXX
 )
@@ -128,12 +128,15 @@ if(DS_BUILD_EXAMPLES)
     add_executable(rest_api_server examples/rest_api_server.cpp)
     target_link_libraries(rest_api_server PRIVATE ds_battery pthread)
 
+    add_executable(raps_ev_stability_demo examples/raps_ev_stability_demo.cpp)
+    target_link_libraries(raps_ev_stability_demo PRIVATE ds_ailee_governor)
+
     # Note: multi_cell_pack.cpp currently has API mismatches and is disabled
     # add_executable(multi_cell_pack examples/multi_cell_pack.cpp)
     # target_link_libraries(multi_cell_pack PRIVATE ds_battery)
 
     install(
-        TARGETS basic_integration rest_api_server
+        TARGETS basic_integration rest_api_server raps_ev_stability_demo
         RUNTIME DESTINATION bin/examples
     )
 endif()
@@ -165,6 +168,10 @@ if(DS_BUILD_TESTS)
     add_executable(test_ailee_governor tests/test_ailee_governor.cpp)
     target_link_libraries(test_ailee_governor PRIVATE ds_ailee_governor)
     add_test(NAME test_ailee_governor COMMAND test_ailee_governor)
+
+    add_executable(test_raps_ev_stability tests/test_raps_ev_stability.cpp)
+    target_link_libraries(test_raps_ev_stability PRIVATE ds_ailee_governor)
+    add_test(NAME test_raps_ev_stability COMMAND test_raps_ev_stability)
 endif()
 
 # ============================================================================

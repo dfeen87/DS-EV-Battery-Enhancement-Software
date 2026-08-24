@@ -63,7 +63,7 @@ namespace ds {
 // VERSION INFORMATION
 // ============================================================================
 
-constexpr int DS_VERSION_MAJOR = 5;
+constexpr int DS_VERSION_MAJOR = 6;
 constexpr int DS_VERSION_MINOR = 0;
 constexpr int DS_VERSION_PATCH = 0;
 

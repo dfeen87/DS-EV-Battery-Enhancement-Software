@@ -36,6 +36,7 @@
 
 #include "ds_battery_enhancement.hpp"
 #include "ds_bms_middleware_v2.hpp"
+#include "raps_ev_stability_membrane.hpp"
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
@@ -52,7 +53,7 @@ namespace drive {
 // VERSION INFORMATION
 // ============================================================================
 
-constexpr int TORQUE_VERSION_MAJOR = 2;
+constexpr int TORQUE_VERSION_MAJOR = 6;
 constexpr int TORQUE_VERSION_MINOR = 0;
 constexpr int TORQUE_VERSION_PATCH = 0;
 
@@ -206,7 +207,7 @@ struct DSTorqueWeights {
 // COMPLETE CONFIGURATION
 // ============================================================================
 
-struct TorqueConfig {
+struct alignas(64) TorqueConfig {
     DrivetrainConfig drivetrain;
     BatteryConstraints battery;
     DSTorqueWeights ds_weights;
@@ -221,10 +222,12 @@ struct TorqueConfig {
     double overboost_duration_s = 10.0;
     double overboost_power_multiplier = 1.15; // 15% overboost
     
-    // Safety features
+    // Safety & RAPS Membrane features
     bool enable_thermal_prediction = true;
     bool enable_cell_aware_limiting = true;
     bool enable_smooth_transitions = true;
+    bool enable_raps_stability_membrane = true;
+    raps::ev::StabilityConfig raps_stability_config;
     double transition_time_constant_s = 0.5;  // Smooth torque changes
     
     // Diagnostics
@@ -236,7 +239,7 @@ struct TorqueConfig {
 // TORQUE RESULT (Enhanced)
 // ============================================================================
 
-struct TorqueResult {
+struct alignas(64) TorqueResult {
     // Torque limits
     double max_drive_torque_nm;              // Front+rear combined
     double max_regen_torque_nm;              // Braking torque limit
@@ -256,6 +259,8 @@ struct TorqueResult {
     double soc_scaling;                      // SOC protection
     double health_scaling;                   // Long-term health
     double cell_balancing_scaling;           // Weak cell protection
+    double raps_membrane_scaling;            // RAPS stability membrane scaling
+    double raps_boost_allowance;             // RAPS boost allowance factor
     double overall_scaling;                  // Combined scaling factor
     
     // Active derating reasons
@@ -265,6 +270,9 @@ struct TorqueResult {
     bool metric_derate_active;
     bool soc_derate_active;
     bool weak_cell_derate_active;
+    bool raps_membrane_derate_active;
+    bool raps_dsm_tripped;
+    std::string raps_dsm_trip_reason;
     bool power_limit_active;
     bool traction_limit_active;
     
@@ -393,6 +401,7 @@ private:
     TorqueConfig config_;
     TorqueDiagnostics diagnostics_;
     ThermalModel thermal_model_;
+    raps::ev::RapsEVStabilityMembrane raps_membrane_;
     
     // State tracking
     double last_torque_limit_nm_;
@@ -660,6 +669,7 @@ public:
     explicit DSTorqueManager(const TorqueConfig& config)
         : config_(config),
           thermal_model_(),
+          raps_membrane_(config.raps_stability_config),
           last_torque_limit_nm_(0.0),
           overboost_timer_s_(0.0),
           time_since_init_s_(0.0),
@@ -676,6 +686,7 @@ public:
         initialized_ = true;
         diagnostics_.reset();
         thermal_model_.reset();
+        raps_membrane_.init(config.raps_stability_config);
         last_torque_limit_nm_ = 0.0;
         overboost_timer_s_ = 0.0;
         time_since_init_s_ = 0.0;
@@ -742,16 +753,48 @@ public:
         // --- 5. Cell-level scaling (if available) ---
         result.cell_balancing_scaling = compute_cell_scaling(pack_diagnostics);
         result.weak_cell_derate_active = (result.cell_balancing_scaling < 0.95);
-        
-        // --- 6. Drive mode adjustment ---
+
+        // --- 6. RAPS EV Stability Membrane Processing ---
+        if (config_.enable_raps_stability_membrane) {
+            double current_estimate_a = enhanced.state.current;
+            auto membrane_state = raps_membrane_.evaluate(
+                enhanced.state.voltage,
+                current_estimate_a,
+                enhanced.state.temperature,
+                pack_diagnostics,
+                dt);
+            result.raps_membrane_scaling = membrane_state.overall_membrane_stability;
+            result.raps_boost_allowance = membrane_state.stability_boost_allowance;
+            result.raps_dsm_tripped = membrane_state.dsm_tripped;
+            result.raps_dsm_trip_reason = membrane_state.get_dsm_trip_reason();
+            result.raps_membrane_derate_active = (result.raps_membrane_scaling < 0.95);
+        } else {
+            result.raps_membrane_scaling = 1.0;
+            result.raps_boost_allowance = 1.0;
+            result.raps_dsm_tripped = false;
+            result.raps_dsm_trip_reason = "NONE";
+            result.raps_membrane_derate_active = false;
+        }
+
+        if (result.raps_dsm_tripped) {
+            result.limp_mode_active = true;
+            result.overall_scaling = 0.0;
+            result.max_drive_torque_nm = 0.0;
+            result.max_regen_torque_nm = 0.0;
+            result.limiting_factor = "RAPS_DSM_TRIP (" + result.raps_dsm_trip_reason + ")";
+            return result;
+        }
+
+        // --- 7. Drive mode adjustment ---
         double mode_fraction = get_drive_mode_fraction();
-        
-        // --- 7. Combine all scaling factors ---
+
+        // --- 8. Combine all scaling factors ---
         double combined_scaling = result.base_motor_scaling *
                                  result.ds_scaling *
                                  result.thermal_scaling *
                                  result.soc_scaling *
                                  result.cell_balancing_scaling *
+                                 result.raps_membrane_scaling *
                                  mode_fraction;
         
         // Apply protection limits
