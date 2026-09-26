@@ -172,6 +172,10 @@ if(DS_BUILD_TESTS)
     add_executable(test_raps_ev_stability tests/test_raps_ev_stability.cpp)
     target_link_libraries(test_raps_ev_stability PRIVATE ds_ailee_governor)
     add_test(NAME test_raps_ev_stability COMMAND test_raps_ev_stability)
+
+    add_executable(test_ailee_trust_integration tests/test_ailee_trust_integration.cpp)
+    target_link_libraries(test_ailee_trust_integration PRIVATE ds_ailee_governor)
+    add_test(NAME test_ailee_trust_integration COMMAND test_ailee_trust_integration)
 endif()
 
 # ============================================================================
