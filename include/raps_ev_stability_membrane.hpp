@@ -21,7 +21,7 @@
  *
  * AUTHORS: Don Michael Feeney Jr. & Jules
  * LICENSE: Copyright (c) Don Michael Feeney Jr. Licensed under the MIT License.
- * VERSION: 6.0.0
+ * VERSION: 7.0.0
  * ============================================================================
  */
 
@@ -37,7 +37,7 @@
 namespace raps {
 namespace ev {
 
-constexpr int RAPS_EV_VERSION_MAJOR = 6;
+constexpr int RAPS_EV_VERSION_MAJOR = 7;
 constexpr int RAPS_EV_VERSION_MINOR = 0;
 constexpr int RAPS_EV_VERSION_PATCH = 0;
 

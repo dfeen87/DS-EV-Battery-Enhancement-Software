@@ -27,6 +27,7 @@ struct TrustGateConfig {
     double soft_ceiling_threshold = 0.70;  // Threshold for Level 1 Soft Ceiling
     double hard_ceiling_threshold = 0.50;  // Threshold for Level 2 Hard Ceiling
     // Below 0.50 triggers Level 3 Protective Mode
+    uint32_t protective_recovery_cycles = 50; // Hysteresis requirement (50 cycles) to exit Level 3
 };
 
 struct GovernanceDecision {
@@ -109,7 +110,21 @@ public:
     }
 
     /**
+     * Checks whether system state satisfies deterministic entry/exit criteria for exiting Level 3 Protective Mode.
+     * Requires sustained trust_score >= 0.85, zero active anomalies, and consecutive healthy cycles >= hysteresis threshold.
+     */
+    bool verify_protective_mode_exit(double current_trust_score,
+                                     bool active_anomaly,
+                                     uint32_t consecutive_healthy_cycles) const noexcept {
+        if (active_anomaly) return false;
+        if (current_trust_score < config_.accept_trust_threshold) return false;
+        if (consecutive_healthy_cycles < config_.protective_recovery_cycles) return false;
+        return true;
+    }
+
+    /**
      * Checks if a proposed parameter update passes trust gating and envelope limits.
+     * Enforces strict trust_score >= 0.85 requirement.
      */
     bool verify_parameter_update(double current_trust_score,
                                  const ParameterEnvelope& envelope,

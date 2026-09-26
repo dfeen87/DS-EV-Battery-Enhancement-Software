@@ -8,7 +8,7 @@
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://isocpp.org/)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-green.svg)]()
 [![Hardened](https://img.shields.io/badge/Hardened-Edition%20Ready-Purple.svg)]()
-[![Version](https://img.shields.io/badge/Version-6.0.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/Version-7.0.0-blue.svg)]()
 [![CI](https://github.com/dfeen87/EV-Battery-Enhancement-Software/actions/workflows/ci.yml/badge.svg)](https://github.com/dfeen87/EV-Battery-Enhancement-Software/actions/workflows/ci.yml)
 
 Dual‑State (DS/ds) EV Enhancement Software is a production-ready, high-performance battery and power management suite for electric vehicles. By treating batteries as dual-state systems—where physical metrics (like voltage, current, and temperature) and historical stress tracking are dynamically coupled—we achieve earlier degradation detection, better health prediction, and optimized charging strategies.
