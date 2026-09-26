@@ -22,6 +22,7 @@
 #include "../ailee_horsepower_governor.hpp"
 #include "../ds_battery_enhancement.hpp"
 #include "../ds_bms_middleware_v2.hpp"
+#include "../ds_torque_manager.hpp"
 
 #include <cstdio>
 #include <memory>
@@ -126,6 +127,56 @@ public:
 
 private:
     ds_plugin::DSBMSMiddleware bms_middleware_;
+};
+
+/**
+ * Adapter wrapping DSAileeTorqueManager as an AILEE Trust Layer Compartment.
+ */
+class TorqueManagerAdapter : public ICompartment {
+public:
+    TorqueManagerAdapter() = default;
+
+    const char* get_name() const noexcept override {
+        return "TorqueManagerAdapter";
+    }
+
+    bool initialize() noexcept override {
+        torque_manager_ = std::make_unique<ds::drive::DSAileeTorqueManager>();
+        return true;
+    }
+
+    void set_torque_command(const ds::drive::TorqueCommand& cmd) noexcept {
+        cmd_ = cmd;
+    }
+
+    CompartmentTelemetry evaluate(double dt) noexcept override {
+        (void)dt;
+        CompartmentTelemetry t;
+        if (!torque_manager_) {
+            initialize();
+        }
+        auto out = torque_manager_->processTorqueCommand(cmd_);
+        t.trust_score = out.trust_score;
+        t.health_score = out.raps_membrane_stability;
+        t.anomaly_detected = out.raps_dsm_tripped || (out.governance_level == 3);
+        t.recommended_level = static_cast<GovernanceLevel>(out.governance_level);
+        snprintf(t.status_message.data, sizeof(t.status_message.data), "%s", out.reason.c_str());
+        return t;
+    }
+
+    GovernanceLevel get_recommended_governance_level() const noexcept override {
+        if (!torque_manager_) return GovernanceLevel::LEVEL_3_PROTECTIVE;
+        auto dec = torque_manager_->getLastGovernanceDecision();
+        return static_cast<GovernanceLevel>(dec.level);
+    }
+
+    void reset_to_baseline() noexcept override {
+        cmd_ = ds::drive::TorqueCommand();
+    }
+
+private:
+    std::unique_ptr<ds::drive::DSAileeTorqueManager> torque_manager_;
+    ds::drive::TorqueCommand cmd_;
 };
 
 } // namespace adapters

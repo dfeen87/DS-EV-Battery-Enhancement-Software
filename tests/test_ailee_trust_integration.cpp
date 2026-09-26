@@ -58,7 +58,41 @@ void test_trust_gated_learning() {
     assert(snap3.approved == false);
     (void)res3;
 
+    // Verify alias field synchronization in snapshot struct
+    assert(snap1.rollback_handle == snap1.snapshot_id);
+    assert(snap1.compartment_id == "ChargingCompartment");
+    assert(snap1.previous_params == 1.0);
+    assert(snap1.proposed_params == 1.05);
+    assert(snap1.applied_params == 1.05);
+
     std::cout << "  -> test_trust_gated_learning PASSED.\n";
+}
+
+void test_protective_mode_exit_recovery() {
+    std::cout << "[TEST] Running test_protective_mode_exit_recovery...\n";
+    ailee::ev::TrustGate trust_gate;
+
+    // Recovery fails if active anomaly is present
+    bool exit1 = trust_gate.verify_protective_mode_exit(0.95, true, 100);
+    assert(exit1 == false);
+    (void)exit1;
+
+    // Recovery fails if trust score < 0.85
+    bool exit2 = trust_gate.verify_protective_mode_exit(0.80, false, 100);
+    assert(exit2 == false);
+    (void)exit2;
+
+    // Recovery fails if consecutive healthy cycles < hysteresis threshold (50)
+    bool exit3 = trust_gate.verify_protective_mode_exit(0.90, false, 30);
+    assert(exit3 == false);
+    (void)exit3;
+
+    // Recovery succeeds when trust_score >= 0.85, no anomaly, and cycles >= 50
+    bool exit4 = trust_gate.verify_protective_mode_exit(0.92, false, 55);
+    assert(exit4 == true);
+    (void)exit4;
+
+    std::cout << "  -> test_protective_mode_exit_recovery PASSED.\n";
 }
 
 void test_protective_mode_fallback() {
@@ -124,8 +158,8 @@ void test_rollback_mechanism() {
     assert(envelope.current_value == 115.0);
     (void)approved;
 
-    // Rollback
-    bool rb_res = engine.rollback(snap.snapshot_id, envelope);
+    // Rollback using rollback_handle alias
+    bool rb_res = engine.rollback(snap.rollback_handle, envelope);
     assert(rb_res == true);
     assert(envelope.current_value == 100.0);
     (void)rb_res;
@@ -160,6 +194,22 @@ void test_adapter_shims() {
     assert(t_bms.health_score > 0.0);
     (void)t_bms;
 
+    ailee::ev::adapters::TorqueManagerAdapter tm_adapter;
+    tm_adapter.initialize();
+    ds::drive::TorqueCommand cmd;
+    cmd.requested_torque_nm = 200.0;
+    cmd.motor_rpm = 2500.0;
+    cmd.v_batt = 400.0;
+    cmd.i_batt = 150.0;
+    cmd.ctx.soc = 80.0;
+    cmd.ctx.soh = 90.0;
+    cmd.ctx.temp_c = 28.0;
+    cmd.ctx.sensor_valid = true;
+    tm_adapter.set_torque_command(cmd);
+    auto t_tm = tm_adapter.evaluate(0.01);
+    assert(t_tm.trust_score >= 0.70);
+    (void)t_tm;
+
     std::cout << "  -> test_adapter_shims PASSED.\n";
 }
 
@@ -167,6 +217,7 @@ int main() {
     std::cout << "=== Running AILEE Trust Layer Integration Test Suite ===\n";
     test_trust_gated_learning();
     test_protective_mode_fallback();
+    test_protective_mode_exit_recovery();
     test_rollback_mechanism();
     test_adapter_shims();
     std::cout << "=== ALL AILEE TRUST LAYER TESTS PASSED SUCCESSFULLY ===\n";

@@ -26,21 +26,35 @@
 #include <chrono>
 #include <ctime>
 #include <cstdio>
+#include <mutex>
 
 namespace ailee {
 namespace ev {
 
 struct ParameterSnapshot {
     uint64_t snapshot_id = 0;
+    uint64_t rollback_handle = 0; // Alias for snapshot_id
     std::string timestamp;
-    std::string compartment_name;
+    std::string compartment_id;   // Subsystem identifier (e.g. BMSCompartment)
+    std::string compartment_name; // Backward-compatibility alias
     std::string param_name;
-    double previous_value = 0.0;
-    double proposed_value = 0.0;
-    double applied_value = 0.0;
+    double previous_params = 0.0; // Key parameter state prior to update
+    double previous_value = 0.0;  // Backward-compatibility alias
+    double proposed_params = 0.0; // Proposed parameter value
+    double proposed_value = 0.0;  // Backward-compatibility alias
+    double applied_params = 0.0;  // Resulting applied parameter value
+    double applied_value = 0.0;   // Backward-compatibility alias
     double trust_score = 0.0;
     bool approved = false;
     std::string reason;
+
+    void sync_aliases() {
+        rollback_handle = snapshot_id;
+        compartment_id = compartment_name;
+        previous_params = previous_value;
+        proposed_params = proposed_value;
+        applied_params = applied_value;
+    }
 };
 
 class LearningEngine {
@@ -51,7 +65,7 @@ public:
 
     /**
      * Submit a proposed parameter update for a compartment.
-     * Evaluates trust gate and parameter envelope.
+     * Evaluates trust gate and parameter envelope with thread-safe audit logging.
      */
     bool propose_parameter_update(const std::string& compartment_name,
                                  ParameterEnvelope& envelope,
@@ -59,6 +73,7 @@ public:
                                  double current_trust_score,
                                  const TrustGate& trust_gate,
                                  ParameterSnapshot* out_snapshot = nullptr) {
+        std::lock_guard<std::mutex> lock(engine_mutex_);
         bool approved = trust_gate.verify_parameter_update(current_trust_score, envelope, proposed_value);
 
         ParameterSnapshot snap;
@@ -84,6 +99,7 @@ public:
             }
         }
 
+        snap.sync_aliases();
         snapshots_.push_back(snap);
         write_audit_log(snap);
 
@@ -95,11 +111,12 @@ public:
     }
 
     /**
-     * Rollback a specific snapshot ID, restoring previous_value into the envelope.
+     * Rollback a specific snapshot ID / rollback handle, restoring previous_value into the envelope.
      */
-    bool rollback(uint64_t snapshot_id, ParameterEnvelope& envelope) {
+    bool rollback(uint64_t rollback_handle, ParameterEnvelope& envelope) {
+        std::lock_guard<std::mutex> lock(engine_mutex_);
         for (auto it = snapshots_.rbegin(); it != snapshots_.rend(); ++it) {
-            if (it->snapshot_id == snapshot_id && it->approved) {
+            if ((it->snapshot_id == rollback_handle || it->rollback_handle == rollback_handle) && it->approved) {
                 envelope.current_value = it->previous_value;
 
                 ParameterSnapshot snap;
@@ -112,8 +129,9 @@ public:
                 snap.applied_value = it->previous_value;
                 snap.trust_score = 1.0;
                 snap.approved = true;
-                snap.reason = "ROLLBACK EXECUTION for snapshot ID " + std::to_string(snapshot_id);
+                snap.reason = "ROLLBACK EXECUTION for rollback handle " + std::to_string(rollback_handle);
 
+                snap.sync_aliases();
                 snapshots_.push_back(snap);
                 write_audit_log(snap);
                 return true;
@@ -125,7 +143,8 @@ public:
     /**
      * Get snapshot history.
      */
-    const std::vector<ParameterSnapshot>& get_snapshots() const noexcept {
+    std::vector<ParameterSnapshot> get_snapshots() const {
+        std::lock_guard<std::mutex> lock(engine_mutex_);
         return snapshots_;
     }
 
@@ -179,6 +198,7 @@ private:
     std::string automotive_log_path_;
     uint64_t next_snapshot_id_;
     std::vector<ParameterSnapshot> snapshots_;
+    mutable std::mutex engine_mutex_;
 };
 
 } // namespace ev
