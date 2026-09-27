@@ -50,6 +50,16 @@ class TestHardenedPipeline(unittest.TestCase):
         code, out, err = self.run_diag(["--soh", "90.0"])
         self.assertEqual(code, 0)
 
+    def test_diagnostics_help(self):
+        code, out, err = self.run_diag(["--help"])
+        self.assertEqual(code, 0)
+        self.assertIn("State of Health (%)", out)
+
+    def test_non_finite_measurement_is_rejected(self):
+        code, out, err = self.run_diag(["--soh", "nan"])
+        self.assertEqual(code, 4)
+        self.assertIn("must be a finite number", out)
+
     def test_temperature_safety_boundaries(self):
         # Temperature just above limit (45.1 C) -> must fail/exit 4
         code, out, err = self.run_diag(["--temp", "45.1"])
