@@ -4,6 +4,7 @@ import sys
 import json
 import argparse
 import fnmatch
+import math
 import platform
 import subprocess
 
@@ -81,10 +82,10 @@ def main():
     parser = argparse.ArgumentParser(description="DS EV Battery Enhancement - Pre-Flight Diagnostics")
     parser.add_argument("--model", type=str, help="Override vehicle model")
     parser.add_argument("--firmware", type=str, help="Override firmware version")
-    parser.add_argument("--soh", type=float, help="Override battery State of Health (%)")
+    parser.add_argument("--soh", type=float, help="Override battery State of Health (%%)")
     parser.add_argument("--temp", type=float, help="Override temperature (°C)")
     parser.add_argument("--voltage", type=float, help="Override battery voltage (V)")
-    parser.add_argument("--soc", type=float, help="Override State of Charge (%)")
+    parser.add_argument("--soc", type=float, help="Override State of Charge (%%)")
     parser.add_argument("--log-dir", type=str, help="Alternative log directory")
     args = parser.parse_args()
 
@@ -220,8 +221,14 @@ def main():
         log_message("CRITICAL: Configuration files (profiles/thresholds) could not be located.", log_paths)
         sys.exit(1)
 
-    profiles = load_json(profiles_path).get("supported_vehicles", {})
-    thresholds = load_json(thresholds_path).get("safety_thresholds", {})
+    profiles_data = load_json(profiles_path)
+    thresholds_data = load_json(thresholds_path)
+    if profiles_data is None or thresholds_data is None:
+        log_message("CRITICAL: Configuration files could not be parsed.", log_paths)
+        sys.exit(1)
+
+    profiles = profiles_data.get("supported_vehicles", {})
+    thresholds = thresholds_data.get("safety_thresholds", {})
 
     # Validate model support
     if model not in profiles:
@@ -252,6 +259,18 @@ def main():
 
     # 5. Safety Thresholds Verification
     failures = []
+
+    # NaN values compare false against every bound, so reject all non-finite
+    # measurements explicitly rather than accidentally treating them as safe.
+    measurements = {
+        "Battery SOH": battery_soh,
+        "Battery temperature": temperature_c,
+        "Battery voltage": voltage_v,
+        "Battery State of Charge": soc,
+    }
+    for name, value in measurements.items():
+        if not math.isfinite(value):
+            failures.append(f"{name} must be a finite number (received: {value})")
 
     # State of Health
     min_soh = thresholds.get("battery_soh", {}).get("min_percent", 80.0)
