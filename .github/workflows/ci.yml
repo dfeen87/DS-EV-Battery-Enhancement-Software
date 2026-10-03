@@ -21,8 +21,14 @@ jobs:
 
       - name: Build simulation smoke test
         run: |
-          cmake -B build
+          cmake -B build -DDS_ENABLE_PYTHON_GOVERNOR=OFF
           cmake --build build
+
+      - name: Run C++ invariant and integration tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Run Python invariant and integration tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
 
       - name: Run simulation smoke test
         run: ./build/basic_integration

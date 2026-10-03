@@ -12,6 +12,7 @@
 #include <iostream>
 #include <cassert>
 #include <cmath>
+#include <limits>
 
 bool test_initialization() {
     std::cout << "Testing DS initialization..." << std::flush;
@@ -107,6 +108,50 @@ bool test_energy_conservation() {
     return true;
 }
 
+bool test_invalid_inputs_are_atomic() {
+    std::cout << "Testing invalid input rejection and atomic state..." << std::flush;
+    ds::DSEnhancement enhancer;
+    enhancer.init();
+    enhancer.enhance(360.0, 10.0, 25.0, 0.8, 1.0);
+    const ds::DSState before = enhancer.get_state();
+
+    const double invalid_values[] = {
+        std::numeric_limits<double>::quiet_NaN(),
+        std::numeric_limits<double>::infinity()
+    };
+    for (double invalid : invalid_values) {
+        bool rejected = false;
+        try {
+            enhancer.enhance(360.0, 10.0, 25.0, invalid, 1.0);
+        } catch (const std::invalid_argument&) {
+            rejected = true;
+        }
+        assert(rejected);
+        assert(enhancer.get_state().time == before.time);
+        assert(enhancer.get_state().state_of_charge == before.state_of_charge);
+    }
+
+    bool rejected_dt = false;
+    try {
+        enhancer.enhance(360.0, 10.0, 25.0, 0.8, 0.0);
+    } catch (const std::invalid_argument&) {
+        rejected_dt = true;
+    }
+    assert(rejected_dt);
+    assert(enhancer.get_state().time == before.time);
+    std::cout << " PASS\n";
+    return true;
+}
+
+bool test_non_finite_configuration_rejected() {
+    std::cout << "Testing non-finite configuration rejection..." << std::flush;
+    ds::DSConfig config;
+    config.nominal_capacity_ah = std::numeric_limits<double>::quiet_NaN();
+    assert(!config.validate());
+    std::cout << " PASS\n";
+    return true;
+}
+
 int main() {
     std::cout << "============================================================================\n";
     std::cout << "DS BATTERY CORE TESTS\n";
@@ -119,6 +164,8 @@ int main() {
         all_passed &= test_enhance_cycle();
         all_passed &= test_degradation_tracking();
         all_passed &= test_energy_conservation();
+        all_passed &= test_invalid_inputs_are_atomic();
+        all_passed &= test_non_finite_configuration_rejected();
         
         std::cout << "\n============================================================================\n";
         if (all_passed) {

@@ -120,7 +120,7 @@ void test_torque_manager_raps_integration() {
     cmd.requested_torque_nm = 300.0;
     cmd.motor_rpm = 4000.0;
     cmd.v_batt = 400.0;
-    cmd.i_batt = 100.0;
+    cmd.i_batt = 50.0; // stable initial step; surge damping is tested separately
     cmd.ctx.soc = 90.0;
     cmd.ctx.soh = 98.0;
     cmd.ctx.temp_c = 25.0;

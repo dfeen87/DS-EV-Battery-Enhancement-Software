@@ -96,6 +96,7 @@ static void print_usage() {
               << "  --capacity <Ah>          Battery nominal capacity (default: 75.0)\n"
               << "  --nominal-voltage <V>    Battery nominal voltage (default: 400.0)\n"
               << "  --json                   Format output as raw JSON string\n"
+              << "  --version                Display the DS-EV release version\n"
               << "  --help                   Display this help message\n";
 }
 
@@ -127,6 +128,9 @@ int main(int argc, char* argv[]) {
             nominal_voltage = std::stod(argv[++i]);
         } else if (arg == "--json") {
             format_json = true;
+        } else if (arg == "--version") {
+            std::cout << "DS-EV " << ds::DSEnhancement::get_version() << "\n";
+            return 0;
         } else if (arg == "-h" || arg == "--help") {
             print_usage();
             return 0;

@@ -20,6 +20,7 @@
 #include <cassert>
 #include <iostream>
 #include <cmath>
+#include <limits>
 
 void test_trust_gated_learning() {
     std::cout << "[TEST] Running test_trust_gated_learning...\n";
@@ -113,7 +114,7 @@ void test_protective_mode_fallback() {
     normal_anom.torque_nm = 300.0;
     normal_anom.rpm = 3000.0;
     normal_anom.v_batt = 400.0;
-    normal_anom.i_batt = 315.0; // HP mech ~ 126.38, HP elec ~ 168.96
+    normal_anom.i_batt = 235.6; // HP mech and electrical HP both ~126.4
     anomaly.update_inputs(normal_anom);
     auto t_anom1 = anomaly.evaluate(0.01);
 
@@ -213,6 +214,41 @@ void test_adapter_shims() {
     std::cout << "  -> test_adapter_shims PASSED.\n";
 }
 
+void test_malformed_evidence_fails_closed() {
+    std::cout << "[TEST] Running test_malformed_evidence_fails_closed...\n";
+    ailee::ev::TrustGate gate;
+    ailee::ev::CompartmentTelemetry evidence;
+    evidence.trust_score = std::numeric_limits<double>::quiet_NaN();
+    auto decision = gate.evaluate_telemetry(&evidence, 1);
+    assert(decision.level == ailee::ev::GovernanceLevel::LEVEL_3_PROTECTIVE);
+    assert(decision.overall_trust_score == 0.0);
+    assert(!decision.learning_allowed);
+    assert(!decision.evidence_valid);
+    assert(decision.evidence_count == 1);
+
+    ailee::ev::ParameterEnvelope envelope;
+    assert(!gate.verify_parameter_update(0.95, envelope,
+        std::numeric_limits<double>::quiet_NaN()));
+    assert(!gate.verify_protective_mode_exit(
+        std::numeric_limits<double>::quiet_NaN(), false, 100));
+
+    ailee::ev::BMSCompartment bms;
+    ailee::ev::BMSInputData bms_input;
+    bms_input.temperature_c = std::numeric_limits<double>::infinity();
+    bms.update_inputs(bms_input);
+    assert(bms.evaluate(0.01).recommended_level ==
+        ailee::ev::GovernanceLevel::LEVEL_3_PROTECTIVE);
+
+    ds::drive::DSAileeTorqueManager torque_manager;
+    ds::drive::TorqueCommand command;
+    command.requested_torque_nm = std::numeric_limits<double>::quiet_NaN();
+    auto torque = torque_manager.processTorqueCommand(command);
+    assert(torque.applied_torque_nm == 0.0);
+    assert(torque.governance_level == 3);
+    assert(torque.trust_score == 0.0);
+    std::cout << "  -> test_malformed_evidence_fails_closed PASSED.\n";
+}
+
 int main() {
     std::cout << "=== Running AILEE Trust Layer Integration Test Suite ===\n";
     test_trust_gated_learning();
@@ -220,6 +256,7 @@ int main() {
     test_protective_mode_exit_recovery();
     test_rollback_mechanism();
     test_adapter_shims();
+    test_malformed_evidence_fails_closed();
     std::cout << "=== ALL AILEE TRUST LAYER TESTS PASSED SUCCESSFULLY ===\n";
     return 0;
 }

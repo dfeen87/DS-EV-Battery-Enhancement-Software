@@ -36,6 +36,8 @@ struct GovernanceDecision {
     double derate_factor = 1.0;
     bool learning_allowed = true;
     bool fallback_active = false;
+    bool evidence_valid = false;
+    std::size_t evidence_count = 0;
     FixedMessage reason;
 };
 
@@ -65,6 +67,23 @@ public:
 
         for (std::size_t i = 0; i < count; ++i) {
             const auto& t = telemetries[i];
+            const int level = static_cast<int>(t.recommended_level);
+            if (!std::isfinite(t.timestamp) || !std::isfinite(t.health_score) ||
+                !std::isfinite(t.trust_score) || !std::isfinite(t.stress_metric) ||
+                t.health_score < 0.0 || t.health_score > 1.0 ||
+                t.trust_score < 0.0 || t.trust_score > 1.0 ||
+                level < static_cast<int>(GovernanceLevel::LEVEL_0_NORMAL) ||
+                level > static_cast<int>(GovernanceLevel::LEVEL_3_PROTECTIVE)) {
+                decision.level = GovernanceLevel::LEVEL_3_PROTECTIVE;
+                decision.overall_trust_score = 0.0;
+                decision.derate_factor = 0.25;
+                decision.learning_allowed = false;
+                decision.fallback_active = true;
+                decision.evidence_count = i + 1;
+                snprintf(decision.reason.data, sizeof(decision.reason.data),
+                    "Invalid trust evidence at index %zu; fallback activated.", i);
+                return decision;
+            }
             if (t.trust_score < min_trust) {
                 min_trust = t.trust_score;
             }
@@ -78,6 +97,8 @@ public:
         }
 
         decision.overall_trust_score = min_trust;
+        decision.evidence_valid = true;
+        decision.evidence_count = count;
 
         // Determine governance level
         if (any_anomaly || min_trust < config_.hard_ceiling_threshold || highest_req_level == static_cast<int>(GovernanceLevel::LEVEL_3_PROTECTIVE)) {
@@ -116,7 +137,7 @@ public:
     bool verify_protective_mode_exit(double current_trust_score,
                                      bool active_anomaly,
                                      uint32_t consecutive_healthy_cycles) const noexcept {
-        if (active_anomaly) return false;
+        if (!std::isfinite(current_trust_score) || active_anomaly) return false;
         if (current_trust_score < config_.accept_trust_threshold) return false;
         if (consecutive_healthy_cycles < config_.protective_recovery_cycles) return false;
         return true;
@@ -129,7 +150,11 @@ public:
     bool verify_parameter_update(double current_trust_score,
                                  const ParameterEnvelope& envelope,
                                  double proposed_value) const noexcept {
-        if (current_trust_score < config_.accept_trust_threshold) {
+        if (!std::isfinite(current_trust_score) || !std::isfinite(proposed_value) ||
+            !std::isfinite(envelope.min_value) || !std::isfinite(envelope.max_value) ||
+            !std::isfinite(envelope.current_value) || !std::isfinite(envelope.max_step_delta) ||
+            envelope.min_value > envelope.max_value || envelope.max_step_delta < 0.0 ||
+            current_trust_score < config_.accept_trust_threshold) {
             return false;
         }
         if (proposed_value < envelope.min_value || proposed_value > envelope.max_value) {

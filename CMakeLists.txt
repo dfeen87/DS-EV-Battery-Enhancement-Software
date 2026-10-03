@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 project(
     DS_Battery_Enhancement
-    VERSION 7.1.0
+    VERSION 8.0.0
     DESCRIPTION "DS Theory Battery Management & BMS Middleware"
     LANGUAGES CXX
 )
@@ -44,6 +44,7 @@ option(DS_BUILD_BENCHMARKS "Build performance benchmarks" ON)
 option(DS_USE_GPU "Enable GPU acceleration (CUDA)" OFF)
 option(DS_INSTALL "Generate install target" ON)
 option(DS_ENABLE_FEEN "Enable FEEN integration" OFF)
+option(DS_ENABLE_PYTHON_GOVERNOR "Embed the optional Python AILEE governor" OFF)
 
 # ============================================================================
 # Header-Only Library Target
@@ -60,12 +61,14 @@ if(DS_ENABLE_FEEN)
     FetchContent_MakeAvailable(feen)
 endif()
 
-FetchContent_Declare(
-    pybind11
-    GIT_REPOSITORY https://github.com/pybind/pybind11.git
-    GIT_TAG v2.12.0
-)
-FetchContent_MakeAvailable(pybind11)
+if(DS_ENABLE_PYTHON_GOVERNOR)
+    FetchContent_Declare(
+        pybind11
+        GIT_REPOSITORY https://github.com/pybind/pybind11.git
+        GIT_TAG v2.12.0
+    )
+    FetchContent_MakeAvailable(pybind11)
+endif()
 
 add_library(ds_battery INTERFACE)
 
@@ -79,7 +82,11 @@ add_library(ds_ailee_governor STATIC
     src/ailee_horsepower_governor.cpp
     src/ds_torque_manager.cpp
 )
-target_link_libraries(ds_ailee_governor PUBLIC ds_battery pybind11::embed)
+target_link_libraries(ds_ailee_governor PUBLIC ds_battery)
+if(DS_ENABLE_PYTHON_GOVERNOR)
+    target_link_libraries(ds_ailee_governor PUBLIC pybind11::embed)
+    target_compile_definitions(ds_ailee_governor PRIVATE DS_ENABLE_PYTHON_GOVERNOR=1)
+endif()
 target_include_directories(ds_ailee_governor PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 
 target_compile_features(ds_battery INTERFACE cxx_std_17)
@@ -149,33 +156,50 @@ if(DS_BUILD_TESTS)
     message(STATUS "Building tests")
     enable_testing()
 
+    # The test executables use the standard assert contract. Keep assertions
+    # active even when the repository default build type is Release.
+    function(ds_enable_test_assertions target)
+        if(MSVC)
+            target_compile_options(${target} PRIVATE /UNDEBUG)
+        else()
+            target_compile_options(${target} PRIVATE -UNDEBUG)
+        endif()
+    endfunction()
+
     add_executable(test_core tests/test_core.cpp)
     target_link_libraries(test_core PRIVATE ds_battery)
     add_test(NAME test_core COMMAND test_core)
+    ds_enable_test_assertions(test_core)
 
     add_executable(test_feen_integration tests/test_feen_integration.cpp)
     target_link_libraries(test_feen_integration PRIVATE ds_battery)
     add_test(NAME test_feen_integration COMMAND test_feen_integration)
+    ds_enable_test_assertions(test_feen_integration)
 
     add_executable(test_advanced tests/test_advanced.cpp)
     target_link_libraries(test_advanced PRIVATE ds_battery)
     add_test(NAME test_advanced COMMAND test_advanced)
+    ds_enable_test_assertions(test_advanced)
 
     add_executable(test_middleware tests/test_middleware.cpp)
     target_link_libraries(test_middleware PRIVATE ds_battery)
     add_test(NAME test_middleware COMMAND test_middleware)
+    ds_enable_test_assertions(test_middleware)
 
     add_executable(test_ailee_governor tests/test_ailee_governor.cpp)
     target_link_libraries(test_ailee_governor PRIVATE ds_ailee_governor)
     add_test(NAME test_ailee_governor COMMAND test_ailee_governor)
+    ds_enable_test_assertions(test_ailee_governor)
 
     add_executable(test_raps_ev_stability tests/test_raps_ev_stability.cpp)
     target_link_libraries(test_raps_ev_stability PRIVATE ds_ailee_governor)
     add_test(NAME test_raps_ev_stability COMMAND test_raps_ev_stability)
+    ds_enable_test_assertions(test_raps_ev_stability)
 
     add_executable(test_ailee_trust_integration tests/test_ailee_trust_integration.cpp)
     target_link_libraries(test_ailee_trust_integration PRIVATE ds_ailee_governor)
     add_test(NAME test_ailee_trust_integration COMMAND test_ailee_trust_integration)
+    ds_enable_test_assertions(test_ailee_trust_integration)
 endif()
 
 # ============================================================================
@@ -205,6 +229,12 @@ target_compile_definitions(ds_enhancer PRIVATE DS_BUILD_CLI)
 set_target_properties(ds_enhancer PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ds_core/bin"
 )
+if(DS_BUILD_TESTS)
+    add_test(NAME test_cli_version COMMAND ds_enhancer --version)
+    set_tests_properties(test_cli_version PROPERTIES
+        PASS_REGULAR_EXPRESSION "DS-EV 8\\.0\\.0"
+    )
+endif()
 
 # 2. Shared Library for Python Wrapper
 add_library(ds_enhancer_shared SHARED ds_core/src/ds_enhancer.cpp)
@@ -215,11 +245,13 @@ set_target_properties(ds_enhancer_shared PROPERTIES
 )
 
 # 3. pybind11 Python Module
-pybind11_add_module(ds_enhancer_pybind ds_core/src/ds_pybind11_wrapper.cpp)
-target_link_libraries(ds_enhancer_pybind PRIVATE ds_battery)
-set_target_properties(ds_enhancer_pybind PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ds_core/lib"
-)
+if(DS_ENABLE_PYTHON_GOVERNOR)
+    pybind11_add_module(ds_enhancer_pybind ds_core/src/ds_pybind11_wrapper.cpp)
+    target_link_libraries(ds_enhancer_pybind PRIVATE ds_battery)
+    set_target_properties(ds_enhancer_pybind PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ds_core/lib"
+    )
+endif()
 
 # ============================================================================
 # Installation & Package Export
