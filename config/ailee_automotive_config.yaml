@@ -2,6 +2,8 @@
 # EV Horse Power & Dynamic Limits Configuration
 
 ailee_automotive_domain:
+  trust_contract_target: "9.4"
+  evidence_policy: "finite-bounded-fail-closed"
   thresholds:
     hp_consistency_tolerance: 0.85
     temp_soft_limit_c: 45.0

@@ -63,8 +63,8 @@ namespace ds {
 // VERSION INFORMATION
 // ============================================================================
 
-constexpr int DS_VERSION_MAJOR = 7;
-constexpr int DS_VERSION_MINOR = 1;
+constexpr int DS_VERSION_MAJOR = 8;
+constexpr int DS_VERSION_MINOR = 0;
 constexpr int DS_VERSION_PATCH = 0;
 
 inline std::string get_version_string() {
@@ -102,6 +102,13 @@ struct DSConfig {
     
     // Validate configuration
     bool validate() const {
+        const double values[] = {lambda, tau_min, phi_decay_rate,
+            thermodynamic_beta, entropy_weight, nominal_capacity_ah,
+            nominal_voltage, max_temperature, min_temperature, max_current,
+            energy_conservation_tolerance};
+        for (double value : values) {
+            if (!std::isfinite(value)) return false;
+        }
         if (lambda <= 0.0 || lambda > 1e-3) return false;
         if (tau_min <= 0.0 || tau_min > 1.0) return false;
         if (phi_decay_rate < 0.0 || phi_decay_rate > 1.0) return false;
@@ -205,8 +212,20 @@ struct DSState {
     
     // Validate state
     bool is_valid() const {
-        if (!std::isfinite(voltage) || !std::isfinite(current) || 
-            !std::isfinite(temperature)) return false;
+        const double values[] = {voltage, current, temperature, state_of_charge,
+            entropy, cycle_count, degradation, phi_magnitude, lambda,
+            energy_psi, energy_phi, energy_metric, energy_total,
+            charge_throughput_ah, capacity_fade, time, last_update};
+        for (double value : values) {
+            if (!std::isfinite(value)) return false;
+        }
+        for (double gradient : grad_phi) {
+            if (!std::isfinite(gradient)) return false;
+        }
+        if (voltage < 0.0 || entropy < 0.0 || entropy > 1.0 ||
+            cycle_count < 0.0 || phi_magnitude < 0.0 || lambda <= 0.0 ||
+            charge_throughput_ah < 0.0 || capacity_fade < 0.0 ||
+            time < 0.0 || last_update < 0.0) return false;
         if (state_of_charge < 0.0 || state_of_charge > 1.0) return false;
         if (degradation < 0.0 || degradation > 1.0) return false;
         if (!g_eff.is_stable()) return false;
@@ -323,6 +342,9 @@ public:
     
     // Main update function - call once per BMS cycle
     void update(DSState& state, double dt) {
+        if (!std::isfinite(dt) || dt <= 0.0) {
+            throw std::invalid_argument("Update interval must be finite and positive");
+        }
         if (dt < config_.tau_min) {
             return;
         }
@@ -443,6 +465,12 @@ public:
         if (!initialized_) {
             throw std::runtime_error("DSEnhancement not initialized. Call init() first.");
         }
+
+        if (!std::isfinite(voltage) || voltage <= 0.0 ||
+            !std::isfinite(current) || !std::isfinite(temperature) ||
+            !std::isfinite(soc) || !std::isfinite(dt) || dt <= 0.0) {
+            throw std::invalid_argument("Sensor values must be finite, voltage and dt must be positive");
+        }
         
         // Bounds checking: clamp inputs and set flag instead of throwing
         bool input_clamped = false;
@@ -458,20 +486,20 @@ public:
             input_clamped = true;
         }
         
-        // Update physical state from sensors
-        state_.voltage = voltage;
-        state_.current = current;
-        state_.temperature = temperature;
-        state_.state_of_charge = std::clamp(soc, 0.0, 1.0);
-        
-        // Store energy before update
-        double energy_before = state_.energy_total;
-        
-        // Run DS coupling dynamics
-        coupling_.update(state_, dt);
-        
-        // Check energy conservation
-        double energy_error = std::abs(state_.energy_total - energy_before);
+        // Compute into a candidate so a failed update cannot partially mutate the
+        // last-known-good state exposed to downstream control code.
+        DSState candidate = state_;
+        candidate.voltage = voltage;
+        candidate.current = current;
+        candidate.temperature = temperature;
+        candidate.state_of_charge = std::clamp(soc, 0.0, 1.0);
+        coupling_.update(candidate, dt);
+
+        // This is the internal energy-accounting residual, not the legitimate
+        // change in stored energy caused by new physical sensor measurements.
+        double energy_error = std::abs(candidate.energy_total -
+            (candidate.energy_psi + candidate.energy_phi + candidate.energy_metric));
+        state_ = candidate;
         cumulative_energy_error_ += energy_error;
         
         // Generate predictions

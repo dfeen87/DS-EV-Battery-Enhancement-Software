@@ -9,6 +9,7 @@
 
 #include "ailee_horsepower_governor.hpp"
 
+#ifdef DS_ENABLE_PYTHON_GOVERNOR
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wattributes"
 #include <pybind11/embed.h>
@@ -20,10 +21,12 @@
 #include <cmath>
 
 namespace py = pybind11;
+#endif
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wattributes"
 struct AileeHorsepowerGovernor::Impl {
+#ifdef DS_ENABLE_PYTHON_GOVERNOR
     bool py_initialized = false;
     py::object py_module;
     py::object py_eval_func;
@@ -48,6 +51,10 @@ struct AileeHorsepowerGovernor::Impl {
             py_initialized = false;
         }
     }
+#else
+    bool py_initialized = false;
+    Impl() = default;
+#endif
 
     GovernanceDecisionCpp fallbackEvaluate(const RawSignals& signals) const {
         GovernanceDecisionCpp dec;
@@ -59,13 +66,20 @@ struct AileeHorsepowerGovernor::Impl {
         double max_torque = signals.torque_nm > 0.0 ? signals.torque_nm : 400.0;
         double max_current = signals.i_batt > 0.0 ? signals.i_batt : 500.0;
 
-        if (!signals.ctx.sensor_valid) {
+        const bool finite_inputs = std::isfinite(signals.torque_nm) && std::isfinite(signals.rpm) &&
+            std::isfinite(signals.v_batt) && std::isfinite(signals.i_batt) &&
+            std::isfinite(signals.ctx.soc) && std::isfinite(signals.ctx.soh) &&
+            std::isfinite(signals.ctx.temp_c);
+        if (!signals.ctx.sensor_valid || !finite_inputs || signals.torque_nm < 0.0 ||
+            signals.rpm < 0.0 || signals.v_batt <= 0.0 || signals.i_batt < 0.0 ||
+            signals.ctx.soc < 0.0 || signals.ctx.soc > 100.0 ||
+            signals.ctx.soh < 0.0 || signals.ctx.soh > 100.0) {
             dec.level = 3;
             dec.governed_hp = max_hp * 0.25;
             dec.governed_torque = max_torque * 0.25;
             dec.governed_discharge_current = max_current * 0.25;
             dec.trust_score = 0.0;
-            dec.reason = "C++ Fallback Level 3: Sensor validity check failed.";
+            dec.reason = "C++ Fallback Level 3: Sensor validity or numeric-domain check failed.";
             dec.used_fallback = true;
             return dec;
         }
@@ -152,10 +166,21 @@ double AileeHorsepowerGovernor::governHorsepower(double raw_hp_mech, double raw_
 }
 
 GovernanceDecisionCpp AileeHorsepowerGovernor::evaluate(const RawSignals& signals) {
+    const bool valid = signals.ctx.sensor_valid && std::isfinite(signals.torque_nm) &&
+        signals.torque_nm >= 0.0 && std::isfinite(signals.rpm) && signals.rpm >= 0.0 &&
+        std::isfinite(signals.v_batt) && signals.v_batt > 0.0 &&
+        std::isfinite(signals.i_batt) && signals.i_batt >= 0.0 &&
+        std::isfinite(signals.ctx.soc) && signals.ctx.soc >= 0.0 && signals.ctx.soc <= 100.0 &&
+        std::isfinite(signals.ctx.soh) && signals.ctx.soh >= 0.0 && signals.ctx.soh <= 100.0 &&
+        std::isfinite(signals.ctx.temp_c);
+    if (!valid) {
+        return impl_->fallbackEvaluate(signals);
+    }
     if (!impl_->py_initialized) {
         return impl_->fallbackEvaluate(signals);
     }
 
+#ifdef DS_ENABLE_PYTHON_GOVERNOR
     try {
         py::dict py_res = impl_->py_eval_func(
             signals.torque_nm,
@@ -186,4 +211,7 @@ GovernanceDecisionCpp AileeHorsepowerGovernor::evaluate(const RawSignals& signal
     } catch (const std::exception& e) {
         return impl_->fallbackEvaluate(signals);
     }
+#else
+    return impl_->fallbackEvaluate(signals);
+#endif
 }

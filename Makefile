@@ -11,7 +11,7 @@ LOCAL_LOG = logs/install.log
 
 # Logger macro (single-line shell safe)
 define log_action
-	mkdir -p $(INSTALL_DIR)/logs 2>/dev/null || true; mkdir -p logs 2>/dev/null || true; echo "[`date +'%Y-%m-%d %H:%M:%S'`] VERSION: 7.1.0 | ACTION: $(1) | STATUS: $(2) | INFO: $(3)" | tee -a $(LOG_FILE) $(LOCAL_LOG) 2>/dev/null || true
+	mkdir -p $(INSTALL_DIR)/logs 2>/dev/null || true; mkdir -p logs 2>/dev/null || true; echo "[`date +'%Y-%m-%d %H:%M:%S'`] VERSION: 8.0.0 | ACTION: $(1) | STATUS: $(2) | INFO: $(3)" | tee -a $(LOG_FILE) $(LOCAL_LOG) 2>/dev/null || true
 endef
 
 all: help
@@ -100,7 +100,11 @@ install:
 	@echo "Deploying binaries and shared libraries..."
 	@cp -p ds_core/bin/ds_enhancer $(INSTALL_DIR)/bin/
 	@cp -p ds_core/lib/libds_enhancer.* $(INSTALL_DIR)/lib/
-	@cp -p ds_core/lib/ds_enhancer_pybind.* $(INSTALL_DIR)/lib/ 2>/dev/null || cp -p ds_core/lib/ds_enhancer_pybind.*.so $(INSTALL_DIR)/lib/
+	@set -- ds_core/lib/ds_enhancer_pybind*.so; if [ -e "$$1" ]; then \
+		cp -p "$$@" $(INSTALL_DIR)/lib/; \
+	else \
+		echo "NOTICE: Optional Python governor module was not built."; \
+	fi
 
 	@# Copy scripts and utilities
 	@echo "Deploying system scripts..."

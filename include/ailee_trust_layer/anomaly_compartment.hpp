@@ -53,7 +53,10 @@ public:
         (void)dt;
         CompartmentTelemetry t;
 
-        if (!inputs_.sensor_valid) {
+        if (!inputs_.sensor_valid || !std::isfinite(inputs_.torque_nm) ||
+            !std::isfinite(inputs_.rpm) || !std::isfinite(inputs_.v_batt) ||
+            !std::isfinite(inputs_.i_batt) || inputs_.torque_nm < 0.0 ||
+            inputs_.rpm < 0.0 || inputs_.v_batt <= 0.0) {
             t.health_score = 0.0;
             t.trust_score = 0.0;
             t.anomaly_detected = true;

@@ -57,7 +57,13 @@ public:
         CompartmentTelemetry t;
         t.timestamp += dt;
 
-        if (!inputs_.sensor_valid) {
+        if (!inputs_.sensor_valid || !std::isfinite(inputs_.pack_voltage) ||
+            !std::isfinite(inputs_.pack_current) || !std::isfinite(inputs_.temperature_c) ||
+            !std::isfinite(inputs_.soc) || !std::isfinite(inputs_.soh) ||
+            !std::isfinite(inputs_.cell_min_v) || !std::isfinite(inputs_.cell_max_v) ||
+            inputs_.pack_voltage <= 0.0 || inputs_.soc < 0.0 || inputs_.soc > 100.0 ||
+            inputs_.soh < 0.0 || inputs_.soh > 100.0 || inputs_.cell_min_v < 0.0 ||
+            inputs_.cell_max_v < inputs_.cell_min_v) {
             t.health_score = 0.0;
             t.trust_score = 0.0;
             t.anomaly_detected = true;
